@@ -2,6 +2,7 @@ from django.db import models
 
 
 #employees
+#rewrite to use django User model?
 class Employee(models.Model):
     name = models.CharField(max_length=100)
     eid = models.IntegerField(blank = False)
@@ -23,7 +24,7 @@ class Order(models.Model):
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
-    employee_submitted = models.ManyToManyField('Employee', blank=False)
+    employee_submitted = models.ManyToManyField('Employee', blank=False) #or is this one to many?
 
 class Meal(models.Model):
     foods = models.ManyToManyField('Food', blank=False)
