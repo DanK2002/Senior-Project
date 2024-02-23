@@ -2,11 +2,10 @@ from django.db import models
 
 
 #employees
-#rewrite to use django User model?
 class Employee(models.Model):
-    name = models.CharField(max_length=100)
-    eid = models.IntegerField(blank = False)
-    pin = models.IntegerField(blank = False)
+    name = models.CharField(max_length=100)     #rewrite to use django User model?
+    eid = models.IntegerField(blank = False)    #
+    pin = models.IntegerField(blank = False)    #
     wage = models.FloatField(null = False)
     Position = models.CharField(max_length=100)
 
