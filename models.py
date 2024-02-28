@@ -1,14 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 
 #employees
-class Employee(AbstractBaseUser):
-    name = models.CharField(max_length=100)     # rewrite to use django User model?
-    eid = models.IntegerField(blank = False)    #
-    pin = models.IntegerField(blank = False)    #
+class Employee(models.Model):
+    user = models.OneToOneField(User)
     wage = models.FloatField(null = False)
-    Position = models.CharField(max_length=100) # Groups: A generic way of applying labels and permissions to more than one user.
 
 class Shift(models.Model):
     start = models.DateTimeField()
