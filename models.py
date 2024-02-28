@@ -25,6 +25,7 @@ class Order(models.Model):
     employee_submitted = models.ManyToManyField('Employee', blank=False) #or is this one to many?
 
 class Meal(models.Model):
+    name  = models.CharField(max_length=100)
     foods = models.ManyToManyField('Food', blank=False)
     price = models.FloatField(blank = False)
 
@@ -36,6 +37,7 @@ class Food(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
+    #price = models.FloatField(black = false)
     quantity = models.IntegerField(blank = False)
 
     def __str__(self):
