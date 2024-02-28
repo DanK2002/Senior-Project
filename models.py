@@ -3,11 +3,11 @@ from django.db import models
 
 #employees
 class Employee(models.Model):
-    name = models.CharField(max_length=100)     #rewrite to use django User model?
+    name = models.CharField(max_length=100)     # rewrite to use django User model?
     eid = models.IntegerField(blank = False)    #
     pin = models.IntegerField(blank = False)    #
     wage = models.FloatField(null = False)
-    Position = models.CharField(max_length=100)
+    Position = models.CharField(max_length=100) # Groups: A generic way of applying labels and permissions to more than one user.
 
 class Shift(models.Model):
     start = models.DateTimeField()
