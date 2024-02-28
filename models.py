@@ -1,8 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
 #employees
-class Employee(models.Model):
+class Employee(AbstractBaseUser):
     name = models.CharField(max_length=100)     # rewrite to use django User model?
     eid = models.IntegerField(blank = False)    #
     pin = models.IntegerField(blank = False)    #
@@ -17,6 +18,7 @@ class Shift(models.Model):
 
 # orders and food
 class Order(models.Model):
+    number = models.IntegerField()
     time_est = models.DateTimeField()
     time_submitted = models.DateTimeField()
     time_completed = models.DateTimeField()
