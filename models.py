@@ -22,7 +22,7 @@ class Order(models.Model):
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
-    employee_submitted = models.ManyToManyField('Employee', blank=False) #or is this one to many?
+    employee_submitted = models.ForeignKey(Employee)
 
 class Meal(models.Model):
     name  = models.CharField(max_length=100)
@@ -37,7 +37,6 @@ class Food(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
-    #price = models.FloatField(black = false)
     quantity = models.IntegerField(blank = False)
 
     def __str__(self):
