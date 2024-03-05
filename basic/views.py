@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import Http404
 from .models import Computed
 from django.utils import timezone
-from datetime import datetime
 
 # Create your views here.
 
