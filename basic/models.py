@@ -17,13 +17,13 @@ class Computed(models.Model):
 
 #employees
 class Employee(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     wage = models.FloatField(null = False)
 
 class Shift(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
-    employee = models.ForeignKey(Employee)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
 
 # orders and food
@@ -35,7 +35,7 @@ class Order(models.Model):
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
-    employee_submitted = models.ForeignKey(Employee)
+    employee_submitted = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
 class Meal(models.Model):
     name  = models.CharField(max_length=100)
