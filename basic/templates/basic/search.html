@@ -1,0 +1,29 @@
+<h1>
+    Search Page
+</h1>
+
+<p>Search below for computations which have been performed.</p>
+
+<form action = "{% url 'search' %}" method="post">
+
+    {% csrf_token %}
+    
+    <label for="input">Input: </label>
+    <input type="number" id="input" name="input">
+    <input type="submit"  value="Search">
+</form>
+
+{% if searched %}
+    {% if time_computed %}
+        <p>
+            The answer is {{ output }}. It was computed at {{ time_computed|date:"N jS, Y, g:i a" }}
+        </p>
+    {% else %}
+        <p>
+            The computation for input value {{ input }} has not been performed.<br/>
+            Please visit the <a href="../compute">computation page</a> if you would like to compute it.
+        </p>
+    {% endif %}  
+{% endif %}
+
+<a href="../home">Back to Home</a>

@@ -1,0 +1,25 @@
+<h1>
+    Computation Page
+</h1>
+
+
+<form action = "{% url 'compute' %}" method="post">
+
+    {% csrf_token %}
+    
+    <label for="input">Input: </label>
+    <input type="number" id="input" name="input">
+    <input type="submit"  value="Compute">
+</form>
+
+{% if time_computed %}
+
+The answer for {{ input }} is {{ output }}. 
+
+<p>
+    <i> Computed at {{ time_computed|date:"N jS, Y, g:i a" }} </i>
+</p>
+
+{% endif %}
+
+<a href="../home">Back to Home</a>
