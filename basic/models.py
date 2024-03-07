@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 
 # Computed objects cache computations that were already performed
 # A computation that has already been performed will not be performed again 

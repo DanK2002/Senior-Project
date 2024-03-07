@@ -1,6 +1,7 @@
 import json
 from faker import Faker
 from basic.models import Ingredient, Food, Meal
+from django.contrib.auth.models import Group, Permission
 
 newObject = Ingredient(name='Burger Bun', quantity=2000)
 newObject.save()
@@ -75,6 +76,17 @@ newObject = Ingredient(name='Dr Kelp', quantity=2500)
 newObject.save()
 
 newObject = Ingredient(name='Diet Dr Kelp', quantity=2500)
+newObject.save()
+
+#Front of House
+newObject = Group(name = 'FOH')
+newObject.save()
+
+#Back of House
+newObject = Group(name = 'BOH')
+newObject.save()
+
+newObject = Group(name = 'Manager')
 newObject.save()
 
 x = { 
