@@ -1,5 +1,5 @@
 from django.db import models
-from .user import User
+from django.contrib.auth.models import User
 
 # Computed objects cache computations that were already performed
 # A computation that has already been performed will not be performed again 
@@ -53,7 +53,7 @@ class Food(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(null = False)
     category = models.CharField(max_length=100)
-    ingred = models.JSONField()
+    ingred = models.JSONField(default=dict)
 #    ingred = models.ManyToManyField('Ingredient', blank=False)
     
     def __str__(self):

@@ -186,9 +186,11 @@ newObject12 = Food(name='Diet Dr Kelp', price=1.99, category='Drink', ingred=new
 newObject12.save()
 
 newObject = Meal(name='Good Meal', price=9.99)
+newObject.save()
 newObject.foods.add(newObject4, newObject7, newObject10)
 newObject.save()
 
 newObject = Meal(name='Krabby Patty Combo', price=10.99)
+newObject.save()
 newObject.foods.add(newObject1, newObject7, newObject11)
 newObject.save()
