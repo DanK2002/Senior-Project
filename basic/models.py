@@ -1,18 +1,13 @@
 from django.db import models
 from .user import User
 
-# Create your models here.
-
 # Computed objects cache computations that were already performed
 # A computation that has already been performed will not be performed again 
 class Computed(models.Model):  
     input = models.IntegerField()
     output = models.IntegerField()
     time_computed = models.DateTimeField(null=True)
-
-    def __str__(self):
-        return(f"{self.input} -> {self.output}")
-    
+       
 ##Project models
 
 #employees
@@ -20,11 +15,16 @@ class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     wage = models.FloatField(null = False)
 
+    def __str__(self):
+        return self.user.username
+
 class Shift(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Shift of {self.employee} from {self.start} to {self.end}"
 
 # orders and food
 class Order(models.Model):
@@ -37,16 +37,28 @@ class Order(models.Model):
     price = models.FloatField(null=False)
     employee_submitted = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Order #{self.number} submitted by {self.employee_submitted}"
+
 class Meal(models.Model):
     name  = models.CharField(max_length=100)
     foods = models.ManyToManyField('Food', blank=False)
     price = models.FloatField(blank = False)
 
+    def __str__(self):
+        return self.name
+
+
 class Food(models.Model):
     name = models.CharField(max_length=100)
     price = models.FloatField(null = False)
     category = models.CharField(max_length=100)
-    ingred = models.ManyToManyField('Ingredient', blank=False)
+    ingred = models.JSONField()
+#    ingred = models.ManyToManyField('Ingredient', blank=False)
+    
+    def __str__(self):
+        return self.name
+
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
