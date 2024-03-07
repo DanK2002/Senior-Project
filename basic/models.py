@@ -13,8 +13,8 @@ class Computed(models.Model):
 #employees
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    wage = models.FloatField(null = False)
-
+    wage = models.FloatField(null=False)
+    
     def __str__(self):
         return self.user.username
 
