@@ -37,18 +37,31 @@ orders_data = [
 
 #Continually get error for user does not exist
 for order_data in orders_data:
-    user_obj = User.objects.get(username=order_data['employee_submitted'])
-    print(user_obj)
-    order = Order(number = order_data['number'],
-                  time_est = order_data['time_est'],
-                  time_submitted = order_data['time_submitted'],
-                  time_completed = order_data['time_completed'], 
-                  price = order_data['price'], 
-                  employee_submitted = Employee.objects.get(user=user_obj))
+    try:
+        user_obj = User.objects.get(username=order_data['employee_submitted'])
+        print(user_obj)
+    except Exception as e:
+        print(f"Error getting user: {e}")
+    
+    try:
+        order = Order(number = order_data['number'],
+                    time_est = order_data['time_est'],
+                    time_submitted = order_data['time_submitted'],
+                    time_completed = order_data['time_completed'], 
+                    price = order_data['price'], 
+                    employee_submitted = Employee.objects.get(user=user_obj))
+    except Exception as e:
+        print(f"Error creating order: {e}")
     for food_name in order_data['foods']:
-        food = Food.objects.filter(name=food_name).first()
-        order.foods.add(food)
+        try:
+            food = Food.objects.filter(name=food_name).first()
+            order.foods.add(food)
+        except Exception as e:
+            print(f"Error adding food: {e}")
     for meal_name in order_data['meals']:
-        meal = Meal.objects.filter(meal=meal_name).first()
-        order.meals.add(meal)
+        try:
+            meal = Meal.objects.filter(meal=meal_name).first()
+            order.meals.add(meal)
+        except Exception as e:
+            print(f"Error adding Meal: {e}")
     order.save()

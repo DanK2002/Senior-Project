@@ -35,7 +35,7 @@ class Order(models.Model):
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
-    employee_submitted = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee_submitted = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Order #{self.number} submitted by {self.employee_submitted}"
