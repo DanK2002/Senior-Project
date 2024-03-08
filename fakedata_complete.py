@@ -2,13 +2,24 @@ import json
 import random
 from faker import Faker
 from basic.models import Ingredient, Food, Meal, Employee, Shift
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from datetime import timedelta
 from django.utils import timezone
 
 fake = Faker()
 
-# generate employees and shifts
+# Genterate Groups
+#Front of House
+newGroup = Group(name = 'foh')
+newGroup.save()
+# Back of House
+newGroup = Group(name = 'boh')
+newGroup.save()
+# manager
+newGroup = Group(name = 'manager')
+newGroup.save()
+
+# generate employees (and associated users [and assign groups])
 for x in range(5):
     fake_name = fake.name().split()
     first_name = fake_name[0]
@@ -18,12 +29,28 @@ for x in range(5):
     try:
         user = User.objects.create(username=username, password="password123", first_name=first_name, last_name=last_name)
         employee = Employee.objects.create(user=user, wage=wage)
-        for _ in range(3):  # Generate 3 shifts for each employee
-            start_time = fake.date_time_between(start_date='-30d', end_date='now', tzinfo=timezone.get_current_timezone())  # Random start time within the last 30 days
-            end_time = start_time + timedelta(hours=random.randint(4, 12))  # End time is within 4-12 hours after start time
-            shift = Shift.objects.create(start=start_time, end=end_time, employee=employee)
+        if x == 1:
+            man = Group.objects.get(name="manager")
+            man.user_set.add(user)
+        elif x < 4:
+            foh = Group.objects.get(name="foh")
+            foh.user_set.add(user)
+        else:
+            boh = Group.objects.get(name="foh")
+            boh.user_set.add(user)
     except Exception as e:
         print(f"Error creating employee: {e}")
+
+# generate shifts
+for employee in Employee.objects.all():
+    for x in range(3):
+        start_time = fake.date_time_between(start_date='-30d', end_date='now', tzinfo=timezone.get_current_timezone())
+        end_time = start_time + timedelta(hours=random.randint(4, 12))
+        try:
+            shift = Shift.objects.create(start=start_time, end=end_time, employee=employee)
+        except Exception as e:
+            print(f"Error creating shift: {e}")
+
 
 # Define ingredients and their quantities using a dictionary
 ingredients_data = {
