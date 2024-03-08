@@ -7,6 +7,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 fake = Faker()
+Faker.seed(7666777707777886)
 
 # Genterate Groups
 #Front of House
