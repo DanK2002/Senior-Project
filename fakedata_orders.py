@@ -2,7 +2,6 @@ from faker import Faker
 from datetime import timedelta
 from django.utils import timezone
 from basic.models import Food, Meal, Order, User
-
 fake = Faker()
 
 start_times = [fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone()),
@@ -54,7 +53,7 @@ for order_data in orders_data:
     print('username valid')
     order = Order(number = order_data['number'],
                   time_est = order_data['time_est'],
-                  time_submitted = order_data['time_subitted'],
+                  time_submitted = order_data['time_submitted'],
                   time_completed = order_data['time_completed'],
                   price = order_data['price'],
                   employee_submitted = user_exists)
@@ -68,7 +67,6 @@ for order_data in orders_data:
     for meal_name in order_data['meals']:
         meal = Meal.objects.filter(name=meal_name).first()
         order.meals.add(meal)
-    
     print('meals saved')
     order.save()
-    print('order')
+
