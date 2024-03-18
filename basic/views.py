@@ -90,3 +90,15 @@ def search(request):
                 'searched': False,
             }
         )
+    
+def manageemployees(request):
+    return render(request, "basic/manageemployees.html")
+
+def managemenu(request):
+    return render(request, "basic/managemenu.html")
+
+def inventory(request):
+    return render(request, "basic/inventory.html")
+
+def sales(request):
+    return render(request, "basic/sales.html")
