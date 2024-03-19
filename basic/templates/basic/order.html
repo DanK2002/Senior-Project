@@ -1,0 +1,72 @@
+<head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+
+        .button {
+            padding: 40px 60px;
+            background-color: #04533c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;           
+            width: calc(25% - 10px);                /* Make all buttons the same width with slight margin */
+            margin-right: 10px;                     /* Add margin between buttons */
+        }
+
+        .button:last-child {
+            margin-right: 0;                        /* Remove margin from the last button */
+        }
+
+        .large-box {
+            width: 73.5%; 
+            height: 400px; 
+            margin: 65px auto; 
+            padding: 35px;
+            background-color: #04533c;
+            border: 2px solid #000000;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .button a {
+            text-decoration: none;
+            color: inherit; 
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <h1 style="text-align: center;">FOH Orders</h1>
+    
+    <div class="button-container">
+        
+        <button class="button"> <a href="../addneworder/" class="link">Add New Order</a> </button>
+        <button class="button"> <a href="../inprogress/" class="link">In Progress</a></button>
+        <button class="button"> <a href="../ready/" class="link">Ready</a> </button>
+        <button class="button"> <a href="../completed/" class="link">Completed</a> </button>
+    
+    </div>
+
+    <div class="large-box">
+
+    </div>
+
+</body>
+
+</html>

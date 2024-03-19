@@ -102,3 +102,18 @@ def inventory(request):
 
 def sales(request):
     return render(request, "basic/sales.html")
+
+def order(request):
+    return render(request, "basic/order.html")
+
+def addneworder(request):
+    return render(request, "basic/addneworder.html")
+
+def inprogress(request):
+    return render(request, "basic/inprogress.html")
+
+def ready(request):
+    return render(request, "basic/ready.html")
+
+def completed(request):
+    return render(request, "basic/completed.html")

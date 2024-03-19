@@ -9,4 +9,9 @@ urlpatterns = [
     path("managemenu/", views.managemenu, name="managemenu"),
     path("inventory/", views.inventory, name="inventory"),
     path("sales/", views.sales, name="sales"),
+    path("order/", views.order, name="order"),
+    path("addneworder/", views.addneworder, name="addneworder"),
+    path("inprogress/", views.inprogress, name="inprogress"),
+    path("ready/", views.ready, name="ready"),
+    path("completed/", views.completed, name="completed"),
 ]
