@@ -117,7 +117,9 @@ def managemenu(request):
     return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form})
 
 def inventory(request):
-    return render(request, "basic/inventory.html")
+    ingredients = Ingredient.objects.distinct()
+
+    return render(request, "basic/inventory.html", {'ingredients': ingredients})
 
 def sales(request):
     return render(request, "basic/sales.html")
