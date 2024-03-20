@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
-from .models import Computed, Employee
+from .models import *
 from django.utils import timezone
+from .forms import *
 
 # Create your views here.
 
@@ -95,7 +96,25 @@ def manageemployees(request):
     return render(request, "basic/manageemployees.html")
 
 def managemenu(request):
-    return render(request, "basic/managemenu.html")
+    selected_category = request.POST.get('category') #get selected category
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    form = AddFoodForm()
+
+    if request.method == 'POST':
+        if 'save' in request.POST:  # Check if the form was submitted by the Save button
+            form = AddFoodForm(request.POST)
+            if form.is_valid():
+                #if form is valid, process data
+                name = form.cleaned_data['name']
+                category = form.cleaned_data['category']
+                price = form.cleaned_data['price']
+                #food = Food.objects.create(name=name, category=category, price=price)
+            return redirect('managemenu')
+        elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
+            return redirect('managemenu')  # Redirect to the managemenu page without processing the form
+
+    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form})
 
 def inventory(request):
     return render(request, "basic/inventory.html")
