@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import Http404
-from .models import Computed
+from .models import Computed, Employee
 from django.utils import timezone
 
 # Create your views here.
@@ -117,3 +117,12 @@ def ready(request):
 
 def completed(request):
     return render(request, "basic/completed.html")
+
+def clockin_out(request):
+    employee_list = Employee.objects.all()
+    return render(
+        request, 
+        "basic/clockin-out.html", 
+        {
+            'employee_list': employee_list
+        })
