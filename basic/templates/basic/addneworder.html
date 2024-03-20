@@ -33,14 +33,17 @@
         }
 
         .large-box {
-            width: 73.5%; 
+            width: 77%; 
             height: 400px; 
             margin: 65px auto;                  /* Center the box vertically and horizontally */
             padding: 35px;
             background-color: #04533c;
-            border: 2px solid #000000;
+            border: 2px solid black;
             border-radius: 10px;
             text-align: center;
+            display: flex;                      
+            justify-content: center;           
+                           
         }
 
         /* Added CSS to remove underline from links within buttons */
@@ -48,6 +51,12 @@
             text-decoration: none;
             color: inherit;                     /* Inherit the color from the parent (.button) */
         }
+
+        .large-box .button {
+            border: 2px solid black;
+            background-color: #36ad8c;
+        }
+        
     </style>
 </head>
 <body>
@@ -61,7 +70,9 @@
     </div>
 
     <div class="large-box">
-
+        <button class="button"> <a href="" class="link">Dine In</a> </button>
+        <button class="button"> <a href="" class="link">Take-Out</a> </button>
+        <button class="button"> <a href="" class="link">Drive-Through</a> </button>
     </div>
 
     <div class="button-container2">

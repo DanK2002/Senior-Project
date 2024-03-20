@@ -138,3 +138,12 @@ def ready(request):
 
 def completed(request):
     return render(request, "basic/completed.html")
+
+def clockin_out(request):
+    employee_list = Employee.objects.all()
+    return render(
+        request, 
+        "basic/clockin-out.html", 
+        {
+            'employee_list': employee_list
+        })
