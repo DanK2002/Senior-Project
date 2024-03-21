@@ -3,13 +3,14 @@
     <head>
         <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" id="sidenav-style-css" href="{% static 'sidenav.css' %}" media="all">
+        {% block extra_css %}{% endblock %}
     </head>
     <body>
         <!-- Side Navigation Bar For Managers -->
         <div class="sidenav">
             <a><u>Categories</u></a>
             <a href="../manageemployees/">Employees</a>
-            <a><b>Menu</b></a>
+            <a href="../managemenu">Menu</a>
             <a href="../inventory">Inventory</a>
             <a href="../sales">Sales</a>
         </div>

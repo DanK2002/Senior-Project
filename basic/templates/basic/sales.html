@@ -1,12 +1,15 @@
 {% extends "./sidenav.html" %}
-{% block content %}
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" id="sidenav-style-css" href="{% static 'sales.css' %}" media="all">
+{% endblock %}
 
-<h1>Inventory</h1>
+{% block content %}
 
 <div class="sales-section">
     <h2>Sales</h2>
-    <div class="calendar">
-        <!-- Calendar input will be placed here -->
+    <div class="date-range">
+        <!-- date range input here -->
     </div>
     <div>
         <button>Generate Summary Report</button>
@@ -16,10 +19,12 @@
     </div>
 </div>
 
+<hr id="section-seperator" /> 
+
 <div class="summary-section">
     <h2>Summary</h2>
-    <div class="summary-table">
-        <!-- Summary table will be placed here -->
+    <div class="summary-report">
+        <!-- Summary report here -->
     </div>
 </div>
 

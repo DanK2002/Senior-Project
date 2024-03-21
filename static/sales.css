@@ -1,0 +1,15 @@
+.sales-section {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.sales-section button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+#section-separator {
+    width: 100%;
+}
+
