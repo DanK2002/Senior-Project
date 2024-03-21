@@ -1,53 +1,26 @@
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-    
-    .sidenav {
-      height: 100%;
-      width: 160px;
-      position: fixed;
-      z-index: 1;
-      top: 0;
-      left: 0;
-      background-color: #111;
-      overflow-x: hidden;
-      padding-top: 20px;
-    }
-    
-    .sidenav a {
-      padding: 6px 8px 6px 16px;
-      text-decoration: none;
-      font-size: 25px;
-      color: #dfd0d0;
-      display: block;
-    }
-    
-    .sidenav a:hover {
-      color: #f1f1f1;
-    }
-    
-    .main {
-      margin-left: 160px; /* Same as the width of the sidenav */
-      font-size: 28px; /* Increased text to enable scrolling */
-      padding: 0px 10px;
-    }
-    
-    @media screen and (max-height: 450px) {
-      .sidenav {padding-top: 15px;}
-      .sidenav a {font-size: 18px;}
-    }
-    </style>
-    </head>
-    <body>
-    
-    <div class="sidenav">
-      <a><u>Categories</u></a>
-      <a href="../manageemployees/">Employees</a>
-      <a href="../managemenu">Menu</a>
-      <a href="../inventory">Inventory</a>
-      <a><b>Sales</b></a>
-    </div>
+{% extends "./sidenav.html" %}
+{% block content %}
 
-<h1>
-    Inventory
-</h1>
+<h1>Inventory</h1>
+
+<div class="sales-section">
+    <h2>Sales</h2>
+    <div class="calendar">
+        <!-- Calendar input will be placed here -->
+    </div>
+    <div>
+        <button>Generate Summary Report</button>
+    </div>
+    <div>
+        <button>Generate Raw CSV</button>
+    </div>
+</div>
+
+<div class="summary-section">
+    <h2>Summary</h2>
+    <div class="summary-table">
+        <!-- Summary table will be placed here -->
+    </div>
+</div>
+
+{% endblock %}
