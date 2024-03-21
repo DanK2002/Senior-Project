@@ -88,9 +88,26 @@
       top: 40%;
       left: 50%;
       transform: translate(-50%, -50%);
+      overflow-y: auto;
     }
 
-    .add-food-container {
+    .food-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .edit-food-button,
+    .remove-food-button {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-right: 30px;
+      background-color: white; 
+      border: 2px solid gray; 
+      border-radius: 4px; 
+      text-decoration: none; 
+    }
+
+    .add-food-container, .edit-view-food {
       display: flex;
       position:fixed;
       bottom: 0px;
@@ -100,12 +117,8 @@
       border: 3px solid gray;
     }
 
-    .add-food-title {
+    .add-food-title, .edit-food-title {
       text-align: center;
-    }
-
-    .food-details{
-      flex:1;
     }
 
     .add-ingredient-container {
@@ -113,7 +126,9 @@
       border: 1px solid gray;
       padding: 10px;
       width: 55%;
-      margin-right: 150px;
+      position:fixed;
+      bottom: 0px;
+      right: 150px;
     }
 
     .add-ingredient-box {
@@ -162,6 +177,14 @@
     .cancel-button {
       text-decoration: none;
     }
+    .visible {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
 
 
 
@@ -186,16 +209,17 @@
     </div>
 
     <!-- Drop-down list for categories -->
-    <form class = "category-dropdown">
+    <form class="category-dropdown" method="post">
+      {% csrf_token %}
       <label for="category">Category:</label>
-      <select id ="category" name="category" onchange="this.form.submit()">
-        <option value="">Select a Category</option>
-        {% for category in categories %}
-        <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
-        {% endfor %}
-        <option value="add_category">Add Category</option>
+      <select id="category" name="category" onchange="this.form.submit()">
+          <option value="">Select a Category</option>
+          {% for category in categories %}
+              <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
+          {% endfor %}
+          <option value="add_category">Add Category</option>
       </select>
-    </form>
+  </form>
 
     <!-- Button to Edit Category -->
     <div class="edit-category-container">
@@ -206,14 +230,26 @@
 
     <!-- Edit/View Food Items -->
     <div class="edit-view-food-container">
-
+      {% for food in foods %}
+      <div class="food-item">
+          <span>{{ food.name }}</span>
+          <form method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="food_id" value="{{ food.id }}">
+              <input type="hidden" name="selected_category" value="{{ selected_category }}">
+              <button type="submit" name="edit_food" class = "edit-food-button">Edit/View</button>
+          </form>
+          <span><a href="#" class="remove-food-button">-</a></span>
+      </div>
+      {% endfor %}
     </div>
 
     <!-- Add Food Section -->
-    <div class="add-food-container">
+    <div class="add-food-container {% if not edit_mode %}visible{% else %}hidden{% endif %}">
       <div class = "add-food-title"> 
         Add Food 
       </div>
+
       <!-- Name, Category, and Price fields -->
       <div class="food-details">
         <form method="POST">
@@ -236,10 +272,30 @@
         </div>
       </div>
       </div>
-
     </div>
-    
 
-
+    <!-- Edit/View Food Item Details When Edit/View is Clicked-->
+    <div class="edit-view-food {% if edit_mode %}visible{% else %}hidden{% endif %}">
+      <div class = "edit-food-title"> 
+        Edit Food 
+      </div>
+      <!-- Name, Category, and Price fields -->
+      <div class="food-details">
+        Name:
+        <br>
+        Category:
+        <br>
+        Price
+        <br>
+      </div>
+      <!-- Add New Ingredient -->
+      <div class="add-ingredient-container">
+        <div class="add-ingredient-box">
+          <a href="#">+</a>
+          Add New Ingredient
+        </div>
+      </div>
+      </div>
+    </div>
   </body>
   </html>
