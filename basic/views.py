@@ -114,9 +114,6 @@ def manageemployees(request):
             selectedUser = User.objects.get(username=selectedUsername)  # Find that user
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
             shifts = Shift.objects.filter(employee = selectedEmployee)  # Find all of their shifts
-            hours = 0
-            for shift in shifts:
-                hours += (shift.end - shift.start)
             return render(
                 request,
                 "basic/manageemployees.html",
@@ -126,7 +123,6 @@ def manageemployees(request):
                     'selectedUser' : selectedUser,
                     'selectedEmployee' : selectedEmployee,
                     'shifts' : shifts,
-                    'hours' : hours,
                 }
             )
         elif 'Remove' in request.POST:    # User wants to delete employee
@@ -166,10 +162,6 @@ def manageemployees(request):
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
             shifts = Shift.objects.filter(employee = selectedEmployee)  # And their related shifts
 
-            hours = 0
-            for shift in shifts:
-                hours += (shift.end - shift.start)
-
             # Populate the form with pre-existing data
             editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
                                             "last_name": selectedUser.last_name,
@@ -180,7 +172,6 @@ def manageemployees(request):
                 {
                     'selectedUser': selectedUser,
                     'selectedEmployee': selectedEmployee,
-                    'hours' : hours,
                     'employees' : employees,
                     'users' : users,
                     'editEmployee' : editEmployee,
@@ -196,8 +187,9 @@ def manageemployees(request):
             if (request.POST.get('last_name') != None):
                 selectedUser.last_name = request.POST.get('last_name')
             if (request.POST.get('wage') != None):
-                selectedUser.wage = request.POST.get('wage')
+                selectedEmployee.wage = request.POST.get('wage')
             selectedUser.save()
+            selectedEmployee.save()
             return render(
                 request,
                 "basic/manageemployees.html",
