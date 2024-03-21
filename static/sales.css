@@ -1,6 +1,18 @@
+h2 {
+    text-align: center;
+}
+
 .sales-section {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
     padding-bottom: 20px;
     margin-bottom: 20px;
+}
+
+.button-section {
+    display: flex;
+    flex-direction: column;
 }
 
 .sales-section button {
@@ -9,7 +21,22 @@
     font-size: 18px;
 }
 
+.date-range {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 10%; /* Adjust the space between buttons and date range */
+}
+
+.date-range label {
+    margin-bottom: 5px;
+}
+
+.date-range input[type="date"] {
+    padding: 10px;
+    font-size: 18px;
+}
+
 #section-separator {
     width: 100%;
 }
-

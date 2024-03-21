@@ -5,27 +5,26 @@
 {% endblock %}
 
 {% block content %}
-
+<h2>Sales</h2>
 <div class="sales-section">
-    <h2>Sales</h2>
-    <div class="date-range">
-        <!-- date range input here -->
-    </div>
-    <div>
+    <div class="button-section">
         <button>Generate Summary Report</button>
-    </div>
-    <div>
         <button>Generate Raw CSV</button>
+    </div>
+    <div class="date-range">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" autocomplete="off">
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" autocomplete="off">
     </div>
 </div>
 
 <hr id="section-seperator" /> 
 
+<h2>Summary</h2>
 <div class="summary-section">
-    <h2>Summary</h2>
     <div class="summary-report">
         <!-- Summary report here -->
     </div>
 </div>
-
 {% endblock %}
