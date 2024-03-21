@@ -91,9 +91,133 @@ def search(request):
                 'searched': False,
             }
         )
-    
+
+# For managing employees in the managerial section
 def manageemployees(request):
-    return render(request, "basic/manageemployees.html")
+    employees = Employee.objects.all()
+    users = User.objects.all()
+    if request.method == 'POST':    # Check for form submission
+        print(request.POST)         # For debugging purposes; logs request in console
+        if 'New Employee' in request.POST:   # User wants to add new employee; displays add employee form
+            form =  AddEmployeeForm()
+            return render(
+                request,
+                "basic/manageemployees.html",
+                {
+                    'employees' : employees,
+                    'users' : users,
+                    'add_form' : form,
+                }
+            )
+        elif 'View' in request.POST:  # User wants to view information about a specific employee
+            selectedUsername = request.POST.get('select-employees')     # Get the username requested
+            selectedUser = User.objects.get(username=selectedUsername)  # Find that user
+            selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
+            shifts = Shift.objects.filter(employee = selectedEmployee)  # Find all of their shifts
+            hours = 0
+            for shift in shifts:
+                hours += (shift.end - shift.start)
+            return render(
+                request,
+                "basic/manageemployees.html",
+                {
+                    'employees' : employees,
+                    'users' : users,
+                    'selectedUser' : selectedUser,
+                    'selectedEmployee' : selectedEmployee,
+                    'shifts' : shifts,
+                    'hours' : hours,
+                }
+            )
+        elif 'Remove' in request.POST:    # User wants to delete employee
+            selectedUsername = request.POST.get('select-employees')             # Get the username requested
+            selectedUser = User.objects.get(username=selectedUsername)  # Find that user
+            selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
+            print(selectedUser.first_name + selectedUser.last_name)
+            Shift.objects.filter(employee = selectedEmployee).delete()  # Delete their shifts
+            Employee.objects.get(user = selectedUser).delete()          # Delete the employee
+            User.objects.get(username = selectedUsername).delete()      # Delete the user
+            return render(
+                request,
+                "basic/manageemployees.html",
+                {
+                    'employees' : employees,
+                    'users' : users,
+                }
+            )
+        if 'Add' in request.POST:     # User wants to add a new employee and has already submitted the form
+            newUser = User.objects.create(                     # Add a new user based on form input
+                username = request.POST.get('username'),
+                first_name = request.POST.get('first_name'),
+                last_name = request.POST.get('last_name'),
+            )
+            Employee.objects.create(user=newUser, wage=request.POST.get('wage'))
+            return render(
+                request,
+                "basic/manageemployees.html",
+                {
+                    'employees' : employees,
+                    'users' : users,
+                }
+            )
+        if 'Edit' in request.POST:  # User wants to edit an existing employee; display the form
+            selectedUsername = request.POST.get('user')                 # Get the username requested
+            selectedUser = User.objects.get(username=selectedUsername)  # Find that user
+            selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
+            shifts = Shift.objects.filter(employee = selectedEmployee)  # And their related shifts
+
+            hours = 0
+            for shift in shifts:
+                hours += (shift.end - shift.start)
+
+            # Populate the form with pre-existing data
+            editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
+                                            "last_name": selectedUser.last_name,
+                                            "wage" : selectedEmployee.wage})
+            return render(
+                request,
+                "basic/manageemployees.html",
+                {
+                    'selectedUser': selectedUser,
+                    'selectedEmployee': selectedEmployee,
+                    'hours' : hours,
+                    'employees' : employees,
+                    'users' : users,
+                    'editEmployee' : editEmployee,
+                }
+            )
+        if 'Save' in request.POST:          # User has edited an existing employee and wants to save changes
+            selectedUsername = request.POST.get('user')                 # Get the username requested
+            selectedUser = User.objects.get(username=selectedUsername)  # Find that user
+            selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
+            shifts = Shift.objects.filter(employee = selectedEmployee)  # And their related shifts
+            if (request.POST.get('first_name') != None):
+                selectedUser.first_name = request.POST.get('first_name')
+            if (request.POST.get('last_name') != None):
+                selectedUser.last_name = request.POST.get('last_name')
+            if (request.POST.get('wage') != None):
+                selectedUser.wage = request.POST.get('wage')
+            selectedUser.save()
+            return render(
+                request,
+                "basic/manageemployees.html",
+                {
+                    'employees' : employees,
+                    'users' : users,
+                    'selectedUser' : selectedUser,
+                    'selectedEmployee' : selectedEmployee,
+                    'shifts' : shifts,
+                }
+            )
+    # If no actions have occurred, render the page with just employees
+    return render(
+        request,
+        "basic/manageemployees.html",
+        {
+            'employees' : employees,
+            'users' : users,
+        }
+    )
 
 def managemenu(request):
     selected_category = request.POST.get('category') #get selected category
@@ -126,7 +250,9 @@ def managemenu(request):
     return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
 
 def inventory(request):
-    return render(request, "basic/inventory.html")
+    ingredients = Ingredient.objects.distinct()
+
+    return render(request, "basic/inventory.html", {'ingredients': ingredients})
 
 def sales(request):
     return render(request, "basic/sales.html")
@@ -145,3 +271,12 @@ def ready(request):
 
 def completed(request):
     return render(request, "basic/completed.html")
+
+def clockin_out(request):
+    employee_list = Employee.objects.all()
+    return render(
+        request, 
+        "basic/clockin-out.html", 
+        {
+            'employee_list': employee_list
+        })

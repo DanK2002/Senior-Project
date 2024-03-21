@@ -65,10 +65,18 @@
         <br>
         <br>
         <table>
+          <tr>
             <th>Ingredient</th>
             <th>Quantity</th>
+          </tr>
+          {% for ingredient in ingredients %}
+          <tr>
+            <td> {{ ingredient.name }} </td>
+            <td> {{ ingredient.quantity }} </td>
+          </tr>
+          {% endfor %}
         </table>
-
+ 
         <br>
         <button type="button">Add New Ingredient</button>
     </div>
