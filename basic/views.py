@@ -114,9 +114,6 @@ def manageemployees(request):
             selectedUser = User.objects.get(username=selectedUsername)  # Find that user
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
             shifts = Shift.objects.filter(employee = selectedEmployee)  # Find all of their shifts
-            hours = 0
-            for shift in shifts:
-                hours += (shift.end - shift.start)
             return render(
                 request,
                 "basic/manageemployees.html",
@@ -126,7 +123,6 @@ def manageemployees(request):
                     'selectedUser' : selectedUser,
                     'selectedEmployee' : selectedEmployee,
                     'shifts' : shifts,
-                    'hours' : hours,
                 }
             )
         elif 'Remove' in request.POST:    # User wants to delete employee
@@ -166,10 +162,6 @@ def manageemployees(request):
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
             shifts = Shift.objects.filter(employee = selectedEmployee)  # And their related shifts
 
-            hours = 0
-            for shift in shifts:
-                hours += (shift.end - shift.start)
-
             # Populate the form with pre-existing data
             editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
                                             "last_name": selectedUser.last_name,
@@ -180,7 +172,6 @@ def manageemployees(request):
                 {
                     'selectedUser': selectedUser,
                     'selectedEmployee': selectedEmployee,
-                    'hours' : hours,
                     'employees' : employees,
                     'users' : users,
                     'editEmployee' : editEmployee,
@@ -196,8 +187,9 @@ def manageemployees(request):
             if (request.POST.get('last_name') != None):
                 selectedUser.last_name = request.POST.get('last_name')
             if (request.POST.get('wage') != None):
-                selectedUser.wage = request.POST.get('wage')
+                selectedEmployee.wage = request.POST.get('wage')
             selectedUser.save()
+            selectedEmployee.save()
             return render(
                 request,
                 "basic/manageemployees.html",
@@ -237,8 +229,17 @@ def managemenu(request):
             return redirect('managemenu')
         elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
             return redirect('managemenu')  # Redirect to the managemenu page without processing the form
-
-    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form})
+    if selected_category:
+        foods = Food.objects.filter(category=selected_category)
+    else:
+        foods = Food.objects.all()
+    
+    edit_mode = False
+    if request.method == 'POST' and 'edit_food' in request.POST:
+        # Set edit_mode to True when the "Edit Food" link is clicked
+        edit_mode = True
+    
+    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
