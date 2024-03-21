@@ -113,8 +113,17 @@ def managemenu(request):
             return redirect('managemenu')
         elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
             return redirect('managemenu')  # Redirect to the managemenu page without processing the form
-
-    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form})
+    if selected_category:
+        foods = Food.objects.filter(category=selected_category)
+    else:
+        foods = Food.objects.all()
+    
+    edit_mode = False
+    if request.method == 'POST' and 'edit_food' in request.POST:
+        # Set edit_mode to True when the "Edit Food" link is clicked
+        edit_mode = True
+    
+    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
 
 def inventory(request):
     return render(request, "basic/inventory.html")
