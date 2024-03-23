@@ -1,0 +1,7 @@
+.main {
+font-size: 28px; /* Increased text to enable scrolling */
+}
+
+table, th, td {
+    border:1px solid black;
+}

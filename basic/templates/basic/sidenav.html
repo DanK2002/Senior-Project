@@ -3,20 +3,24 @@
     <head>
         <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" id="sidenav-style-css" href="{% static 'sidenav.css' %}" media="all">
-        {% block extra_css %}{% endblock %}
+        <div id="css-content">
+            {% block extra_css %}{% endblock %}
+        </div>
+        <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
     </head>
     <body>
         <!-- Side Navigation Bar For Managers -->
         <div class="sidenav">
             <a><u>Categories</u></a>
-            <a href="../manageemployees/">Employees</a>
-            <a href="../managemenu">Menu</a>
-            <a href="../inventory">Inventory</a>
-            <a href="../sales">Sales</a>
+            <a hx-get="../manageemployees/" hx-target="#html-content, css-content">Employees</a>
+            <a hx-get="../managemenu" hx-target="#html-content, css-content">Menu</a>
+            <a hx-get="../inventory" hx-target="#html-content, css-content">Inventory</a>
+            <a hx-get="../sales" hx-target="#html-content, css-content">Sales</a>
         </div>
 
-        {% block content %}
-        {% endblock %}
-
+        <div id="html-content">
+            {% block content %}
+            {% endblock %}
+        </div>
     </body>
 </html>
