@@ -238,16 +238,40 @@ def managemenu(request):
     if request.method == 'POST' and 'edit_food' in request.POST:
         # Set edit_mode to True when the "Edit Food" link is clicked
         edit_mode = True
-    
-    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
+    #'''
+    html_content = render(request, "basic/managemenu.html", {
+        'categories': categories, 
+        'selected_category': selected_category, 
+        'form': form, 
+        'foods': foods, 
+        'edit_mode': edit_mode
+        }).content.decode('utf-8')
+    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
+
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
+    #'''
+    #return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
-
-    return render(request, "basic/inventory.html", {'ingredients': ingredients})
+    html_content = render(request, "basic/inventory_html.html", {'ingredients': ingredients}).content.decode('utf-8')
+    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 def sales(request):
-    return render(request, "basic/sales.html")
+    html_content = render(request, "basic/sales_html.html").content.decode('utf-8')
+    css_content = render(request, "basic/sales_css.html").content.decode('utf-8')
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content, # div in sidenav
+        'css_content': css_content # div in sidenav
+    })
+
 
 def order(request):
     return render(request, "basic/order.html")
