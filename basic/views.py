@@ -257,14 +257,14 @@ def managemenu(request):
         # Set edit_mode to True when the "Edit Food" link is clicked
         edit_mode = True
 
-    html_content = render(request, "basic/managemenu.html", {
+    html_content = render(request, "basic/menu_html.html", {
         'categories': categories, 
         'selected_category': selected_category, 
         'form': form, 
         'foods': foods, 
         'edit_mode': edit_mode
         }).content.decode('utf-8')
-    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
+    css_content = render(request, "basic/menu_css.html").content.decode('utf-8')
 
     return render(request, "basic/sidenav.html", { 
         'html_content': html_content,

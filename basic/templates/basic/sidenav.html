@@ -1,21 +1,22 @@
 {% load static %}
-<html lang="en-US">
+<html lang="en-US" hx-ext="multi-swap">
     <head>
         <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" id="sidenav-style-css" href="{% static 'sidenav.css' %}" media="all">
+        <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/htmx.org@1.9.11/dist/ext/multi-swap.js"></script>
         <div id="css-content">
             {{ css_content|safe }}
         </div>
-        <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
     </head>
-    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <body>
         <!-- Side Navigation Bar For Managers -->
         <div class="sidenav">
             <a><u>Categories</u></a>
-            <a hx-get="../manageemployees/" hx-target="#html-content, css-content">Employees</a>
-            <a hx-get="../managemenu" hx-target="#html-content, css-content">Menu</a>
-            <a hx-get="../inventory" hx-target="#html-content, css-content">Inventory</a>
-            <a hx-get="../sales" hx-target="#html-content, css-content">Sales</a>
+            <a hx-get="../manageemployees/" hx-swap="multi:#html-content,#css-content">Employees</a>
+            <a hx-get="../managemenu" hx-swap="multi:#html-content,#css-content">Menu</a>
+            <a hx-get="../inventory" hx-swap="multi:#html-content,#css-content">Inventory</a>
+            <a hx-get="../sales" hx-swap="multi:#html-content,#css-content">Sales</a>
         </div>
 
         <div id="html-content">
