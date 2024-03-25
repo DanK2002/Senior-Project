@@ -100,23 +100,23 @@ def manageemployees(request):
         print(request.POST)         # For debugging purposes; logs request in console
         if 'New Employee' in request.POST:   # User wants to add new employee; displays add employee form
             form =  AddEmployeeForm()
-            html_content = render(
+            return render(
                 request,
-                "basic/employees_html.html",
+                "basic/manageemployees.html",
                 {
                     'employees' : employees,
                     'users' : users,
                     'add_form' : form,
                 }
-            ).content.decode('utf-8')
+            )
         elif 'View' in request.POST:  # User wants to view information about a specific employee
             selectedUsername = request.POST.get('select-employees')     # Get the username requested
             selectedUser = User.objects.get(username=selectedUsername)  # Find that user
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
             shifts = Shift.objects.filter(employee = selectedEmployee)  # Find all of their shifts
-            html_content = render(
+            return render(
                 request,
-                "basic/employees_html.html",
+                "basic/manageemployees.html",
                 {
                     'employees' : employees,
                     'users' : users,
@@ -124,7 +124,7 @@ def manageemployees(request):
                     'selectedEmployee' : selectedEmployee,
                     'shifts' : shifts,
                 }
-            ).content.decode('utf-8')
+            )
         elif 'Remove' in request.POST:    # User wants to delete employee
             selectedUsername = request.POST.get('select-employees')             # Get the username requested
             selectedUser = User.objects.get(username=selectedUsername)  # Find that user
@@ -133,30 +133,30 @@ def manageemployees(request):
             Shift.objects.filter(employee = selectedEmployee).delete()  # Delete their shifts
             Employee.objects.get(user = selectedUser).delete()          # Delete the employee
             User.objects.get(username = selectedUsername).delete()      # Delete the user
-            html_content = render(
+            return render(
                 request,
-                "basic/employees_html.html",
+                "basic/manageemployees.html",
                 {
                     'employees' : employees,
                     'users' : users,
                 }
-            ).content.decode('utf-8')
-        elif 'Add' in request.POST:     # User wants to add a new employee and has already submitted the form
+            )
+        if 'Add' in request.POST:     # User wants to add a new employee and has already submitted the form
             newUser = User.objects.create(                     # Add a new user based on form input
                 username = request.POST.get('username'),
                 first_name = request.POST.get('first_name'),
                 last_name = request.POST.get('last_name'),
             )
             Employee.objects.create(user=newUser, wage=request.POST.get('wage'))
-            html_content = render(
+            return render(
                 request,
-                "basic/employees_html.html",
+                "basic/manageemployees.html",
                 {
                     'employees' : employees,
                     'users' : users,
                 }
-            ).content.decode('utf-8')
-        elif 'Edit' in request.POST:  # User wants to edit an existing employee; display the form
+            )
+        if 'Edit' in request.POST:  # User wants to edit an existing employee; display the form
             selectedUsername = request.POST.get('user')                 # Get the username requested
             selectedUser = User.objects.get(username=selectedUsername)  # Find that user
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
@@ -166,9 +166,9 @@ def manageemployees(request):
             editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
                                             "last_name": selectedUser.last_name,
                                             "wage" : selectedEmployee.wage})
-            html_content = render(
+            return render(
                 request,
-                "basic/employees_html.html",
+                "basic/manageemployees.html",
                 {
                     'selectedUser': selectedUser,
                     'selectedEmployee': selectedEmployee,
@@ -176,8 +176,8 @@ def manageemployees(request):
                     'users' : users,
                     'editEmployee' : editEmployee,
                 }
-            ).content.decode('utf-8')
-        elif 'Save' in request.POST:          # User has edited an existing employee and wants to save changes
+            )
+        if 'Save' in request.POST:          # User has edited an existing employee and wants to save changes
             selectedUsername = request.POST.get('user')                 # Get the username requested
             selectedUser = User.objects.get(username=selectedUsername)  # Find that user
             selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
@@ -190,9 +190,9 @@ def manageemployees(request):
                 selectedEmployee.wage = request.POST.get('wage')
             selectedUser.save()
             selectedEmployee.save()
-            html_content = render(
+            return render(
                 request,
-                "basic/employees_html.html",
+                "basic/manageemployees.html",
                 {
                     'employees' : employees,
                     'users' : users,
@@ -200,34 +200,16 @@ def manageemployees(request):
                     'selectedEmployee' : selectedEmployee,
                     'shifts' : shifts,
                 }
-            ).content.decode('utf-8')
-        else:
-            html_content = render(
-                request,
-                "basic/employees_html.html",
-                {
-                    'employees' : employees,
-                    'users' : users,
-                }
-            ).content.decode('utf-8')
-    else:
-            html_content = render(
-            request,
-            "basic/employees_html.html",
-            {
-                'employees' : employees,
-                'users' : users,
-            }
-        ).content.decode('utf-8')
-                
-    css_content = render(request, "basic/employees_css.html").content.decode('utf-8')
+            )
     # If no actions have occurred, render the page with just employees
-
-    return render(request, "basic/sidenav.html", { 
-        'html_content': html_content,
-        'css_content': css_content
-    })
-
+    return render(
+        request,
+        "basic/manageemployees.html",
+        {
+            'employees' : employees,
+            'users' : users,
+        }
+    )
 
 def managemenu(request):
     selected_category = request.POST.get('category') #get selected category
@@ -256,60 +238,31 @@ def managemenu(request):
     if request.method == 'POST' and 'edit_food' in request.POST:
         # Set edit_mode to True when the "Edit Food" link is clicked
         edit_mode = True
-
-    html_content = render(request, "basic/menu_html.html", {
-        'categories': categories, 
-        'selected_category': selected_category, 
-        'form': form, 
-        'foods': foods, 
-        'edit_mode': edit_mode
-        }).content.decode('utf-8')
-    css_content = render(request, "basic/menu_css.html").content.decode('utf-8')
-
-    return render(request, "basic/sidenav.html", { 
-        'html_content': html_content,
-        'css_content': css_content
-    })
-
+    
+    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
-    html_content = render(request, "basic/inventory_html.html", {'ingredients': ingredients}).content.decode('utf-8')
-    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
-    return render(request, "basic/sidenav.html", { 
-        'html_content': html_content,
-        'css_content': css_content
-    })
 
+    return render(request, "basic/inventory.html", {'ingredients': ingredients})
 
 def sales(request):
-    html_content = render(request, "basic/sales_html.html").content.decode('utf-8')
-    css_content = render(request, "basic/sales_css.html").content.decode('utf-8')
-    return render(request, "basic/sidenav.html", { 
-        'html_content': html_content, # div in sidenav
-        'css_content': css_content # div in sidenav
-    })
-
+    return render(request, "basic/sales.html")
 
 def order(request):
     return render(request, "basic/order.html")
 
-
 def addneworder(request):
     return render(request, "basic/addneworder.html")
-
 
 def inprogress(request):
     return render(request, "basic/inprogress.html")
 
-
 def ready(request):
     return render(request, "basic/ready.html")
 
-
 def completed(request):
     return render(request, "basic/completed.html")
-
 
 def clockin_out(request):
     employee_list = Employee.objects.all()
@@ -319,4 +272,3 @@ def clockin_out(request):
         {
             'employee_list': employee_list
         })
-

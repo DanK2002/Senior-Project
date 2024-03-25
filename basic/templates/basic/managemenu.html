@@ -1,0 +1,301 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    
+    .sidenav {
+      height: 100%;
+      width: 160px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+    
+    .sidenav a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #dfd0d0;
+      display: block;
+    }
+    
+    .sidenav a:hover {
+      color: #f1f1f1;
+    }
+    
+    .main {
+      margin-left: 160px; /* Same as the width of the sidenav */
+      font-size: 28px; /* Increased text to enable scrolling */
+      padding: 0px 10px;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .category-dropdown {
+      text-align: right;
+    }
+
+    .edit-category-container {
+      float: right;
+      padding: 10px;    
+    }
+
+    .edit-category {
+      width: 200px;
+      height: 50px; 
+      background-color: #f0f0f0; 
+      border: 1px solid #ccc;
+    }
+
+    .edit-category a {
+      text-align: center;
+      line-height: 50px;
+      text-decoration: none;
+      color: #333; 
+      display: inline-block; 
+      width: 100%; 
+      height: 100%;
+    }
+
+    .selected-category-container {
+      margin: 0 auto; 
+      text-align: center;
+      width: 200px;
+      height: 50px; 
+      background-color: white; 
+      border: 1px solid gray;
+      position: fixed;
+      top: 1%;
+      left: 20%;
+    }
+
+    .edit-view-food-container {
+      width: 700px;
+      height: 350px; 
+      background-color: #f0f0f0; 
+      border: 3px solid gray;
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      overflow-y: auto;
+    }
+
+    .food-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .edit-food-button,
+    .remove-food-button {
+      display: inline-block;
+      padding: 6px 12px;
+      margin-right: 30px;
+      background-color: white; 
+      border: 2px solid gray; 
+      border-radius: 4px; 
+      text-decoration: none; 
+    }
+
+    .add-food-container, .edit-view-food {
+      display: flex;
+      position:fixed;
+      bottom: 0px;
+      right: 0px;
+      width: 1200px;
+      height: 150px;
+      border: 3px solid gray;
+    }
+
+    .add-food-title, .edit-food-title {
+      text-align: center;
+    }
+
+    .add-ingredient-container {
+      background-color: #70ace0;
+      border: 1px solid gray;
+      padding: 10px;
+      width: 55%;
+      position:fixed;
+      bottom: 0px;
+      right: 150px;
+    }
+
+    .add-ingredient-box {
+      margin-left: 20px;
+      background-color: #b3c7da;
+      border: 1px solid gray;
+      padding: 10px;
+      width: 10%;
+      height: 80%;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .add-ingredient-box a {
+      background-color: white;
+      border: 1px solid gray;
+      padding: 15px;
+      text-align: center;
+      line-height: 50px;
+      text-decoration: none;
+      border-radius: 50%;
+    }
+
+    .save-cancel-container {
+      display: flex;
+      flex-direction: column;
+      position:absolute;
+      bottom:0;
+      right:0;
+      text-align: center;
+      justify-content: flex-end;
+      align-items: flex-end;
+    }
+
+    .save-button, .cancel-button {
+      display: block;
+      width: 100px;
+      height: 40px;
+      margin: 10px;
+      text-align: center;
+      line-height: 40px;
+      color: black;
+      border:2px solid gray;
+      background-color: white;
+    }
+    .cancel-button {
+      text-decoration: none;
+    }
+    .visible {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+
+
+
+    </style>
+    </head>
+    <body>
+    
+    <!-- Side Navigation Bar For Managers -->
+    <div class="sidenav">
+      <a><u>Categories</u></a>
+      <a href="../manageemployees/">Employees</a>
+      <a><b>Menu</b></a>
+      <a href="../inventory">Inventory</a>
+      <a href="../sales">Sales</a>
+    </div>
+
+    <h1>Manage Menu</h1>
+
+    <!-- Display Selected Category -->
+    <div class ="selected-category-container">
+      <p>Category: {{ selected_category }}</p>
+    </div>
+
+    <!-- Drop-down list for categories -->
+    <form class="category-dropdown" method="post">
+      {% csrf_token %}
+      <label for="category">Category:</label>
+      <select id="category" name="category" onchange="this.form.submit()">
+          <option value="">Select a Category</option>
+          {% for category in categories %}
+              <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
+          {% endfor %}
+          <option value="add_category">Add Category</option>
+      </select>
+  </form>
+
+    <!-- Button to Edit Category -->
+    <div class="edit-category-container">
+      <div class ="edit-category">
+        <a href="#">Edit Category</a>
+      </div>
+    </div>
+
+    <!-- Edit/View Food Items -->
+    <div class="edit-view-food-container">
+      {% for food in foods %}
+      <div class="food-item">
+          <span>{{ food.name }}</span>
+          <form method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="food_id" value="{{ food.id }}">
+              <input type="hidden" name="selected_category" value="{{ selected_category }}">
+              <button type="submit" name="edit_food" class = "edit-food-button">Edit/View</button>
+          </form>
+          <span><a href="#" class="remove-food-button">-</a></span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Add Food Section -->
+    <div class="add-food-container {% if not edit_mode %}visible{% else %}hidden{% endif %}">
+      <div class = "add-food-title"> 
+        Add Food 
+      </div>
+
+      <!-- Name, Category, and Price fields -->
+      <div class="food-details">
+        <form method="POST">
+          {% csrf_token %}
+          {% if form %}
+          {{ form.as_p }}
+          {% endif %}
+          <!-- Save and Cancel buttons for adding a food item -->
+          <div class="save-cancel-container">
+            <button type="submit" class="save-button">Save</button>
+            <a href="{% url 'managemenu' %}" class="cancel-button">Cancel</a>
+          </div>
+        </form>
+      </div>
+      <!-- Add New Ingredient -->
+      <div class="add-ingredient-container">
+        <div class="add-ingredient-box">
+          <a href="#">+</a>
+          Add New Ingredient
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Edit/View Food Item Details When Edit/View is Clicked-->
+    <div class="edit-view-food {% if edit_mode %}visible{% else %}hidden{% endif %}">
+      <div class = "edit-food-title"> 
+        Edit Food 
+      </div>
+      <!-- Name, Category, and Price fields -->
+      <div class="food-details">
+        Name:
+        <br>
+        Category:
+        <br>
+        Price
+        <br>
+      </div>
+      <!-- Add New Ingredient -->
+      <div class="add-ingredient-container">
+        <div class="add-ingredient-box">
+          <a href="#">+</a>
+          Add New Ingredient
+        </div>
+      </div>
+      </div>
+    </div>
+  </body>
+  </html>
