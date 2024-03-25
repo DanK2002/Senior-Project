@@ -255,9 +255,6 @@ def order(request):
 def addneworder(request):
     return render(request, "basic/addneworder.html")
 
-def inprogress(request):
-    return render(request, "basic/inprogress.html")
-
 def ready(request):
     return render(request, "basic/ready.html")
 
@@ -266,9 +263,8 @@ def completed(request):
 
 def clockin_out(request):
     employee_list = Employee.objects.all()
-    return render(
-        request, 
-        "basic/clockin-out.html", 
-        {
-            'employee_list': employee_list
-        })
+    return render(request, "basic/clockin-out.html", {'employee_list': employee_list})
+
+def inprogress(request):
+    all_orders = Order.objects.all()
+    return render(request, "basic/inprogress.html", {'all_orders': all_orders})
