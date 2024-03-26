@@ -19,7 +19,6 @@ urlpatterns = [
     path("clockin-out/", views.clockin_out, name="clockin-out"),
 
     # HTMX url(s)
-    path("in-out/", views.in_out, name="in-out"),
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
 

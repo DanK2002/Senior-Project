@@ -274,10 +274,6 @@ def clockin_out(request):
             'employees': employees,
             'users': users
         })
-
-def in_out(request):
-    if request.method == 'POST':
-        return render(request, "partials/in-out.html")
     
 def clockin(request):
     return render(request, "partials/clockin.html")
