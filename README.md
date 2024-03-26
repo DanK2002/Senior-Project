@@ -8,9 +8,9 @@ How to download and run
   	python -m venv env  
   	source env/Scripts/activate  
   	pip install Django  
-  	pip install Faker
-   	python manage.py makemigrations
-   	python manage.py migrate 
+  	pip install Faker  
+   	python manage.py makemigrations  
+   	python manage.py migrate  
   	python manage.py makemigrations basic  
   	python manage.py migrate basic  
 4. Open the repository in VSCode. It will detect the virtual environment, so allow it to default to the virtual environment you created.  
