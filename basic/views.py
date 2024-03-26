@@ -256,7 +256,7 @@ def addneworder(request):
     return render(request, "basic/addneworder.html")
 
 def inprogress(request):
-    in_progress_orders = Order.objects.filter(time_completed__isnull=True)
+    in_progress_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=True)
     return render(
         request, 
         "basic/inprogress.html", 
@@ -265,7 +265,13 @@ def inprogress(request):
         })
 
 def ready(request):
-    return render(request, "basic/ready.html")
+    ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
+    return render(
+        request, 
+        "basic/ready.html", 
+        {
+            'ready_orders': ready_orders
+        })
 
 def completed(request):
     completed_orders = Order.objects.filter(time_completed__isnull=False)
