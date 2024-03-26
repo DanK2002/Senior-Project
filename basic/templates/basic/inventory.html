@@ -41,9 +41,11 @@
         border:1px solid black;
     }
     </style>
+
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     
 </head>
-    <body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     
     <div class="sidenav">
       <a><u>Categories</u></a>
@@ -60,7 +62,7 @@
         <br>
 
         Search for an ingredient:
-        <input type="search" id="site-search" name="q" />
+        <input type="text" id="ingredientname"><br>
 
         <br>
         <br>
@@ -71,7 +73,12 @@
           </tr>
           {% for ingredient in ingredients %}
           <tr>
-            <td> {{ ingredient.name }} </td>
+            <td> 
+              {{ ingredient.name }} 
+              <input type="number" id="amount">
+              <button type="button"> + </button>
+              <button type="button"> - </button>
+            </td>
             <td> {{ ingredient.quantity }} </td>
           </tr>
           {% endfor %}
