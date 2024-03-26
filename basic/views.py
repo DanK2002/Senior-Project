@@ -256,13 +256,25 @@ def addneworder(request):
     return render(request, "basic/addneworder.html")
 
 def inprogress(request):
-    return render(request, "basic/inprogress.html")
+    in_progress_orders = Order.objects.filter(time_completed__isnull=True)
+    return render(
+        request, 
+        "basic/inprogress.html", 
+        {
+            'in_progress_orders': in_progress_orders
+        })
 
 def ready(request):
     return render(request, "basic/ready.html")
 
 def completed(request):
-    return render(request, "basic/completed.html")
+    completed_orders = Order.objects.filter(time_completed__isnull=False)
+    return render(
+        request, 
+        "basic/completed.html", 
+        {
+            'completed_orders': completed_orders
+        })
 
 def clockin_out(request):
     employee_list = Employee.objects.all()

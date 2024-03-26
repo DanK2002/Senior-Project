@@ -31,7 +31,7 @@ class Order(models.Model):
     number = models.IntegerField()
     time_est = models.DateTimeField()
     time_submitted = models.DateTimeField()
-    time_completed = models.DateTimeField(null=True)
+    time_completed = models.DateTimeField(blank=True)
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
