@@ -1,51 +1,8 @@
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
     <style>
-
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            width: 80%;
-            margin: 0 auto;
-            padding-top: 20px;
-        }
-
-        .button {
-            padding: 40px 60px;
-            background-color: #04533c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            cursor: pointer;           
-            width: calc(25% - 10px);                /* Make all buttons the same width with slight margin */
-            margin-right: 10px;                     /* Add margin between buttons */
-        }
-
-        .button:last-child {
-            margin-right: 0;                        /* Remove margin from the last button */
-        }
-
-        .large-box {
-            width: 77%; 
-            height: 400px; 
-            margin: 65px auto; 
-            padding: 35px;
-            background-color: #04533c;
-            border: 2px solid #000000;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .button a {
-            text-decoration: none;
-            color: inherit; 
-        }
 
     </style>
 
@@ -56,15 +13,11 @@
     
     <div class="button-container">
         
-        <button class="button"> <a href="../addneworder/" class="link">Add New Order</a> </button>
-        <button class="button"> <a href="../inprogress/" class="link">In Progress</a></button>
-        <button class="button"> <a href="../ready/" class="link">Ready</a> </button>
-        <button class="button"> <a href="../completed/" class="link">Completed</a> </button>
+        <button class="button" hx-get="../addneworder/">Add New Order</button>
+        <button class="button" hx-get="../inprogress/">In Progress</button>
+        <button class="button" hx-get="../ready/">Ready</button>
+        <button class="button" hx-get="../completed/">Completed</button>
     
-    </div>
-
-    <div class="large-box">
-
     </div>
 
 </body>
