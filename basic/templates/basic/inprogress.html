@@ -62,8 +62,8 @@
 
     <div class="large-box">
         <div class="orders-container">
-            {% if all_orders %}
-                {% for order in all_orders %}
+            {% if in_progress_orders %}
+                {% for order in in_progress_orders %}
                     <div class="order">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
