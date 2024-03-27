@@ -3,6 +3,10 @@ from django.http import Http404
 from .models import *
 from django.utils import timezone
 from .forms import *
+from django.http import JsonResponse
+from django.contrib.auth import authenticate, login as auth_login
+
+
 
 # Create your views here.
 
@@ -219,13 +223,14 @@ def managemenu(request):
 
     if request.method == 'POST':
         if 'save' in request.POST:  # Check if the form was submitted by the Save button
+
             form = AddFoodForm(request.POST)
             if form.is_valid():
                 #if form is valid, process data
                 name = form.cleaned_data['name']
                 category = form.cleaned_data['category']
                 price = form.cleaned_data['price']
-                #food = Food.objects.create(name=name, category=category, price=price)
+                food = Food.objects.create(name=name, category=category, price=price)
             return redirect('managemenu')
         elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
             return redirect('managemenu')  # Redirect to the managemenu page without processing the form
@@ -233,13 +238,21 @@ def managemenu(request):
         foods = Food.objects.filter(category=selected_category)
     else:
         foods = Food.objects.all()
+    if request.method == 'POST' and 'food_id' in request.POST:
+        # Handle AJAX request for food details
+        food_id = request.GET.get('food_id')
+        food = Food.objects.get(pk=food_id)
+        edit_view_food = {
+            'name': food.name,
+            'category': food.category,
+            'price': food.price
+        }
+        return JsonResponse(edit_view_food)
     
-    edit_mode = False
-    if request.method == 'POST' and 'edit_food' in request.POST:
-        # Set edit_mode to True when the "Edit Food" link is clicked
-        edit_mode = True
-    
-    return render(request, "basic/managemenu.html", {'categories': categories, 'selected_category': selected_category, 'form': form, 'foods': foods, 'edit_mode': edit_mode})
+    return render(request, "basic/managemenu.html", 
+                  {'categories': categories, 
+                   'selected_category': selected_category, 
+                   'form': form, 'foods': foods })
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
@@ -272,3 +285,24 @@ def clockin_out(request):
         {
             'employee_list': employee_list
         })
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('landingpage')
+        else:
+            error_message = "Invalid username or password."
+            return render(request, 'basic/login.html', {'error_message': error_message})
+    else:
+        return render(request, "basic/login.html")
+    
+def landingpage(request):
+    user = request.user
+    return render(request, 
+                  "basic/landingpage.html",
+                  {'first_name': user.first_name,
+                  'last_name': user.last_name})

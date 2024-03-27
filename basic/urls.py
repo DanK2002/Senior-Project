@@ -15,4 +15,7 @@ urlpatterns = [
     path("ready/", views.ready, name="ready"),
     path("completed/", views.completed, name="completed"),
     path("clockin-out/", views.clockin_out, name="clockin-out"),
+    path("login/", views.login, name="login"),
+    path("landingpage/", views.landingpage, name="landingpage"),
+
 ]
