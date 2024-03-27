@@ -283,10 +283,19 @@ def completed(request):
         })
 
 def clockin_out(request):
-    employee_list = Employee.objects.all()
+    employees = Employee.objects.all()
+    users = User.objects.all()
     return render(
         request, 
         "basic/clockin-out.html", 
         {
-            'employee_list': employee_list
+            'employees': employees,
+            'users': users
         })
+    
+def clockin(request):
+    return render(request, "partials/clockin.html")
+    
+def clockout(request):
+    return render(request, "partials/clockout.html")
+    

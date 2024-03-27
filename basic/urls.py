@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+#app_name="htmx"
+
 urlpatterns = [
     path("home/", views.home, name="home"),
     path("compute/", views.compute, name="compute"),
@@ -15,4 +17,9 @@ urlpatterns = [
     path("ready/", views.ready, name="ready"),
     path("completed/", views.completed, name="completed"),
     path("clockin-out/", views.clockin_out, name="clockin-out"),
+
+    # HTMX url(s)
+    path("clockin/", views.clockin, name="clockin"),
+    path("clockout/", views.clockout, name="clockout"),
+
 ]
