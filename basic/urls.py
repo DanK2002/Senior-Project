@@ -17,9 +17,8 @@ urlpatterns = [
     path("ready/", views.ready, name="ready"),
     path("completed/", views.completed, name="completed"),
     path("clockin-out/", views.clockin_out, name="clockin-out"),
-
+    path("partials/quantity/", views.quantity, name="quantity"),
     # HTMX url(s)
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
-
 ]
