@@ -3,6 +3,7 @@ from django.http import Http404
 from .models import *
 from django.utils import timezone
 from .forms import *
+from django.views.decorators.http import require_GET, require_POST
 
 # Create your views here.
 
@@ -245,6 +246,19 @@ def inventory(request):
     ingredients = Ingredient.objects.distinct()
 
     return render(request, "basic/inventory.html", {'ingredients': ingredients})
+
+def quantity(request):
+    ingredientID = int(request.POST.get("ingredient"))
+    ingredients = Ingredient.objects.distinct()
+    for ingredient in ingredients:
+        if ingredient.idnumber == ingredientID:
+            ing = ingredient
+    # value = request.POST.get('amount')
+    newValue = ing.quantity + int(request.POST[f'amount{ingredientID}'])
+    ing.quantity = ing.quantity + int(request.POST[f'amount{ingredientID}'])
+    ing.save()
+
+    return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
 def sales(request):
     return render(request, "basic/sales.html")

@@ -63,6 +63,7 @@ class Food(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
     quantity = models.IntegerField(blank = False)
+    idnumber = models.IntegerField(blank = False)
 
     def __str__(self):
         return self.name
