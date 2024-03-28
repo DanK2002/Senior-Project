@@ -1,0 +1,14 @@
+<!-- For adding a new employee -->
+<!-- Should add: groups and password validation based on Django requirements -->
+
+<div>
+    <h1>Add a new employee</h1>
+    <form method = "POST" id = "add-employee-form">
+      {{ add_form }}
+      <!-- Despite being in class "refresh-list", button does not automatically refresh the employee list-->
+      <input type="button" name = "Add" value = "Add" class="refresh-list"
+          hx-post="{% url 'basic:save-new-employee' %}" hx-trigger="click" 
+          hx-target="#employee-info" hx-include="#add-employee-form" hx-swap="innerHTML" />
+      <input type="button" name = "Cancel" value = "Cancel" />
+    </form>
+</div>

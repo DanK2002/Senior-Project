@@ -8,7 +8,26 @@
 
     </head>
     <body>        
-        <h1>This is a landing page</h1>
-        <h1>Welcome, {{ first_name }} {{ last_name }}</h1>
+        <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
+        <h2>Actions:</h2>
+        <a href="{% url 'basic:clockin-out' %}">Clock in/out</a>
+        
+        <!-- Displays relevant actions based on the groups the user belongs to. -->
+
+        {% if "manager" in groups %}
+            <a href="../manageemployees/">Employees</a>
+            <a href="../managemenu">Menu</a>
+            <a href="../inventory">Inventory</a>
+            <a href="../sales">Sales</a>
+        {% endif %}
+
+        {% if "foh" in groups %}
+            <a href="../order/">View Orders</a>
+        {% endif %}
+
+        <!-- Will be different for BoH, but keeping this for now -->
+        {% if "boh" in groups %}
+            <a href="../order/">View Orders</a>
+        {% endif %}
     </body>
-  </html>
+</html>
