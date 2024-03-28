@@ -274,7 +274,7 @@ def managemenu(request):
         foods = Food.objects.all()
     if request.method == 'POST' and 'food_id' in request.POST:
         # Handle AJAX request for food details
-        food_id = request.GET.get('food_id')
+        food_id = request.POST.get('food_id')
         food = Food.objects.get(pk=food_id)
         edit_view_food = {
             'name': food.name,
@@ -307,7 +307,7 @@ def quantity(request):
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
 def searchInventory(request):
-    ingredientString = request.POST.get("ingredientname")
+    ingredientString = request.GET.get("ingredientname")
     ingredients = Ingredient.objects.distinct()
     newIngredients = []
     for ingredient in ingredients:

@@ -62,7 +62,7 @@
         <br>
 
         Search for an ingredient:
-        <input type="text" name = "ingredientname" id="ingredientname" hx-post="{% url 'searchInventory' %}"
+        <input type="text" name = "ingredientname" id="ingredientname" hx-get="{% url 'basic:searchInventory' %}"
         hx-target="#table" hx-include="#ingredientname" hx-trigger="keyup changed"><br>
 
         <br>
@@ -79,7 +79,7 @@
               {{ ingredient.name }} 
               <input type="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}">
               <button type="button" hx-target="#quantity{{ ingredient.idnumber }}" hx-trigger="click" 
-              hx-post="{% url 'quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
+              hx-post="{% url 'basic:quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
               hx-vars="ingredient:{{ ingredient.idnumber }}"> Submit </button>
             </td>
             <td> <div id="quantity{{ ingredient.idnumber }}"> {{ ingredient.quantity }} </div> </td>
@@ -89,7 +89,7 @@
         </div>
  
         <br>
-        <button type="button" hx-post="{% url 'addIngredient' %}" hx-target="#table"
+        <button type="button" hx-post="{% url 'basic:addIngredient' %}" hx-target="#table"
         hx-include="#ingredientTitle, #ingredientAmount" hx-trigger="click">Add New Ingredient</button>
         <br>
         <label> Ingredient Name </label>
