@@ -1,3 +1,4 @@
+from collections import defaultdict
 from django.shortcuts import render, redirect
 from django.http import Http404
 from .models import *
@@ -264,7 +265,36 @@ def sales(request):
     return render(request, "basic/sales.html")
 
 def summary(request):
-    return render(request, "basic/partials/summary.html")
+    orders = Order.objects.all()
+    orders_total = 0
+
+    foods_ind = defaultdict(int)
+    foods_total = 0
+
+    meals_ind = defaultdict(int)
+    meals_total = 0
+    
+    for order in orders:
+        orders_total += order.price
+        for meal in order.meals.all():
+            meals_ind[meal.name] += meal.price
+            meals_total += meal.price
+        for food in order.foods.all():
+            foods_ind[food.name] += food.price
+            foods_total += food.price
+
+    meals_ind = dict(meals_ind)
+    foods_ind = dict(foods_ind)
+    foods_total = round(foods_total, 2)
+    meals_total = round(meals_total, 2)
+
+    return render(request, "basic/partials/summary.html", {
+        'orders_total': orders_total,
+        'meals_ind': meals_ind,
+        'meals_total': meals_total,
+        'foods_ind': foods_ind,
+        'foods_total': foods_total,
+    })
 
 def order(request):
     return render(request, "basic/order.html")
