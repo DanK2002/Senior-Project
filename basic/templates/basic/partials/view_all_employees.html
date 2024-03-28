@@ -1,0 +1,8 @@
+<!-- Displays all employees -->
+<label for = "select-employees">Select an employee:</label>
+<select name = "select-employees" id = "select-employees">
+    {% for user in users %}
+    <option value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }}</option>
+    {% endfor %}
+</select>
+

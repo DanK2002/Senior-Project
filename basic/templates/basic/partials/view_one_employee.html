@@ -1,0 +1,20 @@
+<!-- View a selected employee -->
+
+    <h1>Employee Info</h1>
+    <h2> {{ selectedUser.first_name }} {{ selectedUser.last_name }}  </h2>
+    <form method = "POST">
+        <!-- {% csrf_token %} -->
+        <input hidden name= "user" value="{{ selectedUser.username }}" />
+        <input type="button" name="Edit" value="Edit"
+              hx-post="{% url 'basic:edit-employee-form' %}" hx-trigger="click" 
+              hx-target="#employee-info" hx-swap = "innerHTML" />
+    </form>
+    Salary: ${{ selectedEmployee.wage }}
+    <br>
+      Shifts worked:
+    <br>
+    <ul>
+      {% for shift in shifts %}
+        <li>{{ shift.start }} to {{ shift.end }}</li>
+      {% endfor %}
+    </ul>

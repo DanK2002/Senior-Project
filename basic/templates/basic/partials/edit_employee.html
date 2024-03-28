@@ -1,0 +1,16 @@
+<!-- For editing an existing employee -->
+<!-- Note: I want to add a way to edit shifts, but idk if it's better to use htmx or formsets... -->
+{% if editEmployee %}
+  <div class = "main">
+    <h1>Edit {{ selectedUser.first_name }} {{ selectedUser.last_name }} Information</h1>
+    <form method = "POST" id="edit-employee-form">
+      <!-- {% csrf_token %} -->
+      {{ editEmployee }}
+      <input hidden name = "user" value = "{{ selectedUser.username }}" />
+      <input type="button" name = "Save" value = "Save" 
+            hx-post="{% url 'basic:edit-employee-save' %}" hx-trigger="click" 
+            hx-target="#employee-info" hx-swap = "innerHTML" hx-include = "#edit-employee-form" />
+      <input type="submit" name = "Cancel" value = "Cancel" />
+    </form>
+</div>
+{% endif %}
