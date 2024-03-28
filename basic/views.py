@@ -260,6 +260,16 @@ def quantity(request):
 
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
+def inventoryTable(request):
+    ingredientString = request.POST.get("ingredientname")
+    ingredients = Ingredient.objects.distinct()
+    newIngredients = []
+    for ingredient in ingredients:
+        if ingredientString in ingredient.name:
+            newIngredients.append(ingredient)
+
+    return render(request, "basic/partials/inventoryTable.html", {'ingredients': newIngredients})
+
 def sales(request):
     return render(request, "basic/sales.html")
 
