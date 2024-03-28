@@ -352,12 +352,17 @@ def completed(request):
 def clockin_out(request):
     employees = Employee.objects.all()
     users = User.objects.all()
+    currentShifts = Shift.objects.filter(end=None)
+    clockedIn = []
+    for shift in currentShifts:
+        clockedIn.append(shift.employee.user.username)
     return render(
         request, 
         "basic/clockin-out.html", 
         {
             'employees': employees,
-            'users': users
+            'users': users,
+            'clockedIn': clockedIn
         })
     
 def clockin(request):

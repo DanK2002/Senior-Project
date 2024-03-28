@@ -20,7 +20,7 @@ class Employee(models.Model):
 
 class Shift(models.Model):
     start = models.DateTimeField()
-    end = models.DateTimeField()
+    end = models.DateTimeField(blank=True, null=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     def __str__(self):

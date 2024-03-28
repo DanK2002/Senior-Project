@@ -3,7 +3,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
     <style>
-
+        #button-container {
+            text-align: center; /* Center align the content */
+        }
     </style>
 
 </head>
@@ -11,13 +13,11 @@
 <body>
     <h1 style="text-align: center;">FOH Orders</h1>
     
-    <div class="button-container">
-        
-        <button class="button" hx-get="../addneworder/">Add New Order</button>
-        <button class="button" hx-get="../inprogress/">In Progress</button>
-        <button class="button" hx-get="../ready/">Ready</button>
-        <button class="button" hx-get="../completed/">Completed</button>
-    
+    <div id="button-container" hx-target="#button-container" hx-swap="innerHTML">
+        <button class="button" hx-get="../addneworder/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);">Add New Order</button>
+        <button class="button" hx-get="../inprogress/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">In Progress</button>
+        <button class="button" hx-get="../ready/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Ready</button>
+        <button class="button" hx-get="../completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Completed</button>
     </div>
 
 </body>
