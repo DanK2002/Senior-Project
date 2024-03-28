@@ -3,9 +3,14 @@
     <head>
         <meta name="viewport" charset="UTF-8" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" id="sidenav-style-css" href="{% static 'sidenav.css' %}" media="all">
+        <script 
+            src="https://unpkg.com/htmx.org@1.9.11" 
+            integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" 
+            crossorigin="anonymous"
+        ></script>
         {% block extra_css %}{% endblock %}
     </head>
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <!-- Side Navigation Bar For Managers -->
         <div class="sidenav">
             <a><u>Categories</u></a>

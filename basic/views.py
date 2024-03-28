@@ -263,6 +263,9 @@ def quantity(request):
 def sales(request):
     return render(request, "basic/sales.html")
 
+def summary(request):
+    return render(request, "basic/partials/summary.html")
+
 def order(request):
     return render(request, "basic/order.html")
 

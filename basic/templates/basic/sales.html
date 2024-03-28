@@ -8,9 +8,13 @@
 <h2>Sales</h2>
 <div class="sales-section">
     <div class="button-section">
-        <button type="button" 
-            hx-post="{% url 'answer' %}" hx-trigger="click" 
-            hx-target="#answer" hx-include="#value, #function">Generate Summary Report</button>
+        <button 
+            type="button" 
+            hx-target="#summary-report" 
+            hx-swap="innerHTML"
+            hx-trigger="click" 
+            hx-get="{% url 'summary-report' %}"
+        >Generate Summary Report</button>
         <button>Generate Raw CSV</button>
     </div>
     <div class="date-range">
