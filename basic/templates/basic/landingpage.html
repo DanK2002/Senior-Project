@@ -1,0 +1,33 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    
+    </style>
+
+      <script src="https://unpkg.com/htmx.org@1.9.10"></script> 
+
+    </head>
+    <body>        
+        <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
+        <h2>Actions:</h2>
+        <a href="{% url 'basic:clockin-out' %}">Clock in/out</a>
+        
+        <!-- Displays relevant actions based on the groups the user belongs to. -->
+
+        {% if "manager" in groups %}
+            <a href="../manageemployees/">Employees</a>
+            <a href="../managemenu">Menu</a>
+            <a href="../inventory">Inventory</a>
+            <a href="../sales">Sales</a>
+        {% endif %}
+
+        {% if "foh" in groups %}
+            <a href="../order/">View Orders</a>
+        {% endif %}
+
+        <!-- Will be different for BoH, but keeping this for now -->
+        {% if "boh" in groups %}
+            <a href="../order/">View Orders</a>
+        {% endif %}
+    </body>
+</html>

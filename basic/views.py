@@ -3,6 +3,7 @@ from django.http import Http404
 from .models import *
 from django.utils import timezone
 from .forms import *
+from django.contrib.auth import authenticate, login as auth_login
 
 # Create your views here.
 
@@ -307,3 +308,30 @@ def clockin_out(request):
         {
             'employee_list': employee_list
         })
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('basic:landingpage')
+        else:
+            error_message = "Invalid username or password."
+            return render(request, 'basic/login.html', {'error_message': error_message})
+    else:
+        return render(request, "basic/login.html")
+    
+def landingpage(request):
+    user = request.user
+    groups = []
+    for group in user.groups.all():
+        groups.append(group.name)
+    return render(request, 
+                    "basic/landingpage.html",
+                    {
+                      'user': user,
+                      'groups' : groups,
+                    }
+                )
