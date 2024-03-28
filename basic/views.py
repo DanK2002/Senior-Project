@@ -260,7 +260,7 @@ def quantity(request):
 
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
-def inventoryTable(request):
+def searchInventory(request):
     ingredientString = request.POST.get("ingredientname")
     ingredients = Ingredient.objects.distinct()
     newIngredients = []
@@ -269,6 +269,16 @@ def inventoryTable(request):
             newIngredients.append(ingredient)
 
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': newIngredients})
+
+def addIngredient(request):
+    ingredientName = request.POST.get("ingredientTitle")
+    ingredientAmount = int(request.POST.get("ingredientAmount"))
+    ingredientID = len(Ingredient.objects.distinct())
+    ingredient = Ingredient(name=ingredientName, quantity=ingredientAmount, idnumber=ingredientID)
+    ingredient.save()
+    ingredients = Ingredient.objects.distinct()
+
+    return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
 
 def sales(request):
     return render(request, "basic/sales.html")

@@ -62,7 +62,7 @@
         <br>
 
         Search for an ingredient:
-        <input type="text" name = "ingredientname" id="ingredientname" hx-post="{% url 'inventoryTable' %}"
+        <input type="text" name = "ingredientname" id="ingredientname" hx-post="{% url 'searchInventory' %}"
         hx-target="#table" hx-include="#ingredientname" hx-trigger="keyup changed"><br>
 
         <br>
@@ -89,7 +89,8 @@
         </div>
  
         <br>
-        <button type="button">Add New Ingredient</button>
+        <button type="button" hx-post="{% url 'addIngredient' %}" hx-target="#table"
+        hx-include="#ingredientTitle, #ingredientAmount" hx-trigger="click">Add New Ingredient</button>
         <br>
         <label> Ingredient Name </label>
         <input type="text" name="ingredientTitle" id="ingredientTitle">
