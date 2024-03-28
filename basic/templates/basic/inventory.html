@@ -42,8 +42,10 @@
     }
     </style>
     
+    <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+
 </head>
-    <body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     
     <div class="sidenav">
       <a><u>Categories</u></a>
@@ -60,7 +62,7 @@
         <br>
 
         Search for an ingredient:
-        <input type="search" id="site-search" name="q" />
+        <input type="text" id="ingredientname"><br>
 
         <br>
         <br>
@@ -71,8 +73,14 @@
           </tr>
           {% for ingredient in ingredients %}
           <tr>
-            <td> {{ ingredient.name }} </td>
-            <td> {{ ingredient.quantity }} </td>
+            <td> 
+              {{ ingredient.name }} 
+              <input type="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}">
+              <button type="button" hx-target="#quantity{{ ingredient.idnumber }}" hx-trigger="click" 
+              hx-post="{% url 'quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
+              hx-vars="ingredient:{{ ingredient.idnumber }}"> Submit </button>
+            </td>
+            <td> <div id="quantity{{ ingredient.idnumber }}"> {{ ingredient.quantity }} </div> </td>
           </tr>
           {% endfor %}
         </table>
@@ -80,3 +88,4 @@
         <br>
         <button type="button">Add New Ingredient</button>
     </div>
+</body>

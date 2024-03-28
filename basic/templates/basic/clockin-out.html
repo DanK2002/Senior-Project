@@ -1,18 +1,32 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
 </head>
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <div class="main">
             <b><u> Clock In / Clock Out </u></b>
             <br>
-            {% for employee in employee_list %}
-                {{ employee.user }}<input id="clock" type="button" onclick="change()" value="Clock In"></input>
+            {% for user in users %}
+                {{ user.username }} 
+                {% if user.first_name and user.last_name %}
+                    ({{ user.last_name }}, {{ user.first_name }})
+                {% endif %}
+                {% if user.first_name and not user.last_name %}
+                    ({{ user.first_name }})
+                {% endif %}
+                {% if not user.first_name and user.last_name %}
+                    ({{ user.last_name }})
+                {% endif %}
+                <button hx-target="this" hx-swap="outerHTML" 
+                        hx-post="{% url 'clockout' %}" class="btn btn-primary">
+                    Clock In
+                </button>
                 <br>
             {% endfor %}
             <script>
                 function change() { // Right now, this only changes the first button's value, not the one you click on
                     var elem = document.getElementById("clock");
-                    if (elem.value=="Clock In") { elem.value = "Clock Out"; }
+                    if (elem.value == "Clock In") { elem.value = "Clock Out"; }
                     else { elem.value = "Clock In"; }
                 }
             </script>
