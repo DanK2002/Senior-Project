@@ -31,7 +31,8 @@ class Order(models.Model):
     number = models.IntegerField()
     time_est = models.DateTimeField()
     time_submitted = models.DateTimeField()
-    time_completed = models.DateTimeField(null=True)
+    time_ready = models.DateTimeField(blank=True, null=True)
+    time_completed = models.DateTimeField(blank=True, null=True)
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
@@ -63,6 +64,7 @@ class Food(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
     quantity = models.IntegerField(blank = False)
+    idnumber = models.IntegerField(blank = False)
 
     def __str__(self):
         return self.name

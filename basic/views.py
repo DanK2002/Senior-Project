@@ -3,6 +3,7 @@ from django.http import Http404
 from .models import *
 from django.utils import timezone
 from .forms import *
+from django.views.decorators.http import require_GET, require_POST
 
 # Create your views here.
 
@@ -246,6 +247,19 @@ def inventory(request):
 
     return render(request, "basic/inventory.html", {'ingredients': ingredients})
 
+def quantity(request):
+    ingredientID = int(request.POST.get("ingredient"))
+    ingredients = Ingredient.objects.distinct()
+    for ingredient in ingredients:
+        if ingredient.idnumber == ingredientID:
+            ing = ingredient
+    # value = request.POST.get('amount')
+    newValue = ing.quantity + int(request.POST[f'amount{ingredientID}'])
+    ing.quantity = ing.quantity + int(request.POST[f'amount{ingredientID}'])
+    ing.save()
+
+    return render(request, "basic/partials/quantity.html", {'newValue': newValue})
+
 def sales(request):
     return render(request, "basic/sales.html")
 
@@ -256,13 +270,31 @@ def addneworder(request):
     return render(request, "basic/addneworder.html")
 
 def inprogress(request):
-    return render(request, "basic/inprogress.html")
+    in_progress_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=True)
+    return render(
+        request, 
+        "basic/inprogress.html", 
+        {
+            'in_progress_orders': in_progress_orders
+        })
 
 def ready(request):
-    return render(request, "basic/ready.html")
+    ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
+    return render(
+        request, 
+        "basic/ready.html", 
+        {
+            'ready_orders': ready_orders
+        })
 
 def completed(request):
-    return render(request, "basic/completed.html")
+    completed_orders = Order.objects.filter(time_completed__isnull=False)
+    return render(
+        request, 
+        "basic/completed.html", 
+        {
+            'completed_orders': completed_orders
+        })
 
 def clockin_out(request):
     employees = Employee.objects.all()

@@ -61,7 +61,19 @@
     </div>
 
     <div class="large-box">
-
+        <div class="orders-container">
+            {% if completed_orders %}
+                {% for order in completed_orders %}
+                    <div class="order">
+                        <h3><b>Order Number: {{ order.number }}</b></h3>
+                        <p>Time Completed: {{ order.time_completed}}</p>
+                        <p>Price: ${{ order.price}}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No orders in progress.</p>
+            {% endif %}
+        </div>
     </div>
 
     <div class="button-container2">
