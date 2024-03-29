@@ -1,19 +1,52 @@
-<p>Orders Total: {{ orders_total }}</p>
+<table>
+  <thead>
+    <th>Category</th>
+    <th>Revenue</th>
+  </thead>
+  <tr>
+    <td>Foods</td>
+    <td>{{ foods_total }}</td>
+  </tr>
+  <tr>
+    <td>Meals</td>
+    <td>{{ meals_total }}</td>
+  </tr>
+  <tr>
+    <td>Orders</td>
+    <td>{{ orders_total }}</td>
+  </tr>
+</table>
 
-<p>Meals Individual:</p>
-<ul>
+<table>
+  <thead>
+    <th>Category</th>
+    <th>Revenue</th>
+  </thead>
   {% for meal_name, meal_revenue in meals_ind.items %}
-    <li>{{ meal_name }}: {{ meal_revenue }}</li>
+    <tr>
+      <td>{{ meal_name }}</td>
+      <td>{{ meal_revenue }}</td>
+    </tr>
   {% endfor %}
-</ul>
+  <tr>
+    <td>Meals</td>
+    <td>{{ meals_total }}</td>
+  </tr>
+</table>
 
-<p>Total Meal Revenue: {{ meals_total }}</p>
-
-<p>Foods Individual:</p>
-<ul>
+<table>
+  <thead>
+    <th>Category</th>
+    <th>Revenue</th>
+  </thead>
   {% for food_name, food_revenue in foods_ind.items %}
-    <li>{{ food_name }}: {{ food_revenue }}</li>
+    <tr>
+      <td>{{ food_name }}</td>
+      <td>{{ food_revenue }}</td>
+    </tr>
   {% endfor %}
-</ul>
-
-<p>Total Food Revenue: {{ foods_total }}</p>
+  <tr>
+    <td>Meals</td>
+    <td>{{ foods_total }}</td>
+  </tr>
+</table>
