@@ -353,7 +353,7 @@ def summary(request):
     foods_total = round(foods_total, 2)
     meals_total = round(meals_total, 2)
 
-    return render(request, "basic/partials/summary.html", {
+    return render(request, "basic/partials/sales_summary.html", {
         'orders_total': orders_total,
         'meals_ind': meals_ind,
         'meals_total': meals_total,
