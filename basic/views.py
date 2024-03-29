@@ -261,11 +261,11 @@ def quantity(request):
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
 def searchInventory(request):
-    ingredientString = request.POST.get("ingredientname")
+    ingredientString = request.POST.get("ingredientname").upper()
     ingredients = Ingredient.objects.distinct()
     newIngredients = []
     for ingredient in ingredients:
-        if ingredientString in ingredient.name:
+        if ingredient.name.upper().find(ingredientString) != -1:
             newIngredients.append(ingredient)
 
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': newIngredients})
@@ -278,6 +278,15 @@ def addIngredient(request):
     ingredient.save()
     ingredients = Ingredient.objects.distinct()
 
+    return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
+
+def removeIngredient(request):
+    ingredientName = request.POST.get("removedIngredientTitle")
+    ingredients = Ingredient.objects.distinct()
+    for ingredient in ingredients:
+        if ingredient.name.upper() == ingredientName.upper():
+            ingredient.delete()
+    ingredients = Ingredient.objects.distinct()
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
 
 def sales(request):
