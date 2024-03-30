@@ -66,7 +66,6 @@
         hx-target="#table" hx-include="#ingredientname" hx-trigger="keyup changed"><br>
 
         <br>
-        <br>
         <div id="table">
         <table>
           <tr>
@@ -97,5 +96,12 @@
         <br>
         <label> Ingredient Amount </label>
         <input type="number" name="ingredientAmount" id="ingredientAmount">
+        <br>
+        <br>
+        <button type="button" hx-post="{% url 'removeIngredient' %}" hx-target="#table"
+        hx-include="#removedIngredientTitle" hx-trigger="click">Remove Ingredient</button>
+        <br>
+        <label> Ingredient Name </label>
+        <input type="text" name="removedIngredientTitle" id="removedIngredientTitle">
     </div>
 </body>

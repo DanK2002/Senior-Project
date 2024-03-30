@@ -23,6 +23,7 @@ urlpatterns = [
     path("partials/quantity/", views.quantity, name="quantity"),
     path("partials/searchInventory/", views.searchInventory, name="searchInventory"),
     path("partials/addIngredient/", views.addIngredient, name="addIngredient"),
+    path("partials/removeIngredient/", views.removeIngredient, name="removeIngredient"),
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
     path("partials/summary/", views.summary, name="summary-report"),
