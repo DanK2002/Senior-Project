@@ -12,10 +12,14 @@ urlpatterns = [
     path("inventory/", views.inventory, name="inventory"),
     path("sales/", views.sales, name="sales"),
     path("order/", views.order, name="order"),
+    path("back-order/", views.backorder, name="back-order"),
     path("addneworder/", views.addneworder, name="addneworder"),
     path("inprogress/", views.inprogress, name="inprogress"),
+    path("back-inprogress/", views.backinprogress, name="inprogress"),
     path("ready/", views.ready, name="ready"),
+    path("back-ready/", views.backready, name="back-ready"),
     path("completed/", views.completed, name="completed"),
+    path("back-completed/", views.backcompleted, name="back-completed"),
     path("clockin-out/", views.clockin_out, name="clockin-out"),
 
     # HTMX url(s)
