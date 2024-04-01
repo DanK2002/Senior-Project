@@ -1,73 +1,42 @@
 <!-- Display All Employees -->
-<!-- Note: Used a dropdown menu for the time being; couldn't get HTMX to work but will update when I figure it out -->
+<!-- Note: Used a dropdown menu for the time being -->
 <div class = "main">
     <h1>
-        Employees
+      Employees
     </h1>
+    <!-- Refreshes the employee list. Currently, the list automatically refreshes upon deleting a user,
+         But it does not automatically refresh when saving a new user. For some reason. Will fix next week. -->
+    <form method="POST">
+      <input type="button" value="Refresh Employee List"
+            hx-trigger = "click, click from:.refresh-list delay:1s" hx-post = "{% url 'basic:view-all-employees' %}"
+            hx-target = "#view-employees" hx-swap = "innerHTML" />
+    </form>
+  
     <form method = "POST">
-        {% csrf_token %}
-        <label for = "select-employees">Select an employee:</label>
-        <select name = "select-employees" id = "select-employees">
-            {% for user in users %}
-                <option value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }}</option>
-            {% endfor %}
-        </select>
-        <input type="submit" name="View" value="View" />
-        <input type="submit" name="Remove" value="Remove" />
+        <div id="view-employees">
+            <!-- Lists all employees -->
+            {{ list_all_employees|safe }}
+        </div>
+      </select>
+      <!-- Button to view a specific employee -->
+      <input type="button" name="View" value="View" 
+              hx-post="{% url 'basic:view-employee' %}" hx-trigger="click" 
+              hx-target="#employee-info" hx-include="#select-employees"/>
+  
+      <!-- Button to remove a specific employee -->
+      <input type="button" name="Remove" value="Remove" class= "refresh-list"
+              hx-post="{% url 'basic:remove-employee' %}" hx-trigger="click" hx-swap = "innerHTML"
+              hx-target="#employee-info" hx-include="#select-employees"/>
     </form>
     <br>
-    <form method = "POST">
-        {% csrf_token %}
-        <input type="submit" name="New Employee" value="New Employee" />
+    <form>
+      <!-- Button to add a new employee (view the form) -->
+    <input type="button" name="New Employee" value="New Employee" 
+          hx-post="{% url 'basic:new-employee' %}" hx-trigger="click" 
+          hx-target="#employee-info" hx-swap = "innerHTML" />
     </form>
+  
+    <!-- Section for viewing/adding/editing an employee -->
+    <div id="employee-info"></div>
 </div>
   
-<!-- For viewing a selected employee -->
-{% if selectedUser and not editEmployee %}
-<div class = "main">
-    <h1>Employee Info</h1>
-    <h2> {{ selectedUser.first_name }} {{ selectedUser.last_name }}  </h2>
-    <form method = "POST">
-        {% csrf_token %}
-        <input hidden name= "user" value="{{ selectedUser.username }}" />
-        <input type="submit" name="Edit" value="Edit" />
-    </form>
-    Salary: ${{ selectedEmployee.wage }}
-    <br>
-    Shifts worked:
-    <br>
-    <ul>
-    {% for shift in shifts %}
-        <li>{{ shift.start }} to {{ shift.end }}</li>
-    {% endfor %}
-    </ul>
-</div>
-{% endif %}
-
-<!-- For adding a new employee -->
-{% if add_form %}
-<div class = "main">
-    <h1>Add a new employee</h1>
-    <form method = "POST">
-        {% csrf_token %}
-        {{ add_form }}
-        <input type="submit" name = "Add" value = "Add" />
-        <input type="submit" name = "Cancel" value = "Cancel" />
-    </form>
-</div>
-{% endif %}
-
-<!-- For editing an existing employee -->
-<!-- Note: I want to add a way to edit shifts, but idk if it's better to use htmx or formsets... -->
-{% if editEmployee %}
-<div class = "main">
-    <h1>Edit {{ selectedUser.first_name }} {{ selectedUser.last_name }} Information</h1>
-    <form method = "POST">
-        {% csrf_token %}
-        {{ editEmployee }}
-        <input hidden name = "user" value = "{{ selectedUser.username }}" />
-        <input type="submit" name = "Save" value = "Save" />
-        <input type="submit" name = "Cancel" value = "Cancel" />
-    </form>
-</div>
-{% endif %}

@@ -1,13 +1,3 @@
-
-<!-- Side Navigation Bar For Managers -->
-<div class="sidenav">
-    <a><u>Categories</u></a>
-    <a href="../manageemployees/">Employees</a>
-    <a><b>Menu</b></a>
-    <a href="../inventory">Inventory</a>
-    <a href="../sales">Sales</a>
-</div>
-
 <h1>Manage Menu</h1>
 
 <!-- Display Selected Category -->
@@ -37,7 +27,7 @@
 
 <!-- Edit/View Food Items -->
 <div class="edit-view-food-container">
-{% for food in foods %}
+    {% for food in foods %}
     <div class="food-item">
         <span>{{ food.name }}</span>
         <form method="POST">
@@ -48,7 +38,7 @@
         </form>
         <span><a href="#" class="remove-food-button">-</a></span>
     </div>
-{% endfor %}
+    {% endfor %}
 </div>
 
 <!-- Add Food Section -->
@@ -69,13 +59,13 @@
             <button type="submit" class="save-button">Save</button>
             <a href="{% url 'basic:managemenu' %}" class="cancel-button">Cancel</a>
         </div>
-        </form>
+    </form>
     </div>
     <!-- Add New Ingredient -->
     <div class="add-ingredient-container">
         <div class="add-ingredient-box">
-        <a href="#">+</a>
-        Add New Ingredient
+            <a href="#">+</a>
+            Add New Ingredient
         </div>
     </div>
 </div>
@@ -97,8 +87,8 @@
     <!-- Add New Ingredient -->
     <div class="add-ingredient-container">
         <div class="add-ingredient-box">
-        <a href="#">+</a>
-        Add New Ingredient
+            <a href="#">+</a>
+            Add New Ingredient
         </div>
     </div>
 </div>

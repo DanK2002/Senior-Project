@@ -9,7 +9,7 @@
             {{ css_content|safe }}
         </div>
     </head>
-    <body>
+    <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
         <!-- Side Navigation Bar For Managers -->
         <div class="sidenav">
             <a><u>Categories</u></a>
