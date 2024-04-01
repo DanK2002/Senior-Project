@@ -98,26 +98,23 @@ def search(request):
 # Billie's Domain -------------------------------------------------------------------------------------
 # For managing employees in the managerial section
 def manageemployees(request):
-    employees = Employee.objects.all()
     users = User.objects.all()      
     list_all_employees = render(
         request,
         "basic/partials/view_all_employees.html",
         {
-            'employees' : employees,
             'users' : users,
         }
     ).content.decode('utf-8')
+    html_content = render(request, "basic/employees_html.html", {'list_all_employees' : list_all_employees}).content.decode('utf-8')
+    css_content = render(request, "basic/employees_css.html").content.decode('utf-8')
     print("RESET")
 
     # If no actions have occurred, render the page with just employees
-    return render(
-        request,
-        "basic/manageemployees.html",
-        {
-            'list_all_employees' : list_all_employees
-        }
-    )
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 # User wants to add new employee; displays add employee form
 def new_employee_form(request):
@@ -283,10 +280,17 @@ def managemenu(request):
         }
         return JsonResponse(edit_view_food)
     
-    return render(request, "basic/managemenu.html", 
+    html_content = render(request, "basic/managemenu.html", 
                   {'categories': categories, 
                    'selected_category': selected_category, 
-                   'form': form, 'foods': foods })
+                   'form': form, 'foods': foods }).content.decode('utf-8')
+
+    css_content = render(request, "basic/menu_css.html").content.decode('utf-8')
+
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
