@@ -315,7 +315,7 @@ def quantity(request):
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
 def searchInventory(request):
-    ingredientString = request.POST.get("ingredientname").upper()
+    ingredientString = request.GET.get("ingredientname").upper()
     ingredients = Ingredient.objects.distinct()
     newIngredients = []
     for ingredient in ingredients:
