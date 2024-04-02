@@ -280,7 +280,7 @@ def managemenu(request):
         }
         return JsonResponse(edit_view_food)
     
-    html_content = render(request, "basic/managemenu.html", 
+    html_content = render(request, "basic/menu_html.html", 
                   {'categories': categories, 
                    'selected_category': selected_category, 
                    'form': form, 'foods': foods }).content.decode('utf-8')
