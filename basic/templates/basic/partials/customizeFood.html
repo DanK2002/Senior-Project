@@ -1,0 +1,10 @@
+<a><u>{{food.name}}</u></a>
+<br>
+{% for ingredient in inFood %}
+    <br>
+    <a> {{ingredient}} </a>
+{% endfor %}
+{% for ingredient in notInFood %}
+    <br>
+    <a> {{ingredient}} </a>
+{% endfor %}

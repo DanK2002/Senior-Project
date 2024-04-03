@@ -24,4 +24,7 @@ urlpatterns = [
     path("partials/removeIngredient/", views.removeIngredient, name="removeIngredient"),
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
+    path("ordercreation/", views.ordercreation, name="ordercreation"),
+    path("partials/fooditems/", views.fooditems, name="fooditems"),
+    path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
 ]

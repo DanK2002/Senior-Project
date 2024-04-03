@@ -4,6 +4,7 @@ from .models import *
 from django.utils import timezone
 from .forms import *
 from django.views.decorators.http import require_GET, require_POST
+import json
 
 # Create your views here.
 
@@ -342,3 +343,42 @@ def clockin(request):
 def clockout(request):
     return render(request, "partials/clockout.html")
     
+def ordercreation(request):
+    try:
+        categories = Food.objects.values_list('category', flat=True).distinct()
+
+        return render(request, "basic/ordercreation.html", {'categories': categories})
+    except:
+        return render(request, "basic/ordercreation.html", {'categories': None})
+
+def fooditems(request):
+    categoryName = request.GET.get("categoryName")
+    foods = Food.objects.distinct()
+    newFoods = []
+    for food in foods:
+        if food.category.upper() == categoryName.upper():
+            newFoods.append(food)
+
+    return render(request, "basic/partials/fooditems.html", {'foods': newFoods, 'category': categoryName})
+
+def customizeFood(request):
+    foodName = request.GET.get("foodName")
+    foods = Food.objects.distinct()
+    for food in foods:
+        if food.name.upper() == foodName.upper():
+            theFood = food
+    allIngredients = Ingredient.objects.distinct()
+    ingredientDictionary = json.loads(theFood.ingred)
+    ingredientsInFood = list(ingredientDictionary.keys())
+    notInFood = []
+    inFood = False
+    for ingredient in allIngredients:
+        for ing in ingredientsInFood:
+            if ing.upper() == ingredient.name.upper():
+                inFood = True
+        if not inFood:
+            notInFood.append(ingredient.name)
+        inFood = False
+
+    return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
+                                                                 'notInFood': notInFood})
