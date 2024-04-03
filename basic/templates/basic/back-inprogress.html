@@ -1,5 +1,6 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
     <style>
         
     </style>
@@ -11,9 +12,13 @@
         <div class="orders-container">
             {% if in_progress_orders %}
                 {% for order in in_progress_orders %}
-                    <div class="order">
+                        <form id="order_form_{{ order.id }}" hx-post="{% url 'mark_ready' order.id %}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
+                        <form id="order_form_{{ order.id }}" hx-post="{% url 'mark_ready' order.id %}">
+                            {% csrf_token %}
+                            <button class="button" type="submit">Ready</button>
+                        </form>  
                     </div>
                 {% endfor %}
             {% else %}

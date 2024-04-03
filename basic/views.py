@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from django.http import Http404
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404, JsonResponse
 from .models import *
 from django.utils import timezone
 from .forms import *
@@ -276,6 +276,13 @@ def backinprogress(request):
             'in_progress_orders': in_progress_orders
         })
 
+def mark_ready(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    # Update the time_ready field for the order
+    order.time_ready = timezone.now()  # Assuming you have imported timezone
+    order.save()
+    return JsonResponse({'success': True})
+
 def ready(request):
     ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
     return render(
@@ -311,6 +318,13 @@ def backcompleted(request):
         {
             'completed_orders': completed_orders
         })
+
+def mark_completed(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    # Update the time_ready field for the order
+    order.time_completed = timezone.now()  # Assuming you have imported timezone
+    order.save()
+    return JsonResponse({'success': True})
 
 def clockin_out(request):
     employees = Employee.objects.all()

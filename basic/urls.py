@@ -21,6 +21,10 @@ urlpatterns = [
     path("completed/", views.completed, name="completed"),
     path("back-completed/", views.backcompleted, name="back-completed"),
     path("clockin-out/", views.clockin_out, name="clockin-out"),
+    path('mark_ready/<int:order_id>/', views.mark_ready, name='mark_ready'),
+    path('mark_completed/<int:order_id>/', views.mark_completed, name='mark_completed'),
+
+
 
     # HTMX url(s)
     path("clockin/", views.clockin, name="clockin"),
