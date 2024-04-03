@@ -317,4 +317,23 @@ def clockin(request):
     
 def clockout(request):
     return render(request, "partials/clockout.html")
+
+def modal(request):
+    '''
+    username = request.POST["username"]
+    password = request.POST["password"]
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        auth_login(request, user)
+
+    return render(
+        request, 
+        "partials/modal.html",
+        {
+            'username': username
+        })
+    '''
+    return render(
+        request, 
+        "partials/modal.html")
     

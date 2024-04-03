@@ -38,13 +38,11 @@
                 </td>
                 <td>
                     {% if user.username in clockedIn %}
-                        <button hx-target="this" hx-swap="outerHTML" 
-                                hx-post="{% url 'clockin' %}" class="btn btn-primary">
+                        <button id="button_user.username" hx-target="this" hx-swap="outerHTML" hx-post="{% url 'clockin' %}">
                             Clock Out
                         </button>
                     {% else %}
-                        <button hx-target="this" hx-swap="outerHTML" 
-                                hx-post="{% url 'clockout' %}" class="btn btn-primary">
+                        <button hx-target="this" hx-swap="outerHTML" hx-post="{% url 'clockout' %}">
                             Clock In
                         </button>
                     {% endif %}
@@ -52,5 +50,11 @@
             </tr>
             {% endfor %}
         </table>
+        {% for user in users %}
+        <td id="{{ user.username }}">{{ user.username }}</td>
+        <button hx-get="{% url 'modal' %}" hx-target="body" hx-swap="beforeend" hx-vals='{"username" : "{{ user.username }}"}'>Open a Modal</button>
+        <br>
+        {% endfor %}
+        
     </div>
 </body>

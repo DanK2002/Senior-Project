@@ -21,4 +21,5 @@ urlpatterns = [
     # HTMX url(s)
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
+    path("modal/", views.modal, name="modal"),
 ]
