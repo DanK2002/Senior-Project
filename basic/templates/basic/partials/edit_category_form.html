@@ -1,0 +1,7 @@
+<form id="edit-category-form" action="{% url 'basic:edit_category' %}" method="post" hx-target="#selected-category" hx-swap="outerHTML">
+    {% csrf_token %}
+    <input type="hidden" name="selected_category" value="{{ selected_category }}">
+    <label for="new_category_name">New Category Name:</label>
+    <input type="text" id="new_category_name" name="new_category_name" value="{{ selected_category }}">
+    <button type="submit">Save</button>
+</form>

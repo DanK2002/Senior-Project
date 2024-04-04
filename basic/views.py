@@ -1,6 +1,6 @@
 from collections import defaultdict
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse, HttpResponse, HttpResponseServerError
 from .models import *
 from django.utils import timezone
 from .forms import *
@@ -249,50 +249,92 @@ def view_all_employees (request):
 # End Billie's Domain ------------------------------------------------------
 
 def managemenu(request):
-    selected_category = request.POST.get('category') #get selected category
     categories = Food.objects.values_list('category', flat=True).distinct()
+    selected_category = request.POST.get('category') if request.method == 'POST' else None
 
-    form = AddFoodForm()
-
-    if request.method == 'POST':
-        if 'save' in request.POST:  # Check if the form was submitted by the Save button
-
-            form = AddFoodForm(request.POST)
-            if form.is_valid():
-                #if form is valid, process data
-                name = form.cleaned_data['name']
-                category = form.cleaned_data['category']
-                price = form.cleaned_data['price']
-                food = Food.objects.create(name=name, category=category, price=price)
-            return redirect('managemenu')
-        elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
-            return redirect('managemenu')  # Redirect to the managemenu page without processing the form
-    if selected_category:
-        foods = Food.objects.filter(category=selected_category)
-    else:
-        foods = Food.objects.all()
-    if request.method == 'POST' and 'food_id' in request.POST:
-        # Handle AJAX request for food details
-        food_id = request.POST.get('food_id')
-        food = Food.objects.get(pk=food_id)
-        edit_view_food = {
-            'name': food.name,
-            'category': food.category,
-            'price': food.price
-        }
-        return JsonResponse(edit_view_food)
-    
     html_content = render(request, "basic/menu_html.html", 
                   {'categories': categories, 
-                   'selected_category': selected_category, 
-                   'form': form, 'foods': foods }).content.decode('utf-8')
-
-    css_content = render(request, "basic/menu_css.html").content.decode('utf-8')
+                   'selected_category': selected_category}).content.decode('utf-8')
+    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
 
     return render(request, "basic/sidenav.html", { 
         'html_content': html_content,
         'css_content': css_content
     })
+
+def food_items(request):
+    selected_category = request.POST.get('category') if request.method == 'POST' else None
+    foods = Food.objects.filter(category=selected_category) if selected_category else None
+
+    return render(request, "basic/partials/food_items.html", 
+                  {'foods': foods})
+
+
+def edit_category_form(request):
+    # Retrieve the selected category from the POST data
+    selected_category = request.GET.get('selected_category')
+    print("Selected category 2:", selected_category)  # Log selected category to the console
+
+    # Pass the selected category to the template
+    return render(
+        request,
+        "basic/partials/edit_category_form.html",
+        {'selected_category': selected_category}
+    )
+
+
+def edit_category(request):
+    if request.method == 'POST':
+        new_category_name = request.POST.get('new_category_name')
+        selected_category = request.POST.get('selected_category')  # Retrieve from POST data, not from query parameters
+
+        # Retrieve the food item(s) with the selected category
+        foods_to_update = Food.objects.filter(category=selected_category)
+        # Update the category name for each food item
+        for food in foods_to_update:
+            food.category = new_category_name
+            food.save()
+
+        # Redirect the user back to the management page
+        return redirect('basic:managemenu')
+
+
+
+
+    # form = AddFoodForm()
+
+    # if request.method == 'POST':
+    #     if 'save' in request.POST:  # Check if the form was submitted by the Save button
+
+    #         form = AddFoodForm(request.POST)
+    #         if form.is_valid():
+    #             #if form is valid, process data
+    #             name = form.cleaned_data['name']
+    #             category = form.cleaned_data['category']
+    #             price = form.cleaned_data['price']
+    #             food = Food.objects.create(name=name, category=category, price=price)
+    #         return redirect('managemenu')
+    #     elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
+    #         return redirect('managemenu')  # Redirect to the managemenu page without processing the form
+    # if selected_category:
+    #     foods = Food.objects.filter(category=selected_category)
+    # else:
+    #     foods = Food.objects.all()
+    # if request.method == 'POST' and 'food_id' in request.POST:
+    #     # Handle AJAX request for food details
+    #     food_id = request.GET.get('food_id')
+    #     food = Food.objects.get(pk=food_id)
+    #     edit_view_food = {
+    #         'name': food.name,
+    #         'category': food.category,
+    #         'price': food.price
+    #     }
+    #     return JsonResponse(edit_view_food)
+    
+    # return render(request, "basic/managemenu.html", 
+    #               {'categories': categories, 
+    #                'selected_category': selected_category, 
+    #                'form': form, 'foods': foods })
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()

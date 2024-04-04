@@ -10,7 +10,6 @@ urlpatterns = [
     path("compute/", views.compute, name="compute"),
     path("search/", views.search, name="search"),
     path("manageemployees/", views.manageemployees, name="manageemployees"),
-    path("managemenu/", views.managemenu, name="managemenu"),
     path("inventory/", views.inventory, name="inventory"),
     path("sales/", views.sales, name="sales"),
     path("order/", views.order, name="order"),
@@ -49,6 +48,11 @@ urlpatterns = [
     path("view-all-employees/", views.view_all_employees, name= "view-all-employees"),
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),
+    
+    path("managemenu/", views.managemenu, name="managemenu"),
+    path('edit_category_form/', views.edit_category_form, name='edit_category_form'),
+    path('edit_category/', views.edit_category, name='edit_category'),
+    path("partials/food_items/", views.food_items, name="food_items"),
 
     path("ordercreation/", views.ordercreation, name="ordercreation"),
     path("partials/fooditems/", views.fooditems, name="fooditems"),

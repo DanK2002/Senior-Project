@@ -1,0 +1,16 @@
+<!-- Edit/View Food Items -->
+<div class="edit-view-food-container">
+    {% for food in foods %}
+    <div class="food-item">
+        <span>{{ food.name }}</span>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="food_id" value="{{ food.id }}">
+            <input type="hidden" name="selected_category" value="{{ selected_category }}">
+            <button type="submit" name="edit_food" class="edit-food-button">Edit/View</button>
+        </form>
+        <span><a href="#" class="remove-food-button">-</a></span>
+    </div>
+    {% endfor %}
+  </div>
+  
