@@ -3,32 +3,9 @@
     <br>
     {% for food in foods %}
         <br>
-        <button id="addToOrder" hx-get="{% url 'customizeFood' %}" hx-target="#customizeFood"
+        <button hx-get="{% url 'customizeFood' %}" hx-target="#customizeFood"
         hx-vals='{"foodName": "{{food.name}}"}'> {{ food.name }} </button>
     {% endfor %}
 </div>
 <br>
 <div id="customizeFood"></div>
-
-<!--
-<button id="myButton">Click me</button>
-
-<div id="target1">Target 1</div>
-<div id="target2">Target 2</div>
-
-
-<script>
-    // Get the button and targets by their IDs
-    const button = document.getElementById('myButton');
-    const target1 = document.getElementById('target1');
-    const target2 = document.getElementById('target2');
-
-    // Add click event listener to the button
-    button.addEventListener('click', function() {
-        // Perform actions on target1
-        target1.innerHTML = 'Button clicked - Target 1 updated';
-        
-        // Perform actions on target2
-        target2.innerHTML = 'Button clicked - Target 2 updated';
-    });
-</script>

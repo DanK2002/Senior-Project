@@ -582,8 +582,3 @@ def customizeFood(request):
             inFood = False
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
-
-def ordersummary(request):
-    
-    return render(request, "partials/ordersummary.html")
-
