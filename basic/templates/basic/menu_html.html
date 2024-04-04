@@ -1,36 +1,94 @@
 <h1>Manage Menu</h1>
-  
-<!-- Display Selected Category -->
-<!-- Display Selected Category -->
-<div class="selected-category-container">
-  <p>Category: {{ selected_category }}</p>
 
+<!-- Display Selected Category -->
+<div class ="selected-category-container">
+    <p>Category: {{ selected_category }}</p>
 </div>
 
 <!-- Drop-down list for categories -->
-<form class="category-dropdown" hx-post="{% url 'basic:food_items' %}" hx-target="#food-items-container" hx-swap="innerHTML">
+<form class="category-dropdown" method="post">
     {% csrf_token %}
     <label for="category">Category:</label>
-    <select id="category" name="category" hx-trigger="change" hx-indicator="dots">
-      <option value="">Select a Category</option>
-      {% for category in categories %}
-        <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
-      {% endfor %}
+    <select id="category" name="category" onchange="this.form.submit()">
+        <option value="">Select a Category</option>
+        {% for category in categories %}
+            <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
+        {% endfor %}
+        <option value="add_category">Add Category</option>
     </select>
-    <button type="submit">Update Category</button>
-  </form>
-  
+</form>
 
-<!-- Edit Category Button -->
-<div hx-target="#edit-category-response" hx-swap="outerHTML">
-  <button id="edit-category-button" hx-get="{% url 'basic:edit_category_form' %}?selected_category={{ selected_category }}">Edit Category Name</button>
+<!-- Button to Edit Category -->
+<div class="edit-category-container">
+    <div class ="edit-category">
+        <a href="#">Edit Category</a>
+    </div>
 </div>
 
-<!-- Response Placeholder -->
-<div id="edit-category-response">
-  <!-- This is where the edit category form will be loaded -->
+<!-- Edit/View Food Items -->
+<div class="edit-view-food-container">
+    {% for food in foods %}
+    <div class="food-item">
+        <span>{{ food.name }}</span>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="food_id" value="{{ food.id }}">
+            <input type="hidden" name="selected_category" value="{{ selected_category }}">
+            <button type="submit" name="edit_food" class = "edit-food-button">Edit/View</button>
+        </form>
+        <span><a href="#" class="remove-food-button">-</a></span>
+    </div>
+    {% endfor %}
 </div>
 
-<div id="food-items-container">
-  {% include 'basic/partials/food_items.html' %}
+<!-- Add Food Section -->
+<div class="add-food-container {% if not edit_mode %}visible{% else %}hidden{% endif %}">
+    <div class = "add-food-title"> 
+        Add Food 
+    </div>
+
+    <!-- Name, Category, and Price fields -->
+    <div class="food-details">
+        <form method="POST">
+        {% csrf_token %}
+        {% if form %}
+        {{ form.as_p }}
+        {% endif %}
+        <!-- Save and Cancel buttons for adding a food item -->
+        <div class="save-cancel-container">
+            <button type="submit" class="save-button">Save</button>
+            <a href="{% url 'basic:managemenu' %}" class="cancel-button">Cancel</a>
+        </div>
+    </form>
+    </div>
+    <!-- Add New Ingredient -->
+    <div class="add-ingredient-container">
+        <div class="add-ingredient-box">
+            <a href="#">+</a>
+            Add New Ingredient
+        </div>
+    </div>
+</div>
+
+<!-- Edit/View Food Item Details When Edit/View is Clicked-->
+<div class="edit-view-food {% if edit_mode %}visible{% else %}hidden{% endif %}">
+    <div class = "edit-food-title"> 
+        Edit Food 
+    </div>
+    <!-- Name, Category, and Price fields -->
+    <div class="food-details">
+        Name:
+        <br>
+        Category:
+        <br>
+        Price
+        <br>
+    </div>
+    <!-- Add New Ingredient -->
+    <div class="add-ingredient-container">
+        <div class="add-ingredient-box">
+            <a href="#">+</a>
+            Add New Ingredient
+        </div>
+    </div>
 </div>
