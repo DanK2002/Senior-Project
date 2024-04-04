@@ -246,9 +246,11 @@ for order_data in orders_data:
     order = Order(number = order_data['number'],
                   time_est = order_data['time_est'],
                   time_submitted = order_data['time_submitted'],
+                  time_ready = None,
                   time_completed = order_data['time_completed'],
                   price = order_data['price'],
-                  employee_submitted = user_exists)
+                  employee_submitted = user_exists,
+                  message = '')
     print('order created')
     order.save()
     print('order saved')

@@ -1,0 +1,17 @@
+<a><u>{{food.name}}</u></a>
+<br>
+<a>Message</a> <input type="text">
+<br>
+<button hx-post="{% url 'customizeFood' %}" hx-target="previous"
+hx-vals='{"foodName": "{{food.name}}"}'>Submit Item</button>
+<br>
+{% for ingredient in inFood %}
+    <br>
+    <a> {{ingredient}}: </a>
+    -2 <input type="range" min="-2" max="2" step="1" value="0"> 2
+{% endfor %}
+{% for ingredient in notInFood %}
+    <br>
+    <a> {{ingredient}}: </a>
+    -2 <input type="range" min="-2" max="2" step="1" value="0"> 2
+{% endfor %}

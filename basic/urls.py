@@ -49,4 +49,7 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),
 
+    path("ordercreation/", views.ordercreation, name="ordercreation"),
+    path("partials/fooditems/", views.fooditems, name="fooditems"),
+    path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
 ]
