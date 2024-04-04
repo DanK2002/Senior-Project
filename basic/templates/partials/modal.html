@@ -19,7 +19,7 @@
         
             /* Animate when opening */
             animation-name: fadeIn;
-            animation-duration:150ms;
+            animation-duration: 150ms;
             animation-timing-function: ease;
         }
         
@@ -80,21 +80,26 @@
         } 
         
         @keyframes zoomIn {
-            0% {transform: scale(0.9);}
+            0% {transform: scale(0.5);}
             100% {transform: scale(1);}
         } 
         
         @keyframes zoomOut {
             0% {transform: scale(1);}
-            100% {transform: scale(0.9);}
+            100% {transform: scale(0.5);}
         }
     </style>
     <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
         <div class="modal-underlay" _="on click trigger closeModal"></div>
         <div class="modal-content">
-            <form action="{% url 'clockin-out' %}" method="post">
+            <form action="{% url 'auth-clockin-out' %}" method="post">
                 {% csrf_token %}
-                <label for="">Enter password for {{ username }}</label>
+                <h><b><u>Enter password for {{ username }}:</u></b></h>
+                <br>
+                <label for="username">Username: </label>
+                <input id="username" type="text" name="username" value="{{ username }}">
+                <br>
+                <label for="password">Password: </label>
                 <input id="password" type="password" name="password">
                 <input type="submit" value="OK">
             </form>

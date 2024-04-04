@@ -1,8 +1,6 @@
 from django.urls import path
 from . import views
 
-#app_name="htmx"
-
 urlpatterns = [
     path("home/", views.home, name="home"),
     path("compute/", views.compute, name="compute"),
@@ -22,4 +20,5 @@ urlpatterns = [
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
     path("modal/", views.modal, name="modal"),
+    path("auth-clockin-out/", views.auth_clockin_out, name="auth-clockin-out"),
 ]
