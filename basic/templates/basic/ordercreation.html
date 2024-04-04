@@ -40,6 +40,39 @@
     table, th, td {
         border:1px solid black;
     }
+
+    .summary {
+      height: 100%;
+      width: 160px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+    
+    .summary a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #dfd0d0;
+      display: block;
+    }
+    
+    .summary a:hover {
+      color: #f1f1f1;
+    }
+      
+    @media screen and (max-height: 450px) {
+      .summary {padding-top: 15px;}
+      .summary a {font-size: 18px;}
+    }
+
+    table, th, td {
+        border:1px solid black;
+    }
     </style>
     
     <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
@@ -55,6 +88,15 @@
         {% endfor %}
     </div>
 
-    <div class="main" id="itemlist"></div>
+    <br>
+    <div class="main" id="itemlist">
+    
+    </div>
+
+    <br>
+    <div class="summary" id="summary">
+      <a><u>Order Summary</u></a>
+      
+    </div>
 
 </body>

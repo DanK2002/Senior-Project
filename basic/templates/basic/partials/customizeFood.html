@@ -4,7 +4,12 @@
     <br>
     <a> {{ingredient}} </a>
 {% endfor %}
-{% for ingredient in notInFood %}
-    <br>
-    <a> {{ingredient}} </a>
-{% endfor %}
+<form>
+    <label for="notInFood">Search for more options:</label>
+    <select id="notInFood" name="notInFood">
+        {% for ingredient in notInFood %}
+            <br>
+            <a><option value="{{ ingredient }}">{{ ingredient }}</option></a>
+        {% endfor %}
+    </select>
+</form>
