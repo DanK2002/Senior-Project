@@ -384,5 +384,6 @@ def customizeFood(request):
                                                                  'notInFood': notInFood})
 
 def ordersummary(request):
+    
     return render(request, "partials/ordersummary.html")
 

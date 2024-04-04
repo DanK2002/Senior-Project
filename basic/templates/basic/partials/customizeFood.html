@@ -3,6 +3,33 @@
 {% for ingredient in inFood %}
     <br>
     <a> {{ingredient}} </a>
+    <p>
+        <button hx-get="/decrement" hx-trigger="click" hx-swap="outerHTML" hx-target="#counter">-</button>
+        <span id="counter">0</span>
+        <button hx-get="/increment" hx-trigger="click" hx-swap="outerHTML" hx-target="#counter">+</button>
+    </p>
+
+    
+    <script>
+        // Define a function to update the counter
+        function updateCounter(operation) {
+          var counterElement = document.getElementById('counter');
+          var currentValue = parseInt(counterElement.innerText);
+          if (operation === 'increment') {
+            counterElement.innerText = currentValue + 1;
+          } else if (operation === 'decrement') {
+            counterElement.innerText = currentValue - 1;
+          }
+        }
+    
+        // Attach an htmx event handler to handle the response from the server
+        document.body.addEventListener('htmx:afterSwap', function(event) {
+          // Extract the operation from the response header
+          var operation = event.detail.xhr.getResponseHeader('X-Operation');
+          updateCounter(operation);
+        });
+      </script>
+    
 {% endfor %}
 <form>
     <label for="notInFood">Search for more options:</label>
