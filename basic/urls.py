@@ -52,4 +52,5 @@ urlpatterns = [
     path("ordercreation/", views.ordercreation, name="ordercreation"),
     path("partials/fooditems/", views.fooditems, name="fooditems"),
     path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
+    path("partials/ordersummary/", views.ordersummary, name="ordersummary")
 ]
