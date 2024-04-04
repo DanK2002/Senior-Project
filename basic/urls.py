@@ -31,5 +31,9 @@ urlpatterns = [
     path("managemenu/", views.managemenu, name="managemenu"),
     path('edit_category_form/', views.edit_category_form, name='edit_category_form'),
     path('edit_category/', views.edit_category, name='edit_category'),
+    path('edit_view_food/', views.edit_view_food, name='edit_view_food'),
+    path('fetch_food_details/', views.fetch_food_details, name='fetch_food_details'),
+    path('update_food/', views.update_food, name='update_food'),
+
 
 ]

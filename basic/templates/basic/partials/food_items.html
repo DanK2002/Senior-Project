@@ -3,14 +3,13 @@
     {% for food in foods %}
     <div class="food-item">
         <span>{{ food.name }}</span>
-        <form method="POST">
+        <form method="POST" hx-post="{% url 'basic:edit_view_food' %}" hx-trigger="submit">
             {% csrf_token %}
-            <input type="hidden" name="food_id" value="{{ food.id }}">
+            <input type="hidden" name="food_name" value="{{ food.name }}">
             <input type="hidden" name="selected_category" value="{{ selected_category }}">
             <button type="submit" name="edit_food" class="edit-food-button">Edit/View</button>
         </form>
         <span><a href="#" class="remove-food-button">-</a></span>
     </div>
     {% endfor %}
-  </div>
-  
+</div>
