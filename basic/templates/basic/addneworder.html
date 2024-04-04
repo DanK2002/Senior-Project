@@ -1,71 +1,14 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>                                     /* test */
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            width: 80%;
-            margin: 0 auto;
-            padding-top: 20px;
-        }
-        .button-container2 {
-            text-align: center; 
-            margin-top: 20px;                   /* Add margin to separate from the first button container */
-        }
-
-        .button {
-            padding: 40px 60px;
-            background-color: #04533c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            text-decoration: none;              /* Removed underline from buttons */
-            display: inline-block;
-            font-size: 16px;
-            cursor: pointer;
-            width: calc(25% - 10px);            /* Make all buttons the same width with slight margin */
-            margin-right: 10px;                 /* Add margin between buttons */
-        }
-
-        .button:last-child {
-            margin-right: 0;                    /* Remove margin from the last button */
-        }
-
-        .large-box {
-            width: 77%; 
-            height: 400px; 
-            margin: 65px auto;                  /* Center the box vertically and horizontally */
-            padding: 35px;
-            background-color: #04533c;
-            border: 2px solid black;
-            border-radius: 10px;
-            text-align: center;
-            display: flex;                      
-            justify-content: center;           
-                           
-        }
-
-        /* Added CSS to remove underline from links within buttons */
-        .button a {
-            text-decoration: none;
-            color: inherit;                     /* Inherit the color from the parent (.button) */
-        }
-
-        .large-box .button {
-            border: 2px solid black;
-            background-color: #36ad8c;
-        }
-        
-    </style>
+    <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
 </head>
 <body>
     <h1 style="text-align: center;">FOH Orders (Add New)</h1>
 
-    <div class="large-box">
-        <button class="button"> <a href="" class="link">Dine In</a> </button>
-        <button class="button"> <a href="" class="link">Take-Out</a> </button>
-        <button class="button"> <a href="" class="link">Drive-Through</a> </button>
+    <div class="large-box" id="button-container">
+        <button class="button" hx-get="/dine-in" hx-target="#button-container">Dine In</button>
+        <button class="button" hx-get="/take-out" hx-target="#button-container">Take-Out</button>
+        <button class="button" hx-get="/drive-through" hx-target="#button-container">Drive-Through</button>
     </div>
 
     <div class="button-container2">
