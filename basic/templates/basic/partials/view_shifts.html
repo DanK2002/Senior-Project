@@ -1,0 +1,5 @@
+{% for shift in shifts %}
+From {{ shift.start }} to {{ shift.end }}
+<br />
+{% endfor %}
+Total Hours worked: {{ hours }} hours, {{ minutes }} minutes

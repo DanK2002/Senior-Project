@@ -1,0 +1,13 @@
+<h2>Edit shift</h2>
+
+<form id="edit-shift-form">
+    <input hidden name = "user" value = "{{ selectedUser.username }}" />
+    <input hidden name = "original-shift" value = "{{ originalShift.start|date:'Y-m-d H:i:s' }}" />
+    {{ editShiftForm }}
+    <input type = "button" value = "Save"
+            hx-post = "{% url 'basic:save-existing-shift' %}" hx-trigger = "click" 
+            hx-include = "#edit-shift-form" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
+    <input type = "button" value = "Cancel"
+            hx-get = "{% url 'basic:save-existing-shift' %}" hx-trigger = "click" 
+            hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
+</form>

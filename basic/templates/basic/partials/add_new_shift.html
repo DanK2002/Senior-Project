@@ -1,0 +1,12 @@
+<h2>Add a new shift</h2>
+
+<form id="new-shift-form">
+    <input hidden name = "user" value = "{{ selectedUser.username }}" />
+    {{ newShiftForm }}
+    <input type = "button" value = "Save"
+            hx-post = "{% url 'basic:save-new-shift' %}" hx-trigger = "click" 
+            hx-include = "#new-shift-form" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
+    <input type = "button" value = "Cancel"
+            hx-get = "{% url 'basic:save-new-shift' %}" hx-trigger = "click" 
+            hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
+</form>
