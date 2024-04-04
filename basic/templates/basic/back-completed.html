@@ -1,11 +1,11 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        
+       
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">FOH Orders (Completed)</h1>
+    <h1 style="text-align: center;">(Completed)</h1>
 
     <div class="large-box">
         <div class="orders-container">
@@ -14,7 +14,7 @@
                     <div class="order">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Time Completed: {{ order.time_completed}}</p>
-                        <p>Price: ${{ order.price}}</p>
+                        <p>Price: {{ order.price}}</p>
                     </div>
                 {% endfor %}
             {% else %}
@@ -24,7 +24,7 @@
     </div>
 
     <div class="button-container2">
-        <button class="button"> <a href="../order/" class="link">Back to Orders</a> </button>
+        <button class="button"> <a href="../back-order/" class="link">Back to Menu</a> </button>
     </div>
 
 </body>

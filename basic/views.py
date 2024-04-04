@@ -1,6 +1,6 @@
 from collections import defaultdict
-from django.shortcuts import render, redirect
-from django.http import Http404, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404, JsonResponse, JsonResponse
 from .models import *
 from django.utils import timezone
 from .forms import *
@@ -386,6 +386,9 @@ def summary(request):
 def order(request):
     return render(request, "basic/order.html")
 
+def backorder(request):
+    return render(request, "basic/back-order.html")
+
 def addneworder(request):
     return render(request, "basic/addneworder.html")
 
@@ -398,11 +401,36 @@ def inprogress(request):
             'in_progress_orders': in_progress_orders
         })
 
+def backinprogress(request):
+    in_progress_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=True)
+    return render(
+        request, 
+        "basic/back-inprogress.html", 
+        {
+            'in_progress_orders': in_progress_orders
+        })
+
+def mark_ready(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    # Update the time_ready field for the order
+    order.time_ready = timezone.now()  # Assuming you have imported timezone
+    order.save()
+    return JsonResponse({'success': True})
+
 def ready(request):
     ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
     return render(
         request, 
         "basic/ready.html", 
+        {
+            'ready_orders': ready_orders
+        })
+
+def backready(request):
+    ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
+    return render(
+        request, 
+        "basic/back-ready.html", 
         {
             'ready_orders': ready_orders
         })
@@ -415,6 +443,22 @@ def completed(request):
         {
             'completed_orders': completed_orders
         })
+
+def backcompleted(request):
+    completed_orders = Order.objects.filter(time_completed__isnull=False)
+    return render(
+        request, 
+        "basic/back-completed.html", 
+        {
+            'completed_orders': completed_orders
+        })
+
+def mark_completed(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    # Update the time_ready field for the order
+    order.time_completed = timezone.now()  # Assuming you have imported timezone
+    order.save()
+    return JsonResponse({'success': True})
 
 def clockin_out(request):
     employees = Employee.objects.all()
