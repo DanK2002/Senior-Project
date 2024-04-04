@@ -1,11 +1,12 @@
 from collections import defaultdict
 from django.shortcuts import render, redirect
-from django.http import Http404, JsonResponse
+from django.http import Http404, JsonResponse, HttpResponse
 from .models import *
 from django.utils import timezone
 from .forms import *
 from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.http import require_GET, require_POST
+import csv
 
 # Create your views here.
 
@@ -351,7 +352,7 @@ def sales(request):
         'css_content': css_content # div in sidenav
     })
 
-def summary(request):
+def salesSummary(request):
     orders = Order.objects.all()
     orders_total = 0
 
@@ -382,6 +383,59 @@ def summary(request):
         'foods_ind': foods_ind,
         'foods_total': foods_total,
     })
+
+def generateCsv(request):
+    orders = Order.objects.all()
+    orders_total = 0
+
+    foods_ind = defaultdict(int)
+    foods_total = 0
+
+    meals_ind = defaultdict(int)
+    meals_total = 0
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="somefilename.csv"'},
+    )
+    
+    for order in orders:
+        orders_total += order.price
+        for meal in order.meals.all():
+            meals_ind[meal.name] += meal.price
+            meals_total += meal.price
+        for food in order.foods.all():
+            foods_ind[food.name] += food.price
+            foods_total += food.price
+
+    meals_ind = dict(meals_ind)
+    foods_ind = dict(foods_ind)
+    foods_total = round(foods_total, 2)
+    meals_total = round(meals_total, 2)
+
+    writer = csv.writer(response)
+    # Order Summary
+    writer.writerow(['Category', 'Revenue'])
+    writer.writerow(['Foods', foods_total])
+    writer.writerow(['Meals', meals_total])
+    writer.writerow(['Orders Total', orders_total])
+    #spacer
+    writer.writerow(['', ''])    
+    # Meals Summary
+    writer.writerow(['Meal', 'Revenue'])
+    for meal_name, meal_revenue in meals_ind.items():
+        writer.writerow([meal_name, meal_revenue])
+    writer.writerow(['Meals Total', meals_total])
+    #spacer
+    writer.writerow(['', ''])    
+    # Foods Summary
+    writer.writerow(['Food', 'Revenue'])
+    for food_name, food_revenue in foods_ind.items():
+        writer.writerow([food_name, food_revenue])
+    writer.writerow(['Foods Total', foods_total])
+
+    return response
 
 def order(request):
     return render(request, "basic/order.html")
@@ -438,7 +492,6 @@ def clockin(request):
 def clockout(request):
     return render(request, "partials/clockout.html")
     
-
 
 def login(request):
     if request.method == 'POST':

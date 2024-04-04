@@ -26,7 +26,8 @@ urlpatterns = [
     path("partials/removeIngredient/", views.removeIngredient, name="removeIngredient"),
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
-    path("partials/summary/", views.summary, name="summary-report"),
+    path("partials/sales_summary/", views.salesSummary, name="summary-report"),
+    path("csv-report/", views.generateCsv, name="csv-report"),
     
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),

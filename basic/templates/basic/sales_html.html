@@ -8,7 +8,10 @@
             hx-trigger="click" 
             hx-get="{% url 'basic:summary-report' %}"
         >Generate Summary Report</button>
-        <button>Generate Raw CSV</button>
+        <a href="{% url 'basic:csv-report' %}" download="summary_report.csv">
+            <button type="button">Generate Raw CSV</button>
+        </a>
+        
     </div>
     <div class="date-range">
         <label for="start_date">Start Date:</label>
