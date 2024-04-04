@@ -271,11 +271,17 @@ def managemenu(request):
     else:
         foods = None
     
-    return render(request, "basic/managemenu.html", 
+    html_content = render(request, "basic/managemenu.html", 
                   {'categories': categories, 
                    'selected_category': selected_category,
                    'selected_food': selected_food,
-                   'foods': foods, 'form': form})
+                   'foods': foods, 'form': form}).content.decode('utf-8')
+    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
+    
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 
 def edit_category_form(request):
