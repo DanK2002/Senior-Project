@@ -1,9 +1,14 @@
 from django import forms
 
 class AddFoodForm(forms.Form):
-    name = forms.CharField(max_length=100)
-    category = forms.CharField(max_length=100)
-    price = forms.DecimalField(max_digits=10, decimal_places=2)
+    name = forms.CharField(label='Name', max_length=100)
+    category = forms.CharField(label='Category', max_length=100)
+    price = forms.DecimalField(label='Price', max_digits=10, decimal_places=2)
+    
+class EditFoodForm(forms.Form):
+    initial_name = forms.CharField(label='Name', max_length=100)
+    initial_category = forms.CharField(label='Category', max_length=100)
+    initial_price = forms.DecimalField(label='Price', max_digits=10, decimal_places=2)
 
 class AddEmployeeForm(forms.Form):
     first_name = forms.CharField(max_length=100)
