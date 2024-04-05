@@ -1,0 +1,52 @@
+<table>
+  <thead>
+    <th>Category</th>
+    <th>Revenue</th>
+  </thead>
+  <tr>
+    <td>Foods</td>
+    <td>{{ foods_total }}</td>
+  </tr>
+  <tr>
+    <td>Meals</td>
+    <td>{{ meals_total }}</td>
+  </tr>
+  <tr>
+    <td>Orders</td>
+    <td>{{ orders_total }}</td>
+  </tr>
+</table>
+
+<table>
+  <thead>
+    <th>Category</th>
+    <th>Revenue</th>
+  </thead>
+  {% for meal_name, meal_revenue in meals_ind.items %}
+    <tr>
+      <td>{{ meal_name }}</td>
+      <td>{{ meal_revenue }}</td>
+    </tr>
+  {% endfor %}
+  <tr>
+    <td>Meals</td>
+    <td>{{ meals_total }}</td>
+  </tr>
+</table>
+
+<table>
+  <thead>
+    <th>Category</th>
+    <th>Revenue</th>
+  </thead>
+  {% for food_name, food_revenue in foods_ind.items %}
+    <tr>
+      <td>{{ food_name }}</td>
+      <td>{{ food_revenue }}</td>
+    </tr>
+  {% endfor %}
+  <tr>
+    <td>Meals</td>
+    <td>{{ foods_total }}</td>
+  </tr>
+</table>

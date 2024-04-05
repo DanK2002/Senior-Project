@@ -1,0 +1,11 @@
+<div>
+<a><u>{{category}}</u></a>
+    <br>
+    {% for food in foods %}
+        <br>
+        <button hx-get="{% url 'customizeFood' %}" hx-target="#customizeFood"
+        hx-vals='{"foodName": "{{food.name}}"}'> {{ food.name }} </button>
+    {% endfor %}
+</div>
+<br>
+<div id="customizeFood"></div>

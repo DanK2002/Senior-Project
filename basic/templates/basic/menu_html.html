@@ -1,0 +1,62 @@
+<h1>Manage Menu</h1>
+  
+<!-- Display Selected Category -->
+<div class="selected-category-container">
+  <p>Category: {{ selected_category }}</p>
+</div>
+
+<!-- Drop-down list for categories -->
+<form class="category-dropdown" method="post">
+  {% csrf_token %}
+  <label for="category">Category:</label>
+  <select id="category" name="category">
+    <option value="">Select a Category</option>
+    {% for category in categories %}
+      <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Update Category</button>
+</form>
+
+<form class="food-dropdown" method="post" 
+  hx-target = "#add-food-container"
+  hx-swap ="outerHTML"
+  hx-trigger="change"
+  hx-get="{% url 'basic:fetch_food_details' %}"> 
+  {% csrf_token %}
+  <label for="food_name">Foods:</label>
+  <select id="food_name" name="food_name" hx-post="category">
+    <option value="">Select a Food</option>
+    {% for food in foods %}
+      <option value="{{ food }}" {% if selected_food == food %} selected {% endif %}>{{ food }}</option>
+    {% endfor %}
+  </select>
+  <input type="hidden" name="category" value="{{ selected_category }}">
+</form>
+
+
+<!-- Edit Category Button -->
+<div hx-target="#edit-category-response" hx-swap="outerHTML">
+  <button id="edit-category-button" hx-get="{% url 'basic:edit_category_form' %}?selected_category={{ selected_category }}">Edit Category Name</button>
+</div>
+
+
+<!-- Edit Category Form Placeholder -->
+<div id="edit-category-response">
+  
+</div>
+
+<div id="add-food-container" hx-target="view-food-details" hx-swap="outerHTML">
+  {% include 'basic/partials/add_food.html' %}
+</div>
+<div id="food-details">
+  <div id="view-food-details"></div>
+</div>
+
+<!-- Add New Ingredient -->
+<div class="add-ingredient-container">
+<div class="add-ingredient-box">
+  <a href="#">+</a>
+  Add New Ingredient
+</div>
+</div>

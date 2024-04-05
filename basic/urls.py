@@ -10,21 +10,33 @@ urlpatterns = [
     path("compute/", views.compute, name="compute"),
     path("search/", views.search, name="search"),
     path("manageemployees/", views.manageemployees, name="manageemployees"),
+    path("managemenu/", views.managemenu, name="managemenu"),
     path("inventory/", views.inventory, name="inventory"),
     path("sales/", views.sales, name="sales"),
     path("order/", views.order, name="order"),
+    path("back-order/", views.backorder, name="back-order"),
     path("addneworder/", views.addneworder, name="addneworder"),
     path("inprogress/", views.inprogress, name="inprogress"),
+    path("back-inprogress/", views.backinprogress, name="inprogress"),
     path("ready/", views.ready, name="ready"),
+    path("back-ready/", views.backready, name="back-ready"),
     path("completed/", views.completed, name="completed"),
+    path("back-completed/", views.backcompleted, name="back-completed"),
     path("clockin-out/", views.clockin_out, name="clockin-out"),
+    path('mark_ready/<int:order_id>/', views.mark_ready, name='mark_ready'),
+    path('mark_completed/<int:order_id>/', views.mark_completed, name='mark_completed'),
+
+
+
     # HTMX url(s)
     path("partials/quantity/", views.quantity, name="quantity"),
     path("partials/searchInventory/", views.searchInventory, name="searchInventory"),
     path("partials/addIngredient/", views.addIngredient, name="addIngredient"),
+    path("partials/removeIngredient/", views.removeIngredient, name="removeIngredient"),
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
-    path("partials/summary/", views.summary, name="summary-report"),
+    path("partials/sales_summary/", views.salesSummary, name="summary-report"),
+    path("csv-report/", views.generateCsv, name="csv-report"),
     
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),
@@ -37,6 +49,10 @@ urlpatterns = [
     path("view-all-employees/", views.view_all_employees, name= "view-all-employees"),
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),
+
+    path("ordercreation/", views.ordercreation, name="ordercreation"),
+    path("partials/fooditems/", views.fooditems, name="fooditems"),
+    path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
     
     path("managemenu/", views.managemenu, name="managemenu"),
     path('edit_category_form/', views.edit_category_form, name='edit_category_form'),

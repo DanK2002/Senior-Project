@@ -1,11 +1,14 @@
+from collections import defaultdict
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404, JsonResponse, HttpResponse
 import json
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render, redirect
 from .models import *
 from django.utils import timezone
 from .forms import *
 from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.http import require_GET, require_POST
+import csv
+import json
 
 # Create your views here.
 
@@ -98,26 +101,23 @@ def search(request):
 # Billie's Domain -------------------------------------------------------------------------------------
 # For managing employees in the managerial section
 def manageemployees(request):
-    employees = Employee.objects.all()
     users = User.objects.all()      
     list_all_employees = render(
         request,
         "basic/partials/view_all_employees.html",
         {
-            'employees' : employees,
             'users' : users,
         }
     ).content.decode('utf-8')
+    html_content = render(request, "basic/employees_html.html", {'list_all_employees' : list_all_employees}).content.decode('utf-8')
+    css_content = render(request, "basic/employees_css.html").content.decode('utf-8')
     print("RESET")
 
     # If no actions have occurred, render the page with just employees
-    return render(
-        request,
-        "basic/manageemployees.html",
-        {
-            'list_all_employees' : list_all_employees
-        }
-    )
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 # User wants to add new employee; displays add employee form
 def new_employee_form(request):
@@ -250,6 +250,7 @@ def view_all_employees (request):
 # End Billie's Domain ------------------------------------------------------
 
 def managemenu(request):
+    selected_category = request.POST.get('category') #get selected category
     categories = Food.objects.values_list('category', flat=True).distinct()
     selected_category = None
     selected_food = None
@@ -271,11 +272,17 @@ def managemenu(request):
     else:
         foods = None
     
-    return render(request, "basic/managemenu.html", 
+    html_content = render(request, "basic/managemenu.html", 
                   {'categories': categories, 
                    'selected_category': selected_category,
                    'selected_food': selected_food,
-                   'foods': foods, 'form': form})
+                   'foods': foods, 'form': form}).content.decode('utf-8')
+    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
+    
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 
 def edit_category_form(request):
@@ -376,8 +383,12 @@ def edit_food(request, food_name):
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
-
-    return render(request, "basic/inventory.html", {'ingredients': ingredients})
+    html_content = render(request, "basic/inventory_html.html", {'ingredients': ingredients}).content.decode('utf-8')
+    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 def quantity(request):
     ingredientID = int(request.POST.get("ingredient"))
@@ -393,11 +404,11 @@ def quantity(request):
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
 
 def searchInventory(request):
-    ingredientString = request.GET.get("ingredientname")
+    ingredientString = request.GET.get("ingredientname").upper()
     ingredients = Ingredient.objects.distinct()
     newIngredients = []
     for ingredient in ingredients:
-        if ingredientString in ingredient.name:
+        if ingredient.name.upper().find(ingredientString) != -1:
             newIngredients.append(ingredient)
 
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': newIngredients})
@@ -412,10 +423,24 @@ def addIngredient(request):
 
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
 
-def sales(request):
-    return render(request, "basic/sales.html")
+def removeIngredient(request):
+    ingredientName = request.POST.get("removedIngredientTitle")
+    ingredients = Ingredient.objects.distinct()
+    for ingredient in ingredients:
+        if ingredient.name.upper() == ingredientName.upper():
+            ingredient.delete()
+    ingredients = Ingredient.objects.distinct()
+    return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
 
-def summary(request):
+def sales(request):
+    html_content = render(request, "basic/sales_html.html").content.decode('utf-8')
+    css_content = render(request, "basic/sales_css.html").content.decode('utf-8')
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content, # div in sidenav
+        'css_content': css_content # div in sidenav
+    })
+
+def salesSummary(request):
     orders = Order.objects.all()
     orders_total = 0
 
@@ -439,7 +464,7 @@ def summary(request):
     foods_total = round(foods_total, 2)
     meals_total = round(meals_total, 2)
 
-    return render(request, "basic/partials/summary.html", {
+    return render(request, "basic/partials/sales_summary.html", {
         'orders_total': orders_total,
         'meals_ind': meals_ind,
         'meals_total': meals_total,
@@ -447,8 +472,64 @@ def summary(request):
         'foods_total': foods_total,
     })
 
+def generateCsv(request):
+    orders = Order.objects.all()
+    orders_total = 0
+
+    foods_ind = defaultdict(int)
+    foods_total = 0
+
+    meals_ind = defaultdict(int)
+    meals_total = 0
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="somefilename.csv"'},
+    )
+    
+    for order in orders:
+        orders_total += order.price
+        for meal in order.meals.all():
+            meals_ind[meal.name] += meal.price
+            meals_total += meal.price
+        for food in order.foods.all():
+            foods_ind[food.name] += food.price
+            foods_total += food.price
+
+    meals_ind = dict(meals_ind)
+    foods_ind = dict(foods_ind)
+    foods_total = round(foods_total, 2)
+    meals_total = round(meals_total, 2)
+
+    writer = csv.writer(response)
+    # Order Summary
+    writer.writerow(['Category', 'Revenue'])
+    writer.writerow(['Foods', foods_total])
+    writer.writerow(['Meals', meals_total])
+    writer.writerow(['Orders Total', orders_total])
+    #spacer
+    writer.writerow(['', ''])    
+    # Meals Summary
+    writer.writerow(['Meal', 'Revenue'])
+    for meal_name, meal_revenue in meals_ind.items():
+        writer.writerow([meal_name, meal_revenue])
+    writer.writerow(['Meals Total', meals_total])
+    #spacer
+    writer.writerow(['', ''])    
+    # Foods Summary
+    writer.writerow(['Food', 'Revenue'])
+    for food_name, food_revenue in foods_ind.items():
+        writer.writerow([food_name, food_revenue])
+    writer.writerow(['Foods Total', foods_total])
+
+    return response
+
 def order(request):
     return render(request, "basic/order.html")
+
+def backorder(request):
+    return render(request, "basic/back-order.html")
 
 def addneworder(request):
     return render(request, "basic/addneworder.html")
@@ -462,11 +543,36 @@ def inprogress(request):
             'in_progress_orders': in_progress_orders
         })
 
+def backinprogress(request):
+    in_progress_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=True)
+    return render(
+        request, 
+        "basic/back-inprogress.html", 
+        {
+            'in_progress_orders': in_progress_orders
+        })
+
+def mark_ready(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    # Update the time_ready field for the order
+    order.time_ready = timezone.now()  # Assuming you have imported timezone
+    order.save()
+    return JsonResponse({'success': True})
+
 def ready(request):
     ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
     return render(
         request, 
         "basic/ready.html", 
+        {
+            'ready_orders': ready_orders
+        })
+
+def backready(request):
+    ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
+    return render(
+        request, 
+        "basic/back-ready.html", 
         {
             'ready_orders': ready_orders
         })
@@ -479,6 +585,22 @@ def completed(request):
         {
             'completed_orders': completed_orders
         })
+
+def backcompleted(request):
+    completed_orders = Order.objects.filter(time_completed__isnull=False)
+    return render(
+        request, 
+        "basic/back-completed.html", 
+        {
+            'completed_orders': completed_orders
+        })
+
+def mark_completed(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    # Update the time_ready field for the order
+    order.time_completed = timezone.now()  # Assuming you have imported timezone
+    order.save()
+    return JsonResponse({'success': True})
 
 def clockin_out(request):
     employees = Employee.objects.all()
@@ -502,7 +624,6 @@ def clockin(request):
 def clockout(request):
     return render(request, "partials/clockout.html")
     
-
 
 def login(request):
     if request.method == 'POST':
@@ -530,3 +651,74 @@ def landingpage(request):
                       'groups' : groups,
                     }
                 )
+def ordercreation(request):
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+
+    orderNumber = len(Order.objects.distinct()) + 1
+
+    order = Order(number = orderNumber, time_est = '0001-01-01', time_submitted = '0001-01-01', time_ready = '0001-01-01',
+                time_completed = '0001-01-01', price = 0.0, employee_submitted = fakeUser, message = '')
+
+    order.save()
+
+    return render(request, "basic/ordercreation.html", {'categories': categories})
+
+def fooditems(request):
+    categoryName = request.GET.get("categoryName")
+
+    foods = Food.objects.distinct()
+    newFoods = []
+    for food in foods:
+        if food.category.upper() == categoryName.upper():
+            newFoods.append(food)
+
+    return render(request, "basic/partials/fooditems.html", {'foods': newFoods, 'category': categoryName})
+
+def customizeFood(request):
+    if request.method == 'GET':
+        foodName = request.GET.get("foodName")
+        foods = Food.objects.distinct()
+        for food in foods:
+            if food.name.upper() == foodName.upper():
+                theFood = food
+        allIngredients = Ingredient.objects.distinct()
+        ingredientDictionary = json.loads(theFood.ingred)
+        ingredientsInFood = list(ingredientDictionary.keys())
+        notInFood = []
+        inFood = False
+        for ingredient in allIngredients:
+            for ing in ingredientsInFood:
+                if ing.upper() == ingredient.name.upper():
+                    inFood = True
+            if not inFood:
+                notInFood.append(ingredient.name)
+            inFood = False
+        return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
+                                                                 'notInFood': notInFood})
+    else:
+        foodName = request.POST.get("foodName")
+        foods = Food.objects.distinct()
+        for food in foods:
+            if food.name.upper() == foodName.upper():
+                theFood = food
+        orders = Order.objects.distinct()
+        for order in orders:
+            if order.number == len(Order.objects.distinct()):
+                order.foods.add(theFood)
+        order.save()
+        allIngredients = Ingredient.objects.distinct()
+        ingredientDictionary = json.loads(theFood.ingred)
+        ingredientsInFood = list(ingredientDictionary.keys())
+        notInFood = []
+        inFood = False
+        for ingredient in allIngredients:
+            for ing in ingredientsInFood:
+                if ing.upper() == ingredient.name.upper():
+                    inFood = True
+            if not inFood:
+                notInFood.append(ingredient.name)
+            inFood = False
+        return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
+                                                                 'notInFood': notInFood})

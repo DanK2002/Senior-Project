@@ -1,10 +1,3 @@
-{% extends "./sidenav.html" %}
-{% block extra_css %}
-{% load static %}
-<link rel="stylesheet" id="sidenav-style-css" href="{% static 'sales.css' %}" media="all">
-{% endblock %}
-
-{% block content %}
 <h2>Sales</h2>
 <div class="sales-section">
     <div class="button-section">
@@ -15,7 +8,10 @@
             hx-trigger="click" 
             hx-get="{% url 'basic:summary-report' %}"
         >Generate Summary Report</button>
-        <button>Generate Raw CSV</button>
+        <a href="{% url 'basic:csv-report' %}" download="summary_report.csv">
+            <button type="button">Generate Raw CSV</button>
+        </a>
+        
     </div>
     <div class="date-range">
         <label for="start_date">Start Date:</label>
@@ -33,4 +29,3 @@
         <!-- Summary report here -->
     </div>
 </div>
-{% endblock %}

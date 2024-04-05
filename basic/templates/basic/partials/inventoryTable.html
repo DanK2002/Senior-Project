@@ -9,7 +9,7 @@
         {{ ingredient.name }} 
         <input type="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}">
         <button type="button" hx-target="#quantity{{ ingredient.idnumber }}" hx-trigger="click" 
-        hx-post="{% url 'quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
+        hx-post="{% url 'basic:quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
         hx-vars="ingredient:{{ ingredient.idnumber }}"> Submit </button>
       </td>
       <td> <div id="quantity{{ ingredient.idnumber }}"> {{ ingredient.quantity }} </div> </td>
