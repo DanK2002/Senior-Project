@@ -12,10 +12,25 @@
     </form>
     Salary: ${{ selectedEmployee.wage }}
     <br>
-      Shifts worked:
-    <br>
+    Groups:
     <ul>
-      {% for shift in shifts %}
-        <li>{{ shift.start }} to {{ shift.end }}</li>
+      {% for group in groups %}
+        <li>{{ group }}</li>
       {% endfor %}
     </ul>
+
+    <br>
+      Shifts worked:
+    <br>
+    <form>
+      <label for = "start">Start date:</label>
+      <input type = "date" id = "start" name = "start" />
+      <label for = "end">End date:</label>
+      <input type = "date" id = "end" name = "end" />
+      <input hidden name = "employee" value = "{{selectedUser.username}}" />
+      <input type = "button" value = "View shifts" name = "show-shifts"
+            hx-post="{% url 'basic:view-shifts' %}" hx-trigger="click" hx-include="#view-shifts-form"
+            hx-target="#view-shifts" hx-swap = "innerHTML" />
+    </form>
+    <div id="view-shifts"></div>
+    

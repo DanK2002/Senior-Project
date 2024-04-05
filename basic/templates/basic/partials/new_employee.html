@@ -6,9 +6,14 @@
     <form method = "POST" id = "add-employee-form">
       {{ add_form }}
       <!-- Despite being in class "refresh-list", button does not automatically refresh the employee list-->
-      <input type="button" name = "Add" value = "Add" class="refresh-list"
+      <input type="button" name = "Add" value = "Add" class= "refresh-list"
           hx-post="{% url 'basic:save-new-employee' %}" hx-trigger="click" 
           hx-target="#employee-info" hx-include="#add-employee-form" hx-swap="innerHTML" />
       <input type="button" name = "Cancel" value = "Cancel" />
+    </form>
+    <form method="POST">
+      <input type="button" value="Refresh Employee List"
+            hx-trigger = "click, click from:.refresh-list delay:1s" hx-post = "{% url 'basic:view-all-employees' %}"
+            hx-target = "#view-employees" hx-swap = "innerHTML" />
     </form>
 </div>

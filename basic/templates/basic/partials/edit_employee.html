@@ -2,8 +2,7 @@
 <!-- Note: I want to add a way to edit shifts, but idk if it's better to use htmx or formsets... -->
 <!-- Should add a way to manage the groups that a user is in -->
 
-{% if editEmployee %}
-  <div class = "main">
+  <div>
     <h1>Edit {{ selectedUser.first_name }} {{ selectedUser.last_name }} Information</h1>
     <form method = "POST" id="edit-employee-form">
       <!-- {% csrf_token %} -->
@@ -14,5 +13,12 @@
             hx-target="#employee-info" hx-swap = "innerHTML" hx-include = "#edit-employee-form" />
       <input type="submit" name = "Cancel" value = "Cancel" />
     </form>
-</div>
-{% endif %}
+  </div>
+  <div id="edit-shifts">
+    <form id = "show-shifts">
+      <input hidden name = "user" value = "{{ selectedUser.username }}" />
+      <input type = "button" value = "Manage shifts"
+          hx-post = "{% url 'basic:edit-shifts' %}" hx-trigger = "click"
+          hx-target = "#edit-shifts" hx-swap = "innerHTML" hx-include = "#show-shifts" />
+    </form>
+  </div>

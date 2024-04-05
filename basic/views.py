@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.views.decorators.http import require_GET, require_POST
 import csv
 import json
+from datetime import timedelta, datetime
 
 # Create your views here.
 
@@ -140,14 +141,37 @@ def save_new_employee(request):
                 first_name = request.POST.get('first_name'),
                 last_name = request.POST.get('last_name'),
             )
+    user_groups = request.POST.getlist('user_groups')
+    # Add employee to selected groups:
+    if "foh" in user_groups:
+        foh = Group.objects.get(name="foh")
+        foh.user_set.add(newUser)
+    if "boh" in user_groups:
+        boh = Group.objects.get(name="boh")
+        boh.user_set.add(newUser)
+    if "manager" in user_groups:
+        manager = Group.objects.get(name="manager")
+        manager.user_set.add(newUser)
     newEmployee = Employee.objects.create(user=newUser, wage=request.POST.get('wage'))
+    inGroups = []
+    for group in newUser.groups.all():
+        inGroups.append(group.name)
+    groups = []
+    if "foh" in inGroups:
+        groups.append("Front of House")
+    if "boh" in inGroups:
+        groups.append("Back of House")
+    if "manager" in inGroups:
+        groups.append("Manager")
+
     return render(
         request,
         "basic/partials/view_one_employee.html",
         {
             'selectedUser' : newUser,
             'selectedEmployee' : newEmployee,
-            'shifts' : []
+            'shifts' : [],
+            'groups' : groups
         }
     )
 
@@ -157,6 +181,16 @@ def view_employee(request):
     selectedUser = User.objects.get(username=selectedUsername)  # Find that user
     selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
     shifts = Shift.objects.filter(employee = selectedEmployee)  # Find all of their shifts
+    inGroups = []
+    for group in selectedUser.groups.all():
+        inGroups.append(group.name)
+    groups = []
+    if "foh" in inGroups:
+        groups.append("Front of House")
+    if "boh" in inGroups:
+        groups.append("Back of House")
+    if "manager" in inGroups:
+        groups.append("Manager")
     return render(
         request,
         "basic/partials/view_one_employee.html",
@@ -164,6 +198,7 @@ def view_employee(request):
             'selectedUser' : selectedUser,
             'selectedEmployee' : selectedEmployee,
             'shifts' : shifts,
+            'groups' : groups
         }
     )
 
@@ -173,7 +208,9 @@ def edit_employee(request):
     selectedUser = User.objects.get(username=selectedUsername)  # Find that user
     selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
     shifts = Shift.objects.filter(employee = selectedEmployee)  # And their related shifts
-
+    inGroups = []
+    for group in selectedUser.groups.all():
+        inGroups.append(group.name)
     # Populate the form with pre-existing data
     editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
                                     "last_name": selectedUser.last_name,
@@ -192,6 +229,7 @@ def edit_employee(request):
 def save_existing_employee(request):
     print("Saving employee...")
     print(request.POST)
+    user_groups = request.POST.getlist('user_groups')
     selectedUsername = request.POST.get('user')                 # Get the username requested
     selectedUser = User.objects.get(username=selectedUsername)  # Find that user
     selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
@@ -204,6 +242,39 @@ def save_existing_employee(request):
         selectedEmployee.wage = request.POST.get('wage')
     selectedUser.save()
     selectedEmployee.save()
+
+    # Add employee to selected groups and remove from unselected:
+    inGroups = []
+    for group in selectedUser.groups.all():
+        inGroups.append(group.name)
+    foh = Group.objects.get(name="foh")
+    boh = Group.objects.get(name="boh")
+    manager = Group.objects.get(name="manager")
+    if "foh" in user_groups:
+        foh.user_set.add(selectedUser)
+    elif "foh" in inGroups:
+        foh.user_set.remove(selectedUser)
+    if "boh" in user_groups:
+        boh.user_set.add(selectedUser)
+    elif "boh" in inGroups:
+        boh.user_set.remove(selectedUser)
+    if "manager" in user_groups:
+        manager.user_set.add(selectedUser)
+    elif "manager" in inGroups:
+        manager.user_set.remove(selectedUser)
+    
+    inGroups = []
+    for group in selectedUser.groups.all():
+        inGroups.append(group.name)
+    groups = []
+    if "foh" in inGroups:
+        groups.append("Front of House")
+    if "boh" in inGroups:
+        groups.append("Back of House")
+    if "manager" in inGroups:
+        groups.append("Manager")
+
+    
     return render(
         request,
         "basic/partials/view_one_employee.html",
@@ -211,6 +282,7 @@ def save_existing_employee(request):
             'selectedUser' : selectedUser,
             'selectedEmployee' : selectedEmployee,
             'shifts' : shifts,
+            'groups' : groups
         }
     )
 
@@ -246,6 +318,144 @@ def view_all_employees (request):
             'users' : users
         }
     )
+
+# View employee shifts based on date filters
+def view_shifts (request):
+    print(request.POST)
+    selectedUser = User.objects.get(username = request.POST.get('employee'))
+    selectedEmployee = Employee.objects.get(user = selectedUser)
+    if (request.POST.get('start') != ""):
+        #Show shifts between start and end date
+        if (request.POST.get('end') != ""):
+            shifts = Shift.objects.filter(employee=selectedEmployee,
+                                          start__gte = request.POST.get('start'),
+                                          start__lte = request.POST.get('end')).order_by('start')
+        #Show shifts after the start date
+        else:
+            shifts = Shift.objects.filter(employee=selectedEmployee, start__gte = request.POST.get('start')).order_by('start')
+    elif (request.POST.get('end') != ""):
+        #Show shifts before the end date
+        shifts = Shift.objects.filter(employee=selectedEmployee, start__lte = request.POST.get('end')).order_by('start')
+    else:
+        #Show all shifts
+        shifts = Shift.objects.filter(employee=selectedEmployee).order_by('start')
+    totalTime = timedelta()
+    for shift in shifts:
+        duration = shift.end - shift.start
+        totalTime += duration
+    totalSeconds = totalTime.total_seconds()
+    hours = totalSeconds // 3600
+    minutes = (totalSeconds%3600) // 60
+    return render(
+        request,
+        "basic/partials/view_shifts.html",
+        {
+            'shifts' : shifts,
+            'hours' : hours,
+            'minutes' : minutes
+        }
+    )
+
+# User wants to view a list of employee's shifts
+def edit_shifts(request):
+    print("Showing shift list...")
+    print(request)
+    selectedUser = User.objects.get(username = request.POST.get('user'))
+    selectedEmployee = Employee.objects.get(user = selectedUser)
+    shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
+    print(shifts)
+    return render(
+        request,
+        "basic/partials/edit_shifts.html",
+        {
+            'shifts' : shifts,
+            'selectedUser' : selectedUser
+        }
+    )
+
+# User wants the form to add a new shift
+def add_shift(request):
+    selectedUser = User.objects.get(username = request.POST.get('user'))
+    shiftForm = EditEmployeeShifts()
+    return render(
+        request,
+        "basic/partials/add_new_shift.html",
+        {
+            'newShiftForm' : shiftForm,
+            'selectedUser' : selectedUser,
+        }
+    )
+
+# User wants the form to edit an existing shift
+def edit_shift(request):
+    print("Editing shift...")
+    print(request.POST.get('user'))
+    print(request.POST.get('shift-list'))
+    selectedUser = User.objects.get(username = request.POST.get('user'))
+    selectedEmployee = Employee.objects.get(user = selectedUser)
+    originalShift = Shift.objects.get(employee = selectedEmployee, start = request.POST.get('shift-list'))
+    shiftForm = EditEmployeeShifts({
+        "start_time" : originalShift.start,
+        "end_time" : originalShift.end
+    })
+    return render(
+        request,
+        "basic/partials/edit_one_shift.html",
+        {
+            'editShiftForm' : shiftForm,
+            'selectedUser' : selectedUser,
+            'originalShift' : originalShift
+        }
+    )
+
+# User wants to remove an existing shift
+def remove_shift(request):
+    selectedUser = User.objects.get(username = request.POST.get('user'))
+    selectedEmployee = Employee.objects.get(user = selectedUser)
+    Shift.objects.get(employee = selectedEmployee, start = request.POST.get('shift-list')).delete()
+    return render(
+        request,
+        "basic/partials/remove_shift.html"
+    )
+
+# User wants to save changes to an existing shift
+def save_existing_shift(request):
+    print("Saving shift...")
+    print(request.POST.get(''))
+    if request.method == "POST":
+        selectedUser = User.objects.get(username = request.POST.get('user'))
+        selectedEmployee = Employee.objects.get(user = selectedUser)
+        originalShift = Shift.objects.get(employee = selectedEmployee, start = request.POST.get('original-shift'))
+        originalShift.start = request.POST.get('start_time')
+        originalShift.end = request.POST.get('end_time')
+        originalShift.save()
+        return render(
+            request,
+            "basic/partials/saved_shift.html"
+        )
+    elif request.method == "GET":
+        return render(
+            request,
+            ""
+        )
+    
+# User wants to save a new shift
+def save_new_shift(request):
+    if request.method == "POST":
+        selectedUser = User.objects.get(username = request.POST.get('user'))
+        selectedEmployee = Employee.objects.get(user = selectedUser)
+        Shift.objects.create(start = request.POST.get('start_time'),
+                          end = request.POST.get('end_time'),
+                          employee = selectedEmployee)
+        return render(
+            request,
+            "basic/partials/saved_shift.html"
+        )
+    elif request.method == "GET":
+        return render(
+            request,
+            ""
+        )
 
 # End Billie's Domain ------------------------------------------------------
 

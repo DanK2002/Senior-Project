@@ -62,4 +62,11 @@ urlpatterns = [
     path('update_food/', views.update_food, name='update_food'),
 
 
+    path("view-shifts/", views.view_shifts, name="view-shifts"),
+    path("save-new-shift/", views.save_new_shift, name="save-new-shift"),
+    path("save-existing-shift/", views.save_existing_shift, name="save-existing-shift"),
+    path("edit-shift/", views.edit_shift, name="edit-shift"),
+    path("remove-shift/", views.remove_shift, name="remove-shift"),
+    path("add-shift/", views.add_shift, name="add-shift"),
+    path("edit-shifts/", views.edit_shifts, name = "edit-shifts"),
 ]
