@@ -1,6 +1,6 @@
-from collections import defaultdict
-from django.shortcuts import render, redirect
-from django.http import Http404, JsonResponse
+import json
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import *
 from django.utils import timezone
 from .forms import *
@@ -250,43 +250,129 @@ def view_all_employees (request):
 # End Billie's Domain ------------------------------------------------------
 
 def managemenu(request):
-    selected_category = request.POST.get('category') #get selected category
     categories = Food.objects.values_list('category', flat=True).distinct()
-
+    selected_category = None
+    selected_food = None
     form = AddFoodForm()
-
     if request.method == 'POST':
-        if 'save' in request.POST:  # Check if the form was submitted by the Save button
-
-            form = AddFoodForm(request.POST)
-            if form.is_valid():
-                #if form is valid, process data
-                name = form.cleaned_data['name']
-                category = form.cleaned_data['category']
-                price = form.cleaned_data['price']
-                food = Food.objects.create(name=name, category=category, price=price)
-            return redirect('managemenu')
-        elif 'cancel' in request.POST:  # Check if the form was submitted by the Cancel button
-            return redirect('managemenu')  # Redirect to the managemenu page without processing the form
+        selected_category = request.POST.get('category')
+        selected_food = request.POST.get('food')
+        form = AddFoodForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['name']
+            category = form.cleaned_data['category']
+            price = form.cleaned_data['price']
+            new_food = Food.objects.create(name=name, category=category, price=price)
+            new_food.save()
+            return redirect('basic:managemenu') 
+    
     if selected_category:
         foods = Food.objects.filter(category=selected_category)
     else:
-        foods = Food.objects.all()
-    if request.method == 'POST' and 'food_id' in request.POST:
-        # Handle AJAX request for food details
-        food_id = request.POST.get('food_id')
-        food = Food.objects.get(pk=food_id)
-        edit_view_food = {
-            'name': food.name,
-            'category': food.category,
-            'price': food.price
-        }
-        return JsonResponse(edit_view_food)
+        foods = None
     
     return render(request, "basic/managemenu.html", 
                   {'categories': categories, 
-                   'selected_category': selected_category, 
-                   'form': form, 'foods': foods })
+                   'selected_category': selected_category,
+                   'selected_food': selected_food,
+                   'foods': foods, 'form': form})
+
+
+def edit_category_form(request):
+    # Retrieve the selected category from the POST data
+    selected_category = request.GET.get('selected_category')
+
+    return render(
+        request,
+        "basic/partials/edit_category_form.html",
+        {'selected_category': selected_category}
+    )
+
+
+def edit_category(request):
+    if request.method == 'POST':
+        new_category_name = request.POST.get('new_category_name')
+        selected_category = request.POST.get('selected_category')  # Retrieve from POST data, not from query parameters
+
+        # Retrieve the food items with the selected category
+        foods_to_update = Food.objects.filter(category=selected_category)
+        # Update the category name for each food item
+        for food in foods_to_update:
+            food.category = new_category_name
+            food.save()
+        return redirect('basic:managemenu')
+
+
+def edit_view_food(request):
+    form = EditFoodForm()
+    if request.method == 'POST':
+        form = EditFoodForm(request.POST)
+        if form.is_valid():
+            # Retrieve the data submitted in the form
+            new_name = form.cleaned_data['initial_name']
+            new_category = form.cleaned_data['initial_category']
+            new_price = form.cleaned_data['initial_price']
+            
+            original_name = request.POST.get('original_name')
+            original_food = get_object_or_404(Food, name=original_name)
+            original_food.name = new_name
+            original_food.category = new_category
+            original_food.price = new_price
+            original_food.save()
+
+            return redirect('basic:managemenu')
+
+    return render(request, 'basic/partials/edit_view_food.html', {'form': form})
+
+def fetch_food_details(request):
+    if request.method == 'GET':
+        food_name = request.GET.get('food_name')
+        food = Food.objects.get(name=food_name)
+        form = EditFoodForm(initial={'initial_name': food.name, 'initial_category': food.category, 'initial_price': food.price})
+
+        return render(request, 'basic/partials/edit_view_food.html',  {'form': form})
+    
+
+def update_food(request):
+    if request.method == 'POST':
+        selected_category = request.POST.get('category')
+        selected_food = request.POST.get('food')
+        print("Selected Category:", selected_category)
+        print("Selected Food:", selected_food)
+        return redirect('basic:managemenu', category=selected_category, food=selected_food)
+
+def add_food(request):
+    if request.method == 'POST':
+        form = AddFoodForm(request.POST)
+        if form.is_valid():
+            # Create a new Food object with form data
+            new_food = Food(
+                name=form.cleaned_data['name'],
+                category=form.cleaned_data['category'],
+                price=form.cleaned_data['price']
+            )
+            # Save the new food item to the database
+            new_food.save()
+            return redirect('basic:managemenu')
+    else:
+        form = AddFoodForm()
+    return render(request, 'basic/partials/add_food.html', {'form': form})
+
+def edit_food(request, food_name):
+    food = get_object_or_404(Food, name='initial_food')
+
+    if request.method == 'POST':
+        form = EditFoodForm(request.POST)
+        if form.is_valid():
+            food.name = form.cleaned_data['initial_food']
+            food.category = form.cleaned_data['initial_category']
+            food.price = form.cleaned_data['initial_price']
+            food.save()
+            return redirect('basic:managemenu')
+    else:
+        form = EditFoodForm(initial={'initial_food': food.name, 'initial_category': food.category, 'initial_price': food.price})
+
+    return render(request, 'basic/partials/edit_food.html', {'form': form})
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()

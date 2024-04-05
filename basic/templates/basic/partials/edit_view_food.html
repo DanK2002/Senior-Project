@@ -1,0 +1,12 @@
+<div id="view-food-details">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="original_name" value="{{ form.initial_name.value }}">
+        <!-- Save and Cancel buttons for editing an existing food -->
+        <button type="submit" formaction="{% url 'basic:edit_view_food' %}">Save</button>
+        <button type="reset" class="cancel-button">Cancel</button>
+
+    </form>
+</div>
+  
