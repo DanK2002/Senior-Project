@@ -813,7 +813,6 @@ def mark_completed(request, order_id):
     return JsonResponse({'success': True})
 
 def clockin_out(request):
-    employees = Employee.objects.all()
     users = User.objects.all()
     currentShifts = Shift.objects.filter(end=None)
     clockedIn = []
@@ -823,18 +822,63 @@ def clockin_out(request):
         request, 
         "basic/clockin-out.html", 
         {
-            'employees': employees,
             'users': users,
             'clockedIn': clockedIn
         })
-    
-def clockin(request):
-    return render(request, "partials/clockin.html")
-    
-def clockout(request):
-    return render(request, "partials/clockout.html")
-    
 
+def modal(request):
+    username = request.POST.get("username")
+    return render(
+        request, 
+        "partials/modal.html",
+        {
+            'username': username
+        })
+
+def auth_clockin_out(request):
+    users = User.objects.all()
+    currentShifts = Shift.objects.filter(end=None)
+    
+    clockedIn = []
+    clockedInUsernames = []
+    for shift in currentShifts:
+        clockedIn.append(shift.employee.user)
+        clockedInUsernames.append(shift.employee.user.username)
+
+    username = request.POST.get("username")
+    password = request.POST.get("password")
+    user = authenticate(request, username=username, password=password)
+    
+    if user is not None: # A backend authenticated the credentials
+        employee = Employee.objects.filter(user=user)
+        if user in clockedIn: # Add an end time to the current Shift for this employee
+            shift = currentShifts.filter(employee=employee)
+            shift.end = timezone.now()
+            shift.save()
+        else: # Create new Shift for this employee
+            start = timezone.now()
+            employee = Employee.objects.filter(user=user)
+            newShift = Shift(
+                    start=start, 
+                    end=None,
+                    employee=employee
+                )
+            newShift.save() # Store it into the database
+        return render(
+            request, 
+            "basic/clockin-out.html", 
+            {
+                'users': users,
+                'clockedIn': clockedInUsernames
+            })
+    else: # No backend authenticated the credentials
+        return render(
+            request, 
+            "partials/modal.html",
+            {
+                'username': username
+            })
+    
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -932,3 +976,5 @@ def customizeFood(request):
             inFood = False
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
+
+                                                                 

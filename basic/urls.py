@@ -35,6 +35,8 @@ urlpatterns = [
     path("partials/removeIngredient/", views.removeIngredient, name="removeIngredient"),
     path("clockin/", views.clockin, name="clockin"),
     path("clockout/", views.clockout, name="clockout"),
+    path("modal/", views.modal, name="modal"),
+    path("auth-clockin-out/", views.auth_clockin_out, name="auth-clockin-out"),
     path("partials/sales_summary/", views.salesSummary, name="summary-report"),
     path("csv-report/", views.generateCsv, name="csv-report"),
     
