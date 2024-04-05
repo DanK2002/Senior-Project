@@ -852,12 +852,12 @@ def auth_clockin_out(request):
     if user is not None: # A backend authenticated the credentials
         employee = Employee.objects.filter(user=user)
         if user in clockedIn: # Add an end time to the current Shift for this employee
-            shift = currentShifts.filter(employee=employee)
+            shift = currentShifts.get(employee=employee)
             shift.end = timezone.now()
             shift.save()
         else: # Create new Shift for this employee
             start = timezone.now()
-            employee = Employee.objects.filter(user=user)
+            employee = Employee.objects.get(user=user)
             newShift = Shift(
                     start=start, 
                     end=None,
