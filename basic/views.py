@@ -830,13 +830,12 @@ def modal(request):
     username = request.POST.get("username")
     return render(
         request, 
-        "partials/modal.html",
+        "partials\modal.html",
         {
             'username': username
         })
 
 def auth_clockin_out(request):
-    users = User.objects.all()
     currentShifts = Shift.objects.filter(end=None)
     
     clockedIn = []
@@ -850,7 +849,7 @@ def auth_clockin_out(request):
     user = authenticate(request, username=username, password=password)
     
     if user is not None: # A backend authenticated the credentials
-        employee = Employee.objects.filter(user=user)
+        employee = Employee.objects.get(user=user)
         if user in clockedIn: # Add an end time to the current Shift for this employee
             shift = currentShifts.get(employee=employee)
             shift.end = timezone.now()
@@ -864,13 +863,7 @@ def auth_clockin_out(request):
                     employee=employee
                 )
             newShift.save() # Store it into the database
-        return render(
-            request, 
-            "basic/clockin-out.html", 
-            {
-                'users': users,
-                'clockedIn': clockedInUsernames
-            })
+        return redirect('basic:clockin-out')
     else: # No backend authenticated the credentials
         return render(
             request, 
@@ -905,6 +898,7 @@ def landingpage(request):
                       'groups' : groups,
                     }
                 )
+
 def ordercreation(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 

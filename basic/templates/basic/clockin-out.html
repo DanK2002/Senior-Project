@@ -16,37 +16,41 @@
     <div class="main">
         <b><u> Clock In / Clock Out </u></b>
         <br>
-        <table>
-            <tr>
-                <th>Username</th>
-                <th>Employee Name</th>
-                <th>In / Out</th>
-            </tr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Employee Name</th>
+                    <th>In / Out</th>
+                </tr>
+            </thead>
             {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>
-                    {% if user.first_name and user.last_name %}
-                        {{ user.last_name }}, {{ user.first_name }}
-                    {% elif user.first_name and not user.last_name %}
-                        {{ user.first_name }}
-                    {% elif not user.first_name and user.last_name %}
-                        {{ user.last_name }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
-                <td>
-                    <button id="button_{{user.username}}" hx-target="body" hx-swap="beforeend" 
-                            hx-post="{% url 'basic:modal' %}" hx-vals='{"username" : "{{ user.username }}"}'>
-                        {% if user.username in clockedIn %}
-                            Clock Out
+            <tbody>
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        {% if user.first_name and user.last_name %}
+                            {{ user.last_name }}, {{ user.first_name }}
+                        {% elif user.first_name and not user.last_name %}
+                            {{ user.first_name }}
+                        {% elif not user.first_name and user.last_name %}
+                            {{ user.last_name }}
                         {% else %}
-                            Clock In
+                            N/A
                         {% endif %}
-                    </button>
-                </td>
-            </tr>
+                    </td>
+                    <td>
+                        <button id="button_{{user.username}}" hx-target="body" hx-swap="beforeend" 
+                                hx-post="{% url 'basic:modal' %}" hx-vals='{"username" : "{{ user.username }}"}'>
+                            {% if user.username in clockedIn %}
+                                Clock Out
+                            {% else %}
+                                Clock In
+                            {% endif %}
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
             {% endfor %}
         </table>        
     </div>
