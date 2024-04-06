@@ -830,7 +830,7 @@ def modal(request):
     username = request.POST.get("username")
     return render(
         request, 
-        "partials\modal.html",
+        "partials/modal.html",
         {
             'username': username
         })
