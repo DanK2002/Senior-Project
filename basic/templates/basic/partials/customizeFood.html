@@ -1,8 +1,8 @@
 <a><u>{{food.name}}</u></a>
 <br>
-<a>Message</a> <input type="text">
+<a>Message</a> <input type="text" name = "message" id="message">
 <br>
-<button hx-post="{% url 'basic:customizeFood' %}" hx-target="previous"
+<button hx-post="{% url 'basic:customizeFood' %}" hx-target="previous" hx-include="#message"
 hx-vals='{"foodName": "{{food.name}}"}'>Submit Item</button>
 <br>
 {% for ingredient in inFood %}

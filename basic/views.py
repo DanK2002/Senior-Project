@@ -10,6 +10,7 @@ from django.views.decorators.http import require_GET, require_POST
 import csv
 import json
 from datetime import timedelta, datetime
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -905,15 +906,17 @@ def landingpage(request):
                       'groups' : groups,
                     }
                 )
+@login_required
 def ordercreation(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 
-    fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    user = request.user
 
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = '0001-01-01', time_submitted = '0001-01-01', time_ready = '0001-01-01',
-                time_completed = '0001-01-01', price = 0.0, employee_submitted = fakeUser, message = '')
+                time_completed = '0001-01-01', price = 0.0, employee_submitted = user, message = '')
 
     order.save()
 
@@ -953,6 +956,7 @@ def customizeFood(request):
                                                                  'notInFood': notInFood})
     else:
         foodName = request.POST.get("foodName")
+        message = request.POST.get("message")
         foods = Food.objects.distinct()
         for food in foods:
             if food.name.upper() == foodName.upper():
@@ -961,6 +965,7 @@ def customizeFood(request):
         for order in orders:
             if order.number == len(Order.objects.distinct()):
                 order.foods.add(theFood)
+        order.message = message
         order.save()
         allIngredients = Ingredient.objects.distinct()
         ingredientDictionary = json.loads(theFood.ingred)
