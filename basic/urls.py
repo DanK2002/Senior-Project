@@ -23,6 +23,10 @@ urlpatterns = [
     path("clockin-out/", views.clockin_out, name="clockin-out"),
     path('mark_ready/<int:order_id>/', views.mark_ready, name='mark_ready'),
     path('mark_completed/<int:order_id>/', views.mark_completed, name='mark_completed'),
+    path('remove_completed/<int:order_id>/', views.remove_completed, name='remove_completed'),
+    path('remove_ready/<int:order_id>/', views.remove_ready, name='remove_ready'),
+
+
 
 
 

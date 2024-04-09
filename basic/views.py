@@ -326,6 +326,18 @@ def mark_completed(request, order_id):
     order.save()
     return JsonResponse({'success': True})
 
+def remove_ready(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    order.time_ready = None
+    order.save()
+    return JsonResponse({'success': True})
+
+def remove_completed(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    order.time_completed = None
+    order.save()
+    return JsonResponse({'success': True})
+
 def clockin_out(request):
     employees = Employee.objects.all()
     users = User.objects.all()
