@@ -651,7 +651,17 @@ def sales(request):
     })
 
 def salesSummary(request):
-    orders = Order.objects.all()
+    str_start = request.GET.get('start_date')
+    str_end = request.GET.get('end_date')
+
+    if( str_start != '' and str_end != ''):
+        start_date = datetime.strptime(str_start, '%Y-%m-%d')
+        end_date = datetime.strptime(str_end, '%Y-%m-%d')
+
+        orders = Order.objects.filter(time_completed__date__range=(start_date, end_date))
+    else:
+        orders = Order.objects.all()
+    
     orders_total = 0
 
     foods_ind = defaultdict(int)
