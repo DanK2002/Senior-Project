@@ -1,17 +1,17 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        
+       
     </style>
 </head>
 <body>
     <h1 style="text-align: center;">FOH Orders (In Progress)</h1>
 
-    <div class="large-box">
+    <div id="large-box">
         <div class="orders-container">
             {% if in_progress_orders %}
                 {% for order in in_progress_orders %}
-                    <div class="order">
+                    <div class="order-box">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
                     </div>

@@ -7,10 +7,11 @@
 <body>
     <h1 style="text-align: center;">(Ready)</h1>
 
-    <div class="large-box">
+    <div id="large-box">
         <div class="orders-container">
             {% if ready_orders %}
                 {% for order in ready_orders %}
+                    <div class="order-box">
                         <form id="order_form_{{ order.id }}" hx-post="{% url 'mark_completed' order.id %}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>

@@ -7,11 +7,11 @@
 <body>
     <h1 style="text-align: center;">FOH Orders (Ready)</h1>
 
-    <div class="large-box">
+    <div id="large-box">
         <div class="orders-container">
             {% if ready_orders %}
                 {% for order in ready_orders %}
-                    <div class="order">
+                    <div class="order-box">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
                     </div>
