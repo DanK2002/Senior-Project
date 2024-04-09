@@ -92,72 +92,96 @@ for ingredient_name, quantity in ingredients_data.items():
 # Define foods and their ingredients using dictionaries
 foods_data = [
     {
+        'menu': True,
+        'code': '',
         'name': 'Krabby Patty',
         'price': 5.99,
         'category': 'Sandwich',
         'ingredients': {'Burger Bun': 2, 'Crab Patty': 1, 'Sliced American Cheese': 1, 'Lettuce': 1, 'Onion': 1, 'Ketchup': 2, 'Mustard': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Krusty Dog',
         'price': 3.99,
         'category': 'Sandwich',
         'ingredients': {'Hot Dog Bun': 1, 'Hot Dog': 1, 'Ketchup': 2, 'Mustard': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Steamed Hams',
         'price': 4.99,
         'category': 'Sandwich',
         'ingredients': {'Burger Bun': 2, 'Beef Patty': 1, 'Sliced American Cheese': 1, 'Ketchup': 2, 'Mayo': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Good Burger',
         'price': 4.99,
         'category': 'Sandwich',
         'ingredients': {'Burger Bun': 2, 'Beef Patty': 1, 'Sliced Cheddar Cheese': 1, 'Onion': 1, 'Ketchup': 2, 'Mayo': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Krusty Krab Pizza',
         'price': 10.99,
         'category': 'Pizza',
         'ingredients': {'Pizza Dough': 1, 'Marinara Sauce': 2, 'Shredded Mozarella': 2, 'Parmesan Cheese': 1}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'None Pizza With Left Beef',
         'price': 8.99,
         'category': 'Pizza',
         'ingredients': {'Pizza Dough': 1, 'Beef Topping': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Fries',
         'price': 2.99,
         'category': 'Side',
         'ingredients': {'Frozen Fries': 2, 'Salt': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Onion Rings',
         'price': 2.99,
         'category': 'Side',
         'ingredients': {'Frozen Onion Rings': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Seaweed Salad',
         'price': 1.99,
         'category': 'Side',
         'ingredients': {'Seaweed': 2, 'Pepper': 1}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Orange Soda',
         'price': 1.99,
         'category': 'Drink',
         'ingredients': {'Orange Soda': 1}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Dr Kelp',
         'price': 1.99,
         'category': 'Drink',
         'ingredients': {'Dr Kelp': 1}
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Diet Dr Kelp',
         'price': 1.99,
         'category': 'Drink',
@@ -165,10 +189,57 @@ foods_data = [
     }
 ]
 
+### Code to dynamically generate unique food codes
+# Dictionary to store used letters for category and foos
+used_letters = {'categories': set(), 'foods': set()}
+cat_letters = {}
+food_letters = {}
+
+# Dictionary to store counts for category - food pair
+counts = {}
+
+for food in foods_data:
+    category = food['category']
+    food_name = food['name']
+    
+    # Extract the first letter of the category for the code
+    category_letter = category[0].upper()
+    
+    # If the first letter is already used, find the next available letter
+    if category not in cat_letters.keys():
+        while category_letter in cat_letters.values():
+            category_letter = chr(ord(category_letter) + 1)
+        
+    # Extract the first letter of the food name for the code
+    food_letter = food_name[0].upper()
+    
+    # If the first letter is already used, find the next available letter
+    if food_name not in food_letters.keys():
+        while food_letter in food_letters.values():
+            food_letter = chr(ord(food_letter) + 1)
+        
+    # Update used letters
+    if category not in cat_letters.keys():
+        cat_letters[category] = category_letter
+    if food_name not in food_letters.keys():
+        food_letters[food_name] = food_letter
+    
+    # Update counts dictionary
+    pair = (category_letter, food_letter)
+    counts[pair] = counts.get(pair, 0) + 1
+    
+    # Generate code
+    code = category_letter + food_letter + str(counts[pair])
+    
+    # Assign code to the food itee
+    food['code'] = code
+
 # Loop through the foods list and save each food
 for food_data in foods_data:
+    print(food_data)
     ingredient_list = json.dumps(food_data['ingredients'])
-    food = Food(name=food_data['name'], price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
+    food = Food(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
+                price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
     food.save()
 
 # Define meals and their foods using dictionaries
