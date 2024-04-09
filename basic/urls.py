@@ -53,6 +53,7 @@ urlpatterns = [
     path("ordercreation/", views.ordercreation, name="ordercreation"),
     path("partials/fooditems/", views.fooditems, name="fooditems"),
     path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
+    path("partials/amountchange/", views.amountchange, name="amountchange"),
     
     path("managemenu/", views.managemenu, name="managemenu"),
     path('edit_category_form/', views.edit_category_form, name='edit_category_form'),

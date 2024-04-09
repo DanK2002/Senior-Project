@@ -942,15 +942,20 @@ def customizeFood(request):
                 theFood = food
         allIngredients = Ingredient.objects.distinct()
         ingredientDictionary = json.loads(theFood.ingred)
-        ingredientsInFood = list(ingredientDictionary.keys())
+        ingredientsInFoodNames = list(ingredientDictionary.keys())
+        ingredientsInFood = []
+        for ingredient in allIngredients:
+            for ing in ingredientsInFoodNames:
+                if ing.upper() == ingredient.name.upper():
+                    ingredientsInFood.append(ingredient)
         notInFood = []
         inFood = False
         for ingredient in allIngredients:
-            for ing in ingredientsInFood:
+            for ing in ingredientsInFoodNames:
                 if ing.upper() == ingredient.name.upper():
                     inFood = True
             if not inFood:
-                notInFood.append(ingredient.name)
+                notInFood.append(ingredient)
             inFood = False
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
@@ -982,4 +987,23 @@ def customizeFood(request):
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
 
+def amountchange(request):
+    print(request.POST)
+    id = request.POST.get("ingredientid")
+    amountChange = int(request.POST[f'addition{id}'])
+
+    if amountChange == -2:
+        change = "None"
+    elif amountChange == -1:
+        change = "Less"
+    elif amountChange == 0:
+        change = "Standard"
+    elif amountChange == 1:
+        change = "Extra"
+    elif amountChange == 2:
+        change = "Extra Extra"
+    else:
+        change = "Invalid"
+
+    return render(request, "basic/partials/amountchange.html", {'change':change})
                                                                  
