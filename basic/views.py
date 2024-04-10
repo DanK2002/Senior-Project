@@ -652,7 +652,17 @@ def sales(request):
     })
 
 def salesSummary(request):
-    orders = Order.objects.all()
+    str_start = request.GET.get('start_date')
+    str_end = request.GET.get('end_date')
+
+    if( str_start != '' and str_end != ''):
+        start_date = datetime.strptime(str_start, '%Y-%m-%d')
+        end_date = datetime.strptime(str_end, '%Y-%m-%d')
+
+        orders = Order.objects.filter(time_completed__date__range=(start_date, end_date))
+    else:
+        orders = Order.objects.all()
+    
     orders_total = 0
 
     foods_ind = defaultdict(int)
@@ -837,7 +847,6 @@ def modal(request):
         })
 
 def auth_clockin_out(request):
-    users = User.objects.all()
     currentShifts = Shift.objects.filter(end=None)
     
     clockedIn = []
@@ -851,7 +860,7 @@ def auth_clockin_out(request):
     user = authenticate(request, username=username, password=password)
     
     if user is not None: # A backend authenticated the credentials
-        employee = Employee.objects.filter(user=user)
+        employee = Employee.objects.get(user=user)
         if user in clockedIn: # Add an end time to the current Shift for this employee
             shift = currentShifts.get(employee=employee)
             shift.end = timezone.now()
@@ -865,13 +874,7 @@ def auth_clockin_out(request):
                     employee=employee
                 )
             newShift.save() # Store it into the database
-        return render(
-            request, 
-            "basic/clockin-out.html", 
-            {
-                'users': users,
-                'clockedIn': clockedInUsernames
-            })
+        return redirect('basic:clockin-out')
     else: # No backend authenticated the credentials
         return render(
             request, 

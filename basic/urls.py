@@ -22,19 +22,18 @@ urlpatterns = [
     path("back-ready/", views.backready, name="back-ready"),
     path("completed/", views.completed, name="completed"),
     path("back-completed/", views.backcompleted, name="back-completed"),
-    path("clockin-out/", views.clockin_out, name="clockin-out"),
     path('mark_ready/<int:order_id>/', views.mark_ready, name='mark_ready'),
     path('mark_completed/<int:order_id>/', views.mark_completed, name='mark_completed'),
 
-
+    path("clockin-out/", views.clockin_out, name="clockin-out"),
+    path("modal/", views.modal, name="modal"),
+    path("auth-clockin-out/", views.auth_clockin_out, name="auth-clockin-out"),
 
     # HTMX url(s)
     path("partials/quantity/", views.quantity, name="quantity"),
     path("partials/searchInventory/", views.searchInventory, name="searchInventory"),
     path("partials/addIngredient/", views.addIngredient, name="addIngredient"),
     path("partials/removeIngredient/", views.removeIngredient, name="removeIngredient"),
-    path("modal/", views.modal, name="modal"),
-    path("auth-clockin-out/", views.auth_clockin_out, name="auth-clockin-out"),
     path("partials/sales_summary/", views.salesSummary, name="summary-report"),
     path("csv-report/", views.generateCsv, name="csv-report"),
     

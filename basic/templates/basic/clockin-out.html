@@ -1,52 +1,94 @@
 <!DOCTYPE html>
 <html>
-
+<head>
 <style>
-    table, th, td {
-        border:1px solid black;
+    table {
+        border-collapse: collapse;
+        width: 85%;
+        margin: 0px auto;
+    }
+
+    td, th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    th {
+        font-size: 36px;
+        padding: 16px 14px;
+        text-align: left;
+        background-color: #04AA6D;
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }
+
+    tr, #row2, #row4, #row6, #row8, #row10 { 
+        font-size: 22px;
+    }
+
+    tr:hover, #row2:hover, #row4:hover, #row6:hover, #row8:hover, #row10:hover { background-color: #ddd; }
+
+    #row2, #row4, #row6, #row8, #row10 { background-color: #f2f2f2; }
+    
+    .clockin-out {
+        width: 100%;
+        height: 46px;
+        background-color: #04AA6D;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+    .clockin-out:hover {
+        background-color: #048d5b;
+        cursor: pointer;
     }
 </style>
-
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
 </head>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <div class="main">
-        <b><u> Clock In / Clock Out </u></b>
         <br>
-        <table>
-            <tr>
-                <th>Username</th>
-                <th>Employee Name</th>
-                <th>In / Out</th>
-            </tr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Employee Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
             {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>
-                    {% if user.first_name and user.last_name %}
-                        {{ user.last_name }}, {{ user.first_name }}
-                    {% elif user.first_name and not user.last_name %}
-                        {{ user.first_name }}
-                    {% elif not user.first_name and user.last_name %}
-                        {{ user.last_name }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </td>
-                <td>
-                    <button id="button_{{user.username}}" hx-target="body" hx-swap="beforeend" 
-                            hx-post="{% url 'basic:modal' %}" hx-vals='{"username" : "{{ user.username }}"}'>
-                        {% if user.username in clockedIn %}
-                            Clock Out
+            <tbody>
+                <tr id="row{{forloop.counter}}">
+                    <td>{{ user.username }}</td>
+                    <td>
+                        {% if user.first_name and user.last_name %}
+                            {{ user.last_name }}, {{ user.first_name }}
+                        {% elif user.first_name and not user.last_name %}
+                            {{ user.first_name }}
+                        {% elif not user.first_name and user.last_name %}
+                            {{ user.last_name }}
                         {% else %}
-                            Clock In
+                            N/A
                         {% endif %}
-                    </button>
-                </td>
-            </tr>
+                    </td>
+                    <td>
+                        <button id="button_{{user.username}}" class="clockin-out" hx-target="body" hx-swap="beforeend" 
+                                hx-post="{% url 'basic:modal' %}" hx-vals='{"username" : "{{ user.username }}"}'>
+                            {% if user.username in clockedIn %}
+                                Clock Out
+                            {% else %}
+                                Clock In
+                            {% endif %}
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
             {% endfor %}
         </table>        
     </div>
