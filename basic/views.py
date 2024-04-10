@@ -1007,3 +1007,13 @@ def amountchange(request):
 
     return render(request, "basic/partials/amountchange.html", {'change':change})
                                                                  
+def addFoodToOrder(request):
+    foodName = request.POST.get("foodName")
+    foods = Food.objects.distinct()
+    for food in foods:
+            if food.name.upper() == foodName.upper():
+                theFood = food
+    print(theFood.name)
+    print(request.POST)
+
+    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName})
