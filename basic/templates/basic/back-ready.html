@@ -12,19 +12,17 @@
         <div class="orders-container">
             {% if ready_orders %}
                 {% for order in ready_orders %}
-                    <div class="order-box">
-                        <form id="order_form_{{ order.id }}" hx-post="{% url 'mark_completed' order.id %}">
+                    <div class="order-box" id="order_{{ order.id }}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
-                        <form id="order_form_{{ order.id }}" hx-post="{% url 'mark_completed' order.id %}">
+                        <form id="mark_completed_form_{{ order.id }}" hx-post="{% url 'mark_completed' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Completed</button>
                         </form>
                         <form id="remove_ready_form_{{ order.id }}" hx-post="{% url 'remove_ready' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Remove Ready</button>
-                        </form> 
-                        </form> 
+                        </form>
                     </div>
                 {% endfor %}
             {% else %}
@@ -36,6 +34,6 @@
     <div class="button-container2">
         <button class="button"> <a href="../back-order/" class="link">Back to Menu</a> </button>
     </div>
-
+    
 </body>
 </html>

@@ -335,6 +335,7 @@ def remove_ready(request, order_id):
 def remove_completed(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.time_completed = None
+    order.time_ready = timezone.now()
     order.save()
     return JsonResponse({'success': True})
 
