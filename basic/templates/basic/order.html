@@ -4,40 +4,103 @@
     <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
     <style>
         #button-container {
-            text-align: center; /* Center align the content */
+            text-align: center; 
         }
 
         #large-box {
             margin: 40px auto; /* Center the box horizontally with some margin */
             width: 80%; /* Set the width of the box */
             height: 450px; /* Set the height of the box */
-            background-color: rgb(61, 221, 117); /* Set the background color of the box */
-            border: 2px solid black; /* Add a border to the box */
+            background-color: #2081c3; /* Set the background color of the box */
+            border: 2px solid #03191e; /* Add a border to the box */
             border-style: double; /* Add another border style */
             border-width: 8px;
-            border-color: black;
+            border-color: #03191e;
             text-align: center;
             overflow-y: auto;
+            border-radius: 20px;
+        }
+
+        #large-box-add {
+            margin: 40px auto; 
+            width: 80%; 
+            height: 450px; 
+            background-color: #2081c3;
+            border: 2px solid #03191e; 
+            border-style: double; 
+            border-width: 8px;
+            border-color: #03191e;
+            text-align: center;
+            overflow-y: auto;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            border-radius: 20px;
+        }
+
+        .button {
+            background-color: #941c2f;
+            color: #f7f9f9;
         }
 
         .order-box {
             margin: 15px auto; /* Add margin between each order box */
             width: 60%; /* Add padding to the order box */
-            border: 1px solid black; /* Add border to the order box */
+            border: 1px solid #03191e; /* Add border to the order box */
             background-color: #f9f9f9; /* Set background color of the order box */
+        }
+        
+        .large-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+        }
+
+        .large-button-add {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: 2px solid #03191e; 
+            margin: auto;
+            background-color: #f9f9f9;
+            background-color: #941c2f;
+            color: #f9f9f9;
+        }
+
+        .title {
+            border: 2px solid black; 
+            padding: 10px; 
+            text-align: center; 
+            background-color: #2081c3;
+            width: 250px; 
+            height: 10x; 
+            margin: auto; 
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            border: 2px solid black; 
+            padding: 10px; 
+            text-align: center; 
+            background-color: #96d1ff;
+            width: 500px; 
+            height: 10x; 
+            margin: auto; 
+            margin-bottom: 20px;
+            border-radius: 20px;
         }
     </style>
 
 </head>
 
 <body>
-    <h1 style="text-align: center;">FOH Orders</h1>
-    
+    <div class="title">
+        <h1>FOH Orders</h1>
+    </div>    
+
     <div id="button-container" hx-target="#button-container" hx-swap="innerHTML">
-        <button class="button" hx-get="../addneworder/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);">Add New Order</button>
-        <button class="button" hx-get="../inprogress/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">In Progress</button>
-        <button class="button" hx-get="../ready/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Ready</button>
-        <button class="button" hx-get="../completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Completed</button>
+        <button class="large-button" hx-get="../addneworder/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Add New Order</button>
+        <button class="large-button" hx-get="../inprogress/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">In Progress</button>
+        <button class="large-button" hx-get="../ready/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Ready</button>
+        <button class="large-button" hx-get="../completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Completed</button>
     </div>
 
 

@@ -6,7 +6,9 @@
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">(Completed)</h1>
+    <div class="sub-title">
+        <h1>Completed</h1>
+    </div>
 
     <div id="large-box">
         <div class="orders-container">
@@ -18,7 +20,7 @@
                         <p>Price: {{ order.price}}</p>
                         <form id="remove_completed_form_{{ order.id }}" hx-post="{% url 'remove_completed' order.id %}">
                             {% csrf_token %}
-                            <button class="button" type="submit">Revert to Ready</button>
+                            <button class="button" type="submit">Revert: to Ready</button>
                         </form>
                     </div>
                 {% endfor %}
