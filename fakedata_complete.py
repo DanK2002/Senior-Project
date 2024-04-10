@@ -196,56 +196,42 @@ foods = Food.objects.values_list('name', flat=True).distinct()
 cat_letters = {}
 food_letters = {}
 
-for cat in categories:
-    cat_letters
-    for food in foods:
-        cat_letters
-
-
 # Dictionary to store counts for category - food pair
 counts = {}
 
 for food in foods_data:
     category = food['category']
     food_name = food['name']
-    
     # Extract the first letter of the category for the code
     index = 0
-    category_letter = category[index].upper()
-    
+    category_letter = category[index].upper() 
     # If the first letter is already used, find the next available letter
     if category not in cat_letters.keys():
         while category_letter in cat_letters.values():
             index += 1
             category_letter = category[index].upper()
     else:
-        category_letter = cat_letters[category]
-        
+        category_letter = cat_letters[category]    
     # Extract the first letter of the food name for the code
     index = 0
     food_letter = food_name[0].upper()
-    
     # If the first letter is already used, find the next available letter
     if food_name not in food_letters.keys():
         while food_letter in food_letters.values():
             index += 1
             food_letter = food_name[index].upper()
     else:
-        food_letter = food_letters[food_name]
-        
+        food_letter = food_letters[food_name]   
     # Update used letters
     if category not in cat_letters.keys():
         cat_letters[category] = category_letter
     if food_name not in food_letters.keys():
-        food_letters[food_name] = food_letter
-    
+        food_letters[food_name] = food_letter    
     # Update counts dictionary
     pair = (category_letter, food_letter)
-    counts[pair] = counts.get(pair, 0) + 1
-    
+    counts[pair] = counts.get(pair, 0) + 1 
     # Generate code
     code = category_letter + food_letter + str(counts[pair])
-    
     # Assign code to the food itee
     food['code'] = code
 
@@ -253,45 +239,62 @@ for food in foods_data:
 for food_data in foods_data:
     print(food_data)
     ingredient_list = json.dumps(food_data['ingredients'])
-    food = Food(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
+    food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
                 price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
-    food.save()
 
 # Define meals and their foods using dictionaries
 meals_data = [
     {
+        'menu': True,
+        'code': '',
         'name': 'Good Meal',
         'price': 9.99,
         'foods': ['Good Burger', 'Fries', 'Orange Soda']
     },
     {
+        'menu': True,
+        'code': '',
         'name': 'Krabby Patty Combo',
         'price': 10.99,
         'foods': ['Krabby Patty', 'Fries', 'Dr Kelp']
     }
 ]
 
+meals = Food.objects.values_list('name', flat=True).distinct()
+meal_letters = {}
+
+### Code to dynamically generate unique food codes
+# Dictionary to store counts for category - food pair
+counts = {}
+for meal in meals_data:
+    meal_name = meal['name']
+    # Extract the first letter of the meal name for the code
+    index = 0
+    meal_letter = meal_name[0].upper()
+    # If the first letter is already used, find the next available letter
+    if meal_name not in meal_letters.keys():
+        while meal_letter in meal_letters.values():
+            index += 1
+            meal_letter = meal_name[index].upper()
+    else:
+        meal_letter = meal_letters[meal_name]
+    # Update used letters
+    if meal_name not in meal_letters.keys():
+        meal_letters[meal_name] = meal_letter
+    # Update counts dictionary
+    counts[meal_letter] = counts.get(meal_letter, 0) + 1
+    # Generate code
+    code = meal_letter + str(counts[meal_letter])
+    # Assign code to the meal itee
+    meal['code'] = code
+    print(meal)
+
 # Loop through the meals list and save each meal
 for meal_data in meals_data:
-    meal = Meal(name=meal_data['name'], price=meal_data['price'])
-    meal.save()
+    meal = Meal.objects.create(menu=meal_data['menu'], code=meal_data['code'], name=meal_data['name'], price=meal_data['price'])
     for food_name in meal_data['foods']:
         # get the menu item
         food = Food.objects.filter(name=food_name, menu=True).first()
-        # Generate a new code from db data #
-        code_cat = food.code[:1]
-        code_food = food.code[1:2]
-        
-        high_code = Food.objects.filter(
-            code__startswith=code_cat + code_food
-            ).values_list('code', flat=True).order_by('-code').first()
-        
-        high_number = high_code[2:]
-        # copy into a custom item
-        food.pk = None
-        food.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
-        food.menu = False
-        food.save()
         meal.foods.add(food)
         
     meal.save()
@@ -376,7 +379,42 @@ for order_data in orders_data:
         order.foods.add(food)
     print('foods saved')
     for meal_name in order_data['meals']:
-        meal = Meal.objects.filter(name=meal_name).first()
+        # get the menu item
+        meal = Meal.objects.filter(name=meal_name, menu=True).first()
+        old_meal = Meal.objects.filter(name=meal_name, menu=True).first()
+        print(meal)
+        # Generate a new code from db data #
+        code_meal = meal.code[:1]
+        
+        high_code = Meal.objects.filter(
+            code__startswith=code_meal
+            ).values_list('code', flat=True).order_by('-code').first()
+        
+        high_number = high_code[1:]
+        # copy into a custom item
+        meal.pk = None
+        meal.code = f'{code_meal}{str(int(high_number) + 1)}'
+        meal.menu = False
+        meal.save()
+        print(old_meal.foods.all())
+        for food in old_meal.foods.all():
+            print(food)
+            old_code = food.code
+            # Generate a new code from db data #
+            code_cat = food.code[:1]
+            code_food = food.code[1:2]
+            
+            high_code = Food.objects.filter(
+                code__startswith=code_cat + code_food
+                ).values_list('code', flat=True).order_by('-code').first()
+            
+            high_number = high_code[2:]
+            # copy into a custom item
+            food.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
+            food.menu = False
+            food.pk = None
+            food.save()
+            meal.foods.add(food)
         order.meals.add(meal)
     print('meals saved')
     order.save()
