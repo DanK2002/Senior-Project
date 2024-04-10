@@ -26,17 +26,47 @@
             border: 1px solid black; /* Add border to the order box */
             background-color: #f9f9f9; /* Set background color of the order box */
         }
+
+        .large-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+        }
+
+        .title {
+            border: 2px solid black; 
+            padding: 10px; 
+            text-align: center; 
+            background-color: rgb(35, 232, 107);
+            width: 250px; 
+            height: 10x; 
+            margin: auto; 
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            border: 2px solid black; 
+            padding: 10px; 
+            text-align: center; 
+            background-color: rgba(35, 232, 107, 0.634);
+            width: 500px; 
+            height: 10x; 
+            margin: auto; 
+            margin-bottom: 20px;
+            border-radius: 20px;
+        }
     </style>
 
 </head>
 
 <body>
-    <h1 style="text-align: center;">BOH Orders</h1>
+    <div class="title">
+        <h1>BOH Orders</h1>
+    </div>
     
     <div id="button-container" hx-target="#button-container" hx-swap="innerHTML">
-        <button class="button" hx-get="../back-inprogress/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">In Progress</button>
-        <button class="button" hx-get="../back-ready/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Ready</button>
-        <button class="button" hx-get="../back-completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Completed</button>
+        <button class="large-button" hx-get="../back-inprogress/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">In Progress</button>
+        <button class="large-button" hx-get="../back-ready/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Ready</button>
+        <button class="large-button" hx-get="../back-completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: rgb(54, 210, 138);;">Completed</button>
     </div>
 
 </body>
