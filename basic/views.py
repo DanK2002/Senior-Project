@@ -10,6 +10,7 @@ from django.views.decorators.http import require_GET, require_POST
 import csv
 import json
 from datetime import timedelta, datetime
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -898,16 +899,17 @@ def landingpage(request):
                       'groups' : groups,
                     }
                 )
-
+@login_required
 def ordercreation(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 
-    fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    user = request.user
 
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = '0001-01-01', time_submitted = '0001-01-01', time_ready = '0001-01-01',
-                time_completed = '0001-01-01', price = 0.0, employee_submitted = fakeUser, message = '')
+                time_completed = '0001-01-01', price = 0.0, employee_submitted = user, message = '')
 
     order.save()
 
@@ -933,20 +935,26 @@ def customizeFood(request):
                 theFood = food
         allIngredients = Ingredient.objects.distinct()
         ingredientDictionary = json.loads(theFood.ingred)
-        ingredientsInFood = list(ingredientDictionary.keys())
+        ingredientsInFoodNames = list(ingredientDictionary.keys())
+        ingredientsInFood = []
+        for ingredient in allIngredients:
+            for ing in ingredientsInFoodNames:
+                if ing.upper() == ingredient.name.upper():
+                    ingredientsInFood.append(ingredient)
         notInFood = []
         inFood = False
         for ingredient in allIngredients:
-            for ing in ingredientsInFood:
+            for ing in ingredientsInFoodNames:
                 if ing.upper() == ingredient.name.upper():
                     inFood = True
             if not inFood:
-                notInFood.append(ingredient.name)
+                notInFood.append(ingredient)
             inFood = False
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
     else:
         foodName = request.POST.get("foodName")
+        message = request.POST.get("message")
         foods = Food.objects.distinct()
         for food in foods:
             if food.name.upper() == foodName.upper():
@@ -955,6 +963,7 @@ def customizeFood(request):
         for order in orders:
             if order.number == len(Order.objects.distinct()):
                 order.foods.add(theFood)
+        order.message = message
         order.save()
         allIngredients = Ingredient.objects.distinct()
         ingredientDictionary = json.loads(theFood.ingred)
@@ -971,4 +980,33 @@ def customizeFood(request):
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
 
+def amountchange(request):
+    print(request.POST)
+    id = request.POST.get("ingredientid")
+    amountChange = int(request.POST[f'addition{id}'])
+
+    if amountChange == -2:
+        change = "None"
+    elif amountChange == -1:
+        change = "Less"
+    elif amountChange == 0:
+        change = "Standard"
+    elif amountChange == 1:
+        change = "Extra"
+    elif amountChange == 2:
+        change = "Extra Extra"
+    else:
+        change = "Invalid"
+
+    return render(request, "basic/partials/amountchange.html", {'change':change})
                                                                  
+def addFoodToOrder(request):
+    foodName = request.POST.get("foodName")
+    foods = Food.objects.distinct()
+    for food in foods:
+            if food.name.upper() == foodName.upper():
+                theFood = food
+    print(theFood.name)
+    print(request.POST)
+
+    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName})
