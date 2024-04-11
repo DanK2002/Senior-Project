@@ -1,0 +1,10 @@
+{% for ingredient_name in ingredients %}
+<div>
+  <label for="{{ ingredient_name }}">{{ ingredient_name }}</label>
+  {% if ingred_list and ingredient_name in ingred_list %}
+  <input type="number" id="{{ ingredient_name }}" name="ingredient_{{ ingredient_name }}" value="{{ ingred_list.ingredient_name }}" min="0">
+  {% else %}
+  <input type="number" id="{{ ingredient_name }}" name="ingredient_{{ ingredient_name }}" value="0" min="0">
+  {% endif %}
+</div>
+{% endfor %}

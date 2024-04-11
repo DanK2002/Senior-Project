@@ -34,6 +34,9 @@ urlpatterns = [
     path('edit_view_food/', views.edit_view_food, name='edit_view_food'),
     path('fetch_food_details/', views.fetch_food_details, name='fetch_food_details'),
     path('update_food/', views.update_food, name='update_food'),
+    path('remove_food/', views.remove_food, name='remove_food'),
+    path('add_food/', views.add_food, name='add_food'),
+    path('ingredient_list/', views.ingredient_list, name='ingredient_list'),
 
 
 ]

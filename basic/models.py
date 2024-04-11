@@ -20,7 +20,7 @@ class Employee(models.Model):
 
 class Shift(models.Model):
     start = models.DateTimeField()
-    end = models.DateTimeField()
+    end = models.DateTimeField(blank=True, null=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -31,11 +31,13 @@ class Order(models.Model):
     number = models.IntegerField()
     time_est = models.DateTimeField()
     time_submitted = models.DateTimeField()
-    time_completed = models.DateTimeField(null=True)
+    time_ready = models.DateTimeField(blank=True, null=True)
+    time_completed = models.DateTimeField(blank=True, null=True)
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
     price = models.FloatField(null=False)
     employee_submitted = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=1000)
 
     def __str__(self):
         return f"Order #{self.number} submitted by {self.employee_submitted}"
@@ -54,7 +56,6 @@ class Food(models.Model):
     price = models.FloatField(null = False)
     category = models.CharField(max_length=100)
     ingred = models.JSONField(default=dict)
-#    ingred = models.ManyToManyField('Ingredient', blank=False)
     
     def __str__(self):
         return self.name
@@ -63,8 +64,7 @@ class Food(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
     quantity = models.IntegerField(blank = False)
+    idnumber = models.IntegerField(blank = False)
 
     def __str__(self):
         return self.name
-
-

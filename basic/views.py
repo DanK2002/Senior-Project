@@ -1,10 +1,12 @@
 import json
-from django.http import JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import *
 from django.utils import timezone
 from .forms import *
 from django.contrib.auth import authenticate, login as auth_login
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -256,14 +258,6 @@ def managemenu(request):
     if request.method == 'POST':
         selected_category = request.POST.get('category')
         selected_food = request.POST.get('food')
-        form = AddFoodForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            category = form.cleaned_data['category']
-            price = form.cleaned_data['price']
-            new_food = Food.objects.create(name=name, category=category, price=price)
-            new_food.save()
-            return redirect('basic:managemenu') 
     
     if selected_category:
         foods = Food.objects.filter(category=selected_category)
@@ -299,7 +293,11 @@ def edit_category(request):
         for food in foods_to_update:
             food.category = new_category_name
             food.save()
-        return redirect('basic:managemenu')
+        selected_category = new_category_name
+        return JsonResponse({'Category name successfully changed': True})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
 def edit_view_food(request):
@@ -319,17 +317,35 @@ def edit_view_food(request):
             original_food.price = new_price
             original_food.save()
 
+
+            # process ingredients and quantities
+            ingred_data={}
+            for ingredient_name, quantity in request.POST.items():
+                if ingredient_name.startswith('ingredient_'):
+                    ingredient_name = ingredient_name.split('_')[1]
+                    try:
+                        quantity = int(quantity)
+                        if quantity > 0:
+                            ingred_data[ingredient_name] = quantity
+                    except Ingredient.DoesNotExist:
+                        pass
+
+            # Update ingred field of the new food item and save
+            original_food.ingred = ingred_data
+            original_food.save()
+
             return redirect('basic:managemenu')
 
     return render(request, 'basic/partials/edit_view_food.html', {'form': form})
+
 
 def fetch_food_details(request):
     if request.method == 'GET':
         food_name = request.GET.get('food_name')
         food = Food.objects.get(name=food_name)
         form = EditFoodForm(initial={'initial_name': food.name, 'initial_category': food.category, 'initial_price': food.price})
-
-        return render(request, 'basic/partials/edit_view_food.html',  {'form': form})
+        original_ingred = food.ingred
+        return render(request, 'basic/partials/edit_view_food.html',  {'form': form, 'ingred_list': original_ingred})
     
 
 def update_food(request):
@@ -350,28 +366,54 @@ def add_food(request):
                 category=form.cleaned_data['category'],
                 price=form.cleaned_data['price']
             )
+
             # Save the new food item to the database
             new_food.save()
+
+            # Process ingredients and quantities
+            ingred_data = {}
+            for ingredient_name, quantity in request.POST.items():
+                if ingredient_name.startswith('ingredient_'):
+                    ingredient_name = ingredient_name.split('_')[1]
+                    try:
+                        quantity = int(quantity)
+                        if quantity > 0:
+                            ingred_data[ingredient_name] = quantity
+                    except Ingredient.DoesNotExist:
+                        pass
+
+            # Update ingred field of the new food item and save
+            new_food.ingred = ingred_data
+            new_food.save()
+
             return redirect('basic:managemenu')
     else:
         form = AddFoodForm()
     return render(request, 'basic/partials/add_food.html', {'form': form})
-
-def edit_food(request, food_name):
-    food = get_object_or_404(Food, name='initial_food')
-
+def remove_food(request):
     if request.method == 'POST':
-        form = EditFoodForm(request.POST)
-        if form.is_valid():
-            food.name = form.cleaned_data['initial_food']
-            food.category = form.cleaned_data['initial_category']
-            food.price = form.cleaned_data['initial_price']
-            food.save()
-            return redirect('basic:managemenu')
-    else:
-        form = EditFoodForm(initial={'initial_food': food.name, 'initial_category': food.category, 'initial_price': food.price})
+        food_name = request.POST.get('original_name')
+        food = Food.objects.filter(name=food_name).first()
+        if food:
+            food.delete()
+            return JsonResponse({'message': 'Food item removed successfully'}, status=200)
+        else:
+            return JsonResponse({'error': 'Food item not found'}, status=404)
 
-    return render(request, 'basic/partials/edit_food.html', {'form': form})
+def ingredient_list(request):
+    if request.POST.get('original_name'):
+        ingredients = Ingredient.objects.all().values_list('name', flat=True)
+        selected_food = Food.objects.get(name=request.POST.get('original_name'))
+        ingred_list = selected_food.ingred
+        return render(request, 'basic/partials/ingredient_list.html', {'ingredients': ingredients, 'ingred_list': ingred_list})
+    else:
+        ingredients = Ingredient.objects.all().values_list('name', flat=True)  # Get only the names
+        return render(request, 'basic/partials/ingredient_list.html', {'ingredients': ingredients})
+
+
+         
+# End Kayla's Domain ------------------------------------------------------
+
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()

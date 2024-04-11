@@ -9,6 +9,10 @@ class EditFoodForm(forms.Form):
     initial_name = forms.CharField(label='Name', max_length=100)
     initial_category = forms.CharField(label='Category', max_length=100)
     initial_price = forms.DecimalField(label='Price', max_digits=10, decimal_places=2)
+    
+class AddIngredientForm(forms.Form):
+    ingredient_name = forms.CharField(label='Ingredient Name', max_length=100)
+    ingredient_quantity = forms.IntegerField(label='Quantity')
 
 class AddEmployeeForm(forms.Form):
     first_name = forms.CharField(max_length=100)
