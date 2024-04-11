@@ -47,12 +47,11 @@
     {{foodName}} was added to order.
     <br>
     {{foodName}} was added to order.
-<br>
-<br>
-<u>Order Summary</u>
-{% for food in foodsInOrder %}
+    <br>
+    <br>
+    {% for food in foodsInOrder %}
     <br>
     <br>
     <a>{{food.name}}</a>
-{% endfor %}
+    {% endfor %}
 </body>
