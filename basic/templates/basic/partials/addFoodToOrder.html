@@ -2,3 +2,8 @@
 <br>
 <br>
 <u>Order Summary</u>
+{% for food in foodsInOrder %}
+    <br>
+    <br>
+    <a>{{food.name}}</a>
+{% endfor %}
