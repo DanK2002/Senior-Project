@@ -963,33 +963,6 @@ def customizeFood(request):
             inFood = False
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
-    else:
-        foodName = request.POST.get("foodName")
-        message = request.POST.get("message")
-        foods = Food.objects.distinct()
-        for food in foods:
-            if food.name.upper() == foodName.upper():
-                theFood = food
-        orders = Order.objects.distinct()
-        for order in orders:
-            if order.number == len(Order.objects.distinct()):
-                order.foods.add(theFood)
-        order.message = message
-        order.save()
-        allIngredients = Ingredient.objects.distinct()
-        ingredientDictionary = json.loads(theFood.ingred)
-        ingredientsInFood = list(ingredientDictionary.keys())
-        notInFood = []
-        inFood = False
-        for ingredient in allIngredients:
-            for ing in ingredientsInFood:
-                if ing.upper() == ingredient.name.upper():
-                    inFood = True
-            if not inFood:
-                notInFood.append(ingredient.name)
-            inFood = False
-        return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
-                                                                 'notInFood': notInFood})
 
 def amountchange(request):
     print(request.POST)
@@ -1040,6 +1013,7 @@ def addFoodToOrder(request):
                 ingredientsInFood.append(ingredient)
     
     newIngredients = {}
+    changesToFood = ''
     for x in request.POST:
         #find the ingredient with the id x that matches addition'x'
         if "addition" in str(x):
@@ -1048,10 +1022,25 @@ def addFoodToOrder(request):
                 if additionID == thisIngredient.idnumber:
                     ingredient = thisIngredient
             newAmount = ingredientDictionary.get(ingredient.name) + int(request.POST.get(str(x)))
-            if newAmount < 0:
+            if newAmount < 0 or int(request.POST.get(str(x))) == -1:
                 newAmount = 0
+            if int(request.POST.get(str(x))) == 2:
+                changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == 1:
+                changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == -1:
+                if newAmount == 0:
+                    changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+                else:
+                    changesToFood = changesToFood + "Add less " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == -2:
+                changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
             newIngredients[ingredient.name] = newAmount
     theFood.ingred = json.dumps(newIngredients)
+    if changesToFood == '':
+        changesToFood = "Standard ingredients.\n"
+    changesToFood = changesToFood + request.POST.get("message")
+    theFood.message = changesToFood
     theFood.save()
     #use json.dumps(some dictionary) to pass json of ingredients
 
@@ -1065,4 +1054,10 @@ def addFoodToOrder(request):
     order.save()
 
     foodsInOrder = order.foods.all()
-    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder})
+    total = 0
+    for food in foodsInOrder:
+        total += food.price
+    order.price = total
+    order.save()
+    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder,
+                                                                  'total': total})

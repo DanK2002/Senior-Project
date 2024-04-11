@@ -60,6 +60,7 @@ class Food(models.Model):
     price = models.FloatField(null = False)
     category = models.CharField(max_length=100)
     ingred = models.JSONField(default=dict)
+    message = models.CharField(max_length=1000, blank=True)
 #    ingred = models.ManyToManyField('Ingredient', blank=False)
     
     def __str__(self):

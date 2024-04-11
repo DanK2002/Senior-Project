@@ -375,6 +375,7 @@ for order_data in orders_data:
         food.pk = None
         food.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
         food.menu = False
+        food.message = "This is a test message"
         food.save()
         order.foods.add(food)
     print('foods saved')
@@ -413,6 +414,7 @@ for order_data in orders_data:
             food.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
             food.menu = False
             food.pk = None
+            food.message = "This is a test message"
             food.save()
             meal.foods.add(food)
         order.meals.add(meal)
