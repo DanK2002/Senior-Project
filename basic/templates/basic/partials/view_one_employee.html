@@ -2,35 +2,38 @@
 <!-- Should add a way to view the groups an employee is in -->
 
     <h1>Employee Info</h1>
-    <h2> {{ selectedUser.first_name }} {{ selectedUser.last_name }}  </h2>
-    <form method = "POST">
-        <!-- {% csrf_token %} -->
-        <input hidden name= "user" value="{{ selectedUser.username }}" />
-        <input type="button" name="Edit" value="Edit"
-              hx-post="{% url 'basic:edit-employee-form' %}" hx-trigger="click" 
-              hx-target="#employee-info" hx-swap = "innerHTML" />
-    </form>
-    Salary: ${{ selectedEmployee.wage }}
-    <br>
-    Groups:
-    <ul>
-      {% for group in groups %}
-        <li>{{ group }}</li>
-      {% endfor %}
-    </ul>
+    <div class = "secondary-container">
+      <div class = "inline-container">
+      <h2> {{ selectedUser.first_name }} {{ selectedUser.last_name }}  </h2>
+        <form method = "POST">
+            <!-- {% csrf_token %} -->
+            <input hidden name= "user" value="{{ selectedUser.username }}" />
+            <input type="button" name="Edit" value="Edit" class = "btn"
+                  hx-post="{% url 'basic:edit-employee-form' %}" hx-trigger="click" 
+                  hx-target="#employee-info" hx-swap = "innerHTML" />
+        </form>
+      </div>
+      Salary: ${{ selectedEmployee.wage }}
+      <br>
+      Groups:
+      <ul>
+        {% for group in groups %}
+          <li>{{ group }}</li>
+        {% endfor %}
+      </ul>
 
-    <br>
-      Shifts worked:
-    <br>
-    <form>
-      <label for = "start">Start date:</label>
-      <input type = "date" id = "start" name = "start" />
-      <label for = "end">End date:</label>
-      <input type = "date" id = "end" name = "end" />
-      <input hidden name = "employee" value = "{{selectedUser.username}}" />
-      <input type = "button" value = "View shifts" name = "show-shifts"
-            hx-post="{% url 'basic:view-shifts' %}" hx-trigger="click" hx-include="#view-shifts-form"
-            hx-target="#view-shifts" hx-swap = "innerHTML" />
-    </form>
-    <div id="view-shifts"></div>
-    
+      <br>
+        Shifts worked:
+      <br>
+      <form>
+        <label for = "start">Start date:</label>
+        <input type = "date" id = "start" name = "start" />
+        <label for = "end">End date:</label>
+        <input type = "date" id = "end" name = "end" />
+        <input hidden name = "employee" value = "{{selectedUser.username}}" />
+        <input type = "button" value = "View shifts" name = "show-shifts" class = "btn"
+              hx-post="{% url 'basic:view-shifts' %}" hx-trigger="click" hx-include="#view-shifts-form"
+              hx-target="#view-shifts" hx-swap = "innerHTML" />
+      </form>
+      <div id="view-shifts"></div>
+    </div>

@@ -2,11 +2,14 @@
 
 <form id="new-shift-form">
     <input hidden name = "user" value = "{{ selectedUser.username }}" />
-    {{ newShiftForm }}
-    <input type = "button" value = "Save"
+    <div class = "form-input">
+        {{ newShiftForm }}
+    </div>
+    <br />
+    <input type = "button" value = "Save" class = "btn"
             hx-post = "{% url 'basic:save-new-shift' %}" hx-trigger = "click" 
             hx-include = "#new-shift-form" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
-    <input type = "button" value = "Cancel"
+    <input type = "button" value = "Cancel" class = "btn-rmv"
             hx-get = "{% url 'basic:save-new-shift' %}" hx-trigger = "click" 
             hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
 </form>

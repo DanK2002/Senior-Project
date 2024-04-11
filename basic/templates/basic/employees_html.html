@@ -1,13 +1,17 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'managerial.css' %}">
+
 <!-- Display All Employees -->
 <!-- Note: Used a dropdown menu for the time being -->
 <div class = "main">
     <h1>
       Employees
     </h1>
+    <div class = "container">
     <!-- Refreshes the employee list. Currently, the list automatically refreshes upon deleting a user,
          But it does not automatically refresh when saving a new user. For some reason. Will fix next week. -->
     <form method="POST">
-      <input type="button" value="Refresh Employee List"
+      <input type="button" value="Refresh Employee List" class = "btn"
             hx-trigger = "click, click from:.refresh-list delay:1s" hx-post = "{% url 'basic:view-all-employees' %}"
             hx-target = "#view-employees" hx-swap = "innerHTML" />
     </form>
@@ -17,26 +21,28 @@
             <!-- Lists all employees -->
             {{ list_all_employees|safe }}
         </div>
-      </select>
+      
+      <br />
+
       <!-- Button to view a specific employee -->
-      <input type="button" name="View" value="View" 
+      <input type="button" name="View" value="View" class = "btn"
               hx-post="{% url 'basic:view-employee' %}" hx-trigger="click" 
               hx-target="#employee-info" hx-include="#select-employees"/>
   
       <!-- Button to remove a specific employee -->
-      <input type="button" name="Remove" value="Remove" class= "refresh-list"
+      <input type="button" name="Remove" value="Remove" class= "refresh-list btn-rmv"
               hx-post="{% url 'basic:remove-employee' %}" hx-trigger="click" hx-swap = "innerHTML"
               hx-target="#employee-info" hx-include="#select-employees"/>
     </form>
     <br>
     <form>
       <!-- Button to add a new employee (view the form) -->
-    <input type="button" name="New Employee" value="New Employee" 
+    <input type="button" name="New Employee" value="New Employee"  class = "btn"
           hx-post="{% url 'basic:new-employee' %}" hx-trigger="click" 
           hx-target="#employee-info" hx-swap = "innerHTML" />
     </form>
-  
-    <!-- Section for viewing/adding/editing an employee -->
-    <div id="employee-info"></div>
+      <!-- Section for viewing/adding/editing an employee -->
+      <div id="employee-info"></div>
+    </div>
 </div>
   

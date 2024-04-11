@@ -2,23 +2,26 @@
 <!-- Note: I want to add a way to edit shifts, but idk if it's better to use htmx or formsets... -->
 <!-- Should add a way to manage the groups that a user is in -->
 
-  <div>
-    <h1>Edit {{ selectedUser.first_name }} {{ selectedUser.last_name }} Information</h1>
+  <div class = "secondary-container">
+    <h1>Edit {{ selectedUser.first_name }} {{ selectedUser.last_name }}'s Information</h1>
     <form method = "POST" id="edit-employee-form">
-      <!-- {% csrf_token %} -->
-      {{ editEmployee }}
+      <div class = "form-input">
+        <!-- {% csrf_token %} -->
+        {{ editEmployee }}
+      </div>
+      <br />
       <input hidden name = "user" value = "{{ selectedUser.username }}" />
-      <input type="button" name = "Save" value = "Save" 
+      <input type="button" name = "Save" value = "Save"  class = "btn"
             hx-post="{% url 'basic:edit-employee-save' %}" hx-trigger="click" 
             hx-target="#employee-info" hx-swap = "innerHTML" hx-include = "#edit-employee-form" />
-      <input type="submit" name = "Cancel" value = "Cancel" />
+      <input type="submit" name = "Cancel" value = "Cancel" class = "btn-rmv" />
     </form>
-  </div>
-  <div id="edit-shifts">
-    <form id = "show-shifts">
-      <input hidden name = "user" value = "{{ selectedUser.username }}" />
-      <input type = "button" value = "Manage shifts"
-          hx-post = "{% url 'basic:edit-shifts' %}" hx-trigger = "click"
-          hx-target = "#edit-shifts" hx-swap = "innerHTML" hx-include = "#show-shifts" />
-    </form>
+    <div id="edit-shifts">
+      <form id = "show-shifts">
+        <input hidden name = "user" value = "{{ selectedUser.username }}" />
+        <input type = "button" value = "Manage shifts" class = "btn"
+            hx-post = "{% url 'basic:edit-shifts' %}" hx-trigger = "click"
+            hx-target = "#edit-shifts" hx-swap = "innerHTML" hx-include = "#show-shifts" />
+      </form>
+    </div>
   </div>

@@ -1,5 +1,9 @@
-{% for shift in shifts %}
-From {{ shift.start }} to {{ shift.end }}
-<br />
-{% endfor %}
-Total Hours worked: {{ hours }} hours, {{ minutes }} minutes
+<div class = shifts>
+    {% for shift in shifts %}
+    From {{ shift.start }} to {{ shift.end }}
+    <br />
+    {% endfor %}
+    <span class = "accent">
+        Total Hours worked: {{ hours }} hours, {{ minutes }} minutes
+    </span>
+</div>

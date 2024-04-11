@@ -1,18 +1,21 @@
 <!-- For adding a new employee -->
 <!-- Should add: groups and password validation based on Django requirements -->
 
-<div>
+<div class = "secondary-container">
     <h1>Add a new employee</h1>
     <form method = "POST" id = "add-employee-form">
-      {{ add_form }}
+      <div class = "form-input">
+        {{ add_form }}
+      </div>
+      <br />
       <!-- Despite being in class "refresh-list", button does not automatically refresh the employee list-->
-      <input type="button" name = "Add" value = "Add" class= "refresh-list"
+      <input type="button" name = "Add" value = "Add" class= "refresh-list btn"
           hx-post="{% url 'basic:save-new-employee' %}" hx-trigger="click" 
           hx-target="#employee-info" hx-include="#add-employee-form" hx-swap="innerHTML" />
-      <input type="button" name = "Cancel" value = "Cancel" />
+      <input type="button" name = "Cancel" value = "Cancel" class = "btn-rmv" />
     </form>
     <form method="POST">
-      <input type="button" value="Refresh Employee List"
+      <input type="button" value="Refresh Employee List" class = "btn"
             hx-trigger = "click, click from:.refresh-list delay:1s" hx-post = "{% url 'basic:view-all-employees' %}"
             hx-target = "#view-employees" hx-swap = "innerHTML" />
     </form>

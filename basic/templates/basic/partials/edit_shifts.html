@@ -4,24 +4,24 @@
         <form id="edit-shifts">
         <label for = "shift-list">Select a shift: </label>
         <input hidden name = "user" value = "{{ selectedUser.username }}" />
-        <select id = "shift-list" name = "shift-list">
+        <select id = "shift-list" name = "shift-list" class = "dropdown">
                 {% for shift in shifts %}
                 <option value = "{{ shift.start|date:'Y-m-d H:i:s' }} ">From {{ shift.start }} to {{ shift.end }}</option>
                 {% endfor %}
         </select>
-        <input type = "button" value = "Edit shift" class = "refresh-shift"
+        <input type = "button" value = "Edit shift" class = "refresh-shift btn"
                 hx-post = "{% url 'basic:edit-shift' %}" hx-include = "#edit-shifts"
                 hx-trigger = "click" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
-        <input type = "button" value = "Remove shift" class = "refresh-shift"
+        <input type = "button" value = "Remove shift" class = "refresh-shift btn-rmv"
                 hx-post = "{% url 'basic:remove-shift' %}" hx-include = "#edit-shifts"
                 hx-trigger = "click" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
-        <input type = "button" value = "Add new shift" class = "refresh-shift"
+        <input type = "button" value = "Add new shift" class = "refresh-shift btn"
                 hx-post = "{% url 'basic:add-shift' %}" hx-include = "{{ selectedUser.username }}"
                 hx-trigger = "click" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
         </form>
 </div>
 <form>
-    <input type="button" value = "Refresh shift list"
+    <input type="button" value = "Refresh shift list" class = "btn"
             hx-post = "{% url 'basic:edit-shifts' %}" hx-trigger = "click, click from:.refresh-shift delay: 1s"
             hx-target = "#parent-shift-list" hx-swap = "innerHTML" hx-include = "{{ selectedUser }}" />
 </form>

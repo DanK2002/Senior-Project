@@ -1,6 +1,6 @@
 <!-- Displays all employees -->
 <label for = "select-employees">Select an employee:</label>
-<select name = "select-employees" id = "select-employees">
+<select name = "select-employees" id = "select-employees" class = "dropdown">
     {% for user in users %}
     <option value="{{ user.username }}">{{ user.first_name }} {{ user.last_name }}</option>
     {% endfor %}

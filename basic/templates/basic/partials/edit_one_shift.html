@@ -3,11 +3,14 @@
 <form id="edit-shift-form">
     <input hidden name = "user" value = "{{ selectedUser.username }}" />
     <input hidden name = "original-shift" value = "{{ originalShift.start|date:'Y-m-d H:i:s' }}" />
-    {{ editShiftForm }}
-    <input type = "button" value = "Save"
+    <div class = "form-input">
+        {{ editShiftForm }}
+    </div>
+    <br />
+    <input type = "button" value = "Save" class = "btn"
             hx-post = "{% url 'basic:save-existing-shift' %}" hx-trigger = "click" 
             hx-include = "#edit-shift-form" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
-    <input type = "button" value = "Cancel"
+    <input type = "button" value = "Cancel" class = "btn-rmv"
             hx-get = "{% url 'basic:save-existing-shift' %}" hx-trigger = "click" 
             hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
 </form>
