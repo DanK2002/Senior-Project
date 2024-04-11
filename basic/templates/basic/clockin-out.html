@@ -6,7 +6,10 @@
         border-collapse: collapse;
         width: 80%;
         margin: 0px auto;
+        white-space: nowrap;
     }
+
+    #actionheader { text-align: center; }
 
     td, th {
         border: 1px solid #ddd;
@@ -73,11 +76,12 @@
                 <tr>
                     <th>Username</th>
                     <th>Employee Name</th>
-                    <th>Action</th>
+                    <th id="actionheader">Action</th>
                 </tr>
             </thead>
             <tbody>
             {% for user in users %}
+                {% if user.username in employeeUsernames %}
                 <tr id="row{{forloop.counter}}">
                     <td>{{ user.username }}</td>
                     <td>
@@ -103,6 +107,7 @@
                         </button>
                     </td>
                 </tr>
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>        

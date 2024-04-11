@@ -815,6 +815,10 @@ def mark_completed(request, order_id):
 
 def clockin_out(request):
     users = User.objects.all()
+    employees = Employee.objects.all()
+    employeeUsernames = []
+    for employee in employees:
+        employeeUsernames.append(employee.user.username)
     currentShifts = Shift.objects.filter(end=None)
     clockedIn = []
     for shift in currentShifts:
@@ -824,6 +828,7 @@ def clockin_out(request):
         "basic/clockin-out.html", 
         {
             'users': users,
+            'employeeUsernames': employeeUsernames,
             'clockedIn': clockedIn
         })
 
