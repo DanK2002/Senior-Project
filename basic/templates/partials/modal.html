@@ -1,109 +1,184 @@
+<style>
+    /***** MODAL DIALOG ****/
+    #modal {
+        /* Underlay covers entire screen. */
+        position: fixed;
+        top:0px;
+        bottom: 0px;
+        left:0px;
+        right:0px;
+        background-color:rgba(0,0,0,0.5);
+        z-index:1000;
+    
+        /* Flexbox centers the .modal-content vertically and horizontally */
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+    
+        /* Animate when opening */
+        animation-name: fadeIn;
+        animation-duration: 150ms;
+        animation-timing-function: ease;
+    }
+    
+    #modal > .modal-underlay {
+        /* underlay takes up the entire viewport. This is only
+        required if you want to click to dismiss the popup */
+        position: absolute;
+        z-index: -1;
+        top:0px;
+        bottom:0px;
+        left: 0px;
+        right: 0px;
+    }
+    
+    #modal > .modal-content {
+        /* Position visible dialog near the top of the window */
+        margin-top:10vh;
+    
+        /* Sizing for visible dialog */
+        width:80%;
+        max-width:550px;
+    
+        /* Display properties for visible dialog*/
+        border:solid 1px #999;
+        border-radius:8px;
+        box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
+        background-color:white;
+        /*padding:20px;*/
+    
+        /* Animate when opening */
+        animation-name: zoomIn;
+        animation-duration: 150ms;
+        animation-timing-function: ease;
+    }
+    
+    #modal.closing {
+        /* Animate when closing */
+        animation-name: fadeOut;
+        animation-duration: 150ms;
+        animation-timing-function: ease;
+    }
+    
+    #modal.closing > .modal-content {
+        /* Animate when closing */
+        animation-name: zoomOut;
+        animation-duration: 150ms;
+        animation-timing-function: ease;
+    }
+    
+    @keyframes fadeIn {
+        0% {opacity: 0;}
+        100% {opacity: 1;}
+    } 
+    
+    @keyframes fadeOut {
+        0% {opacity: 1;}
+        100% {opacity: 0;}
+    } 
+    
+    @keyframes zoomIn {
+        0% {transform: scale(0.5);}
+        100% {transform: scale(1);}
+    } 
+    
+    @keyframes zoomOut {
+        0% {transform: scale(1);}
+        100% {transform: scale(0.5);}
+    }
+
+    /* The Close Button */
+    .close {
+        padding: 4px 12px;
+        float: right;
+        cursor: pointer;
+        color: white;
+        background-color: transparent;
+        border: none;
+        font-size: 36px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #333333;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Modal Header */
+    .modal-header {
+        padding: 18px 22px;
+        border: none;
+        border-radius: 6px;
+        background-color: #04AA6D;
+        color: white;
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    /* Modal Body */
+    .modal-body {
+        margin: 16px 16px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    /* Input Boxes */
+    input[type=text], input[type=password] {
+        width: 100%;
+        display: block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 8px 8px;
+        box-sizing: border-box;
+        text-align: left;
+        font-size: 16px;
+    }
+
+    /* Submit Button */
+    input[type=submit] {
+        width: 98%;
+        margin: 6px auto;
+        display: block;
+        border: none;
+        border-radius: 5px;
+        padding: 14px 20px;
+        background-color: #04AA6D;
+        color: white;
+        cursor: pointer;
+        font-size: 19px;
+        font-weight: bold;
+    }
+
+    input[type=submit]:hover {
+        background-color: #048d5b;
+    }
+
+    /* Custom break */
+    .break {
+        margin: 12px auto;
+    }
+</style>
+
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-    <style>
-        /***** MODAL DIALOG ****/
-        #modal {
-            /* Underlay covers entire screen. */
-            position: fixed;
-            top:0px;
-            bottom: 0px;
-            left:0px;
-            right:0px;
-            background-color:rgba(0,0,0,0.5);
-            z-index:1000;
-        
-            /* Flexbox centers the .modal-content vertically and horizontally */
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-        
-            /* Animate when opening */
-            animation-name: fadeIn;
-            animation-duration: 150ms;
-            animation-timing-function: ease;
-        }
-        
-        #modal > .modal-underlay {
-            /* underlay takes up the entire viewport. This is only
-            required if you want to click to dismiss the popup */
-            position: absolute;
-            z-index: -1;
-            top:0px;
-            bottom:0px;
-            left: 0px;
-            right: 0px;
-        }
-        
-        #modal > .modal-content {
-            /* Position visible dialog near the top of the window */
-            margin-top:10vh;
-        
-            /* Sizing for visible dialog */
-            width:80%;
-            max-width:600px;
-        
-            /* Display properties for visible dialog*/
-            border:solid 1px #999;
-            border-radius:8px;
-            box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.3);
-            background-color:white;
-            padding:20px;
-        
-            /* Animate when opening */
-            animation-name: zoomIn;
-            animation-duration: 150ms;
-            animation-timing-function: ease;
-        }
-        
-        #modal.closing {
-            /* Animate when closing */
-            animation-name: fadeOut;
-            animation-duration: 150ms;
-            animation-timing-function: ease;
-        }
-        
-        #modal.closing > .modal-content {
-            /* Animate when closing */
-            animation-name: zoomOut;
-            animation-duration: 150ms;
-            animation-timing-function: ease;
-        }
-        
-        @keyframes fadeIn {
-            0% {opacity: 0;}
-            100% {opacity: 1;}
-        } 
-        
-        @keyframes fadeOut {
-            0% {opacity: 1;}
-            100% {opacity: 0;}
-        } 
-        
-        @keyframes zoomIn {
-            0% {transform: scale(0.5);}
-            100% {transform: scale(1);}
-        } 
-        
-        @keyframes zoomOut {
-            0% {transform: scale(1);}
-            100% {transform: scale(0.5);}
-        }
-    </style>
     <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
         <div class="modal-underlay" _="on click trigger closeModal"></div>
         <div class="modal-content">
+            <button class="close" _="on click trigger closeModal">&times;</button>
             <form action="{% url 'basic:auth-clockin-out' %}" method="post">
                 {% csrf_token %}
-                <h><b><u>Enter password for {{ username }}:</u></b></h>
-                <br>
-                <label for="username">Username: </label>
-                <input id="username" type="text" name="username" value="{{ username }}">
-                <br>
-                <label for="password">Password: </label>
-                <input id="password" type="password" name="password">
-                <input type="submit" value="OK">
+                <div class="modal-header">Enter password for {{ username }}:</div>
+                <div class="modal-body">
+                    <label for="username">Username:</label>
+                    <input id="username" type="text" name="username" value="{{ username }}">
+                    <div class="break"></div>
+                    <label for="password">Password:</label>
+                    <input id="password" type="password" name="password">
+                </div>
+                <input type="submit" value="Submit">
             </form>
-            <button _="on click trigger closeModal">Close</button>
         </div>
     </div>
 </body>

@@ -652,7 +652,17 @@ def sales(request):
     })
 
 def salesSummary(request):
-    orders = Order.objects.all()
+    str_start = request.GET.get('start_date')
+    str_end = request.GET.get('end_date')
+
+    if( str_start != '' and str_end != ''):
+        start_date = datetime.strptime(str_start, '%Y-%m-%d')
+        end_date = datetime.strptime(str_end, '%Y-%m-%d')
+
+        orders = Order.objects.filter(time_completed__date__range=(start_date, end_date))
+    else:
+        orders = Order.objects.all()
+    
     orders_total = 0
 
     foods_ind = defaultdict(int)
@@ -837,7 +847,6 @@ def modal(request):
         })
 
 def auth_clockin_out(request):
-    users = User.objects.all()
     currentShifts = Shift.objects.filter(end=None)
     
     clockedIn = []
@@ -851,7 +860,7 @@ def auth_clockin_out(request):
     user = authenticate(request, username=username, password=password)
     
     if user is not None: # A backend authenticated the credentials
-        employee = Employee.objects.filter(user=user)
+        employee = Employee.objects.get(user=user)
         if user in clockedIn: # Add an end time to the current Shift for this employee
             shift = currentShifts.get(employee=employee)
             shift.end = timezone.now()
@@ -865,13 +874,7 @@ def auth_clockin_out(request):
                     employee=employee
                 )
             newShift.save() # Store it into the database
-        return render(
-            request, 
-            "basic/clockin-out.html", 
-            {
-                'users': users,
-                'clockedIn': clockedInUsernames
-            })
+        return redirect('basic:clockin-out')
     else: # No backend authenticated the credentials
         return render(
             request, 
@@ -929,7 +932,8 @@ def fooditems(request):
     newFoods = []
     for food in foods:
         if food.category.upper() == categoryName.upper():
-            newFoods.append(food)
+            if food.menu == True:
+                newFoods.append(food)
 
     return render(request, "basic/partials/fooditems.html", {'foods': newFoods, 'category': categoryName})
 
@@ -1011,9 +1015,54 @@ def addFoodToOrder(request):
     foodName = request.POST.get("foodName")
     foods = Food.objects.distinct()
     for food in foods:
-            if food.name.upper() == foodName.upper():
-                theFood = food
-    print(theFood.name)
-    print(request.POST)
+        if food.name.upper() == foodName.upper():
+            theFood = food
+    code_cat = theFood.code[:1]
+    code_food = theFood.code[1:2]
+    #find the highest number code for this food type
+    high_code = Food.objects.filter(
+        code__startswith=code_cat + code_food
+        ).values_list('code', flat=True).order_by('-code').first()
+    # Copy the highest number
+    high_number = high_code[2:]
+    # copy into a custom item
+    theFood.pk = None
+    theFood.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
+    theFood.menu = False
 
-    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName})
+    allIngredients = Ingredient.objects.distinct()
+    ingredientDictionary = json.loads(theFood.ingred)
+    ingredientsInFoodNames = list(ingredientDictionary.keys())
+    ingredientsInFood = []
+    for ingredient in allIngredients:
+        for ing in ingredientsInFoodNames:
+            if ing.upper() == ingredient.name.upper():
+                ingredientsInFood.append(ingredient)
+    
+    newIngredients = {}
+    for x in request.POST:
+        #find the ingredient with the id x that matches addition'x'
+        if "addition" in str(x):
+            additionID = int(str(x)[8:])
+            for thisIngredient in ingredientsInFood:
+                if additionID == thisIngredient.idnumber:
+                    ingredient = thisIngredient
+            newAmount = ingredientDictionary.get(ingredient.name) + int(request.POST.get(str(x)))
+            if newAmount < 0:
+                newAmount = 0
+            newIngredients[ingredient.name] = newAmount
+    theFood.ingred = json.dumps(newIngredients)
+    theFood.save()
+    #use json.dumps(some dictionary) to pass json of ingredients
+
+    orders = Order.objects.distinct()
+    #note: this method of finding the current order will not work if multiple machines are creating
+    #orders at once. This method should be tweaked.
+    for currentOrder in orders:
+        if currentOrder.number == len(Order.objects.distinct()):
+            order = currentOrder
+    order.foods.add(theFood)
+    order.save()
+
+    foodsInOrder = order.foods.all()
+    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder})
