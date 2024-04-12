@@ -1,18 +1,23 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
+    <style>
+        
+    </style>
 </head>
 <body>
-    <h1 style="text-align: center;">FOH Orders (Add New)</h1>
-
-    <div class="large-box" id="button-container">
-        <button class="button" hx-get="/dine-in" hx-target="#button-container">Dine In</button>
-        <button class="button" hx-get="/take-out" hx-target="#button-container">Take-Out</button>
-        <button class="button" hx-get="/drive-through" hx-target="#button-container">Drive-Through</button>
+    <div class="sub-title">
+        <h1>Add New Order</h1>
     </div>
 
-    <div class="button-container2">
-        <button class="button"> <a href="../order/" class="link">Back to Orders</a> </button>
+    <div id="large-box-add" id="button-container">
+        <button class="large-button-add" hx-get="/dine-in" hx-target="#button-container">Dine In</button>
+        <button class="large-button-add" hx-get="/take-out" hx-target="#button-container">Take-Out</button>
+        <button class="large-button-add" hx-get="/drive-through" hx-target="#button-container">Drive-Through</button>
+    </div>
+
+    <div class="button-container2" hx-target="body" hx-swap="outerHTML">
+        <button class="button" hx-get="../order/">Back to Menu</button>
     </div>
 </body>
 </html>
