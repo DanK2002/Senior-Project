@@ -943,7 +943,8 @@ def customizeFood(request):
         foods = Food.objects.distinct()
         for food in foods:
             if food.name.upper() == foodName.upper():
-                theFood = food
+                if food.menu == True:
+                    theFood = food
         allIngredients = Ingredient.objects.distinct()
         ingredientDictionary = json.loads(theFood.ingred)
         ingredientsInFoodNames = list(ingredientDictionary.keys())
@@ -989,7 +990,8 @@ def addFoodToOrder(request):
     foods = Food.objects.distinct()
     for food in foods:
         if food.name.upper() == foodName.upper():
-            theFood = food
+            if food.menu:
+                theFood = food
     code_cat = theFood.code[:1]
     code_food = theFood.code[1:2]
     #find the highest number code for this food type
@@ -1011,6 +1013,16 @@ def addFoodToOrder(request):
         for ing in ingredientsInFoodNames:
             if ing.upper() == ingredient.name.upper():
                 ingredientsInFood.append(ingredient)
+
+    notInFood = []
+    inFood = False
+    for ingredient in allIngredients:
+        for ing in ingredientsInFoodNames:
+            if ing.upper() == ingredient.name.upper():
+                inFood = True
+        if not inFood:
+            notInFood.append(ingredient)
+        inFood = False
     
     newIngredients = {}
     changesToFood = ''
@@ -1018,10 +1030,20 @@ def addFoodToOrder(request):
         #find the ingredient with the id x that matches addition'x'
         if "addition" in str(x):
             additionID = int(str(x)[8:])
+            isInFood = True
             for thisIngredient in ingredientsInFood:
                 if additionID == thisIngredient.idnumber:
                     ingredient = thisIngredient
-            newAmount = ingredientDictionary.get(ingredient.name) + int(request.POST.get(str(x)))
+            for thisIngredient in notInFood:
+                if additionID == thisIngredient.idnumber:
+                    ingredient = thisIngredient
+                    isInFood = False
+            
+            if isInFood:
+                newAmount = ingredientDictionary.get(ingredient.name) + int(request.POST.get(str(x)))
+            else:
+                newAmount = int(request.POST.get(str(x)))
+            
             if newAmount < 0 or int(request.POST.get(str(x))) == -1:
                 newAmount = 0
             if int(request.POST.get(str(x))) == 2:
@@ -1061,3 +1083,17 @@ def addFoodToOrder(request):
     order.save()
     return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder,
                                                                   'total': total})
+
+def meal_items(request):
+    allMeals = Meal.objects.distinct()
+    meals = []
+    for meal in allMeals:
+        if meal.menu == True:
+            meals.append(meal)
+
+    return render(request, "basic/partials/meal_items.html", {'meals': meals})
+
+def customizeMeal(request):
+    print(request.GET.get("mealName"))
+
+    return render(request, "basic/partials/customizeMeal.html")

@@ -53,6 +53,7 @@
             <a hx-get="{% url 'basic:fooditems' %}" hx-target="#itemlist" 
             hx-vals='{"categoryName": "{{category}}"}'> {{ category }} </a>
         {% endfor %}
+        <a hx-get="{% url 'basic:meal_items' %}" hx-target="#itemlist"> Meals </a>
     </div>
 
     <div class="main" id="itemlist"></div>

@@ -7,6 +7,9 @@
 <button hx-post="{% url 'basic:addFoodToOrder' %}" hx-target="#foodCustomizer" hx-include="#message, #changesForm"
 hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML">Submit Item</button>
 <br>
+<br>
+<a> <u>Modify Ingredients In Food</u> </a>
+<br>
 {% for ingredient in inFood %}
     <br>
     <a> {{ingredient.name}}: </a>
@@ -16,10 +19,17 @@ hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML">Submit Item</button>
     hx-include="#addition{{ingredient.idnumber}}" hx-vars="ingredientid:{{ ingredient.idnumber }}"> 
     <div id="change{{ingredient.idnumber}}">Standard</div>
 {% endfor %}
-</form>
+<br>
+<a> <u>Add Extra Ingredients</u> </a>
+<br>
 {% for ingredient in notInFood %}
     <br>
     <a> {{ingredient.name}}: </a>
-    -2 <input type="range" min="-2" max="2" step="1" value="0"> 2
+    <input type="range" min="0" max="2" step="1" value="0" hx-target="#change{{ingredient.idnumber}}"
+    hx-post="{% url 'basic:amountchange' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    name="addition{{ingredient.idnumber}}" id="addition{{ingredient.idnumber}}"
+    hx-include="#addition{{ingredient.idnumber}}" hx-vars="ingredientid:{{ ingredient.idnumber }}"> 
+    <div id="change{{ingredient.idnumber}}">Standard</div>
 {% endfor %}
+</form>
 </div>
