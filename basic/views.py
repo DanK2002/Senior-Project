@@ -932,7 +932,8 @@ def fooditems(request):
     newFoods = []
     for food in foods:
         if food.category.upper() == categoryName.upper():
-            newFoods.append(food)
+            if food.menu == True:
+                newFoods.append(food)
 
     return render(request, "basic/partials/fooditems.html", {'foods': newFoods, 'category': categoryName})
 
@@ -942,47 +943,157 @@ def customizeFood(request):
         foods = Food.objects.distinct()
         for food in foods:
             if food.name.upper() == foodName.upper():
-                theFood = food
+                if food.menu == True:
+                    theFood = food
         allIngredients = Ingredient.objects.distinct()
         ingredientDictionary = json.loads(theFood.ingred)
-        ingredientsInFood = list(ingredientDictionary.keys())
+        ingredientsInFoodNames = list(ingredientDictionary.keys())
+        ingredientsInFood = []
+        for ingredient in allIngredients:
+            for ing in ingredientsInFoodNames:
+                if ing.upper() == ingredient.name.upper():
+                    ingredientsInFood.append(ingredient)
         notInFood = []
         inFood = False
         for ingredient in allIngredients:
-            for ing in ingredientsInFood:
+            for ing in ingredientsInFoodNames:
                 if ing.upper() == ingredient.name.upper():
                     inFood = True
             if not inFood:
-                notInFood.append(ingredient.name)
-            inFood = False
-        return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
-                                                                 'notInFood': notInFood})
-    else:
-        foodName = request.POST.get("foodName")
-        message = request.POST.get("message")
-        foods = Food.objects.distinct()
-        for food in foods:
-            if food.name.upper() == foodName.upper():
-                theFood = food
-        orders = Order.objects.distinct()
-        for order in orders:
-            if order.number == len(Order.objects.distinct()):
-                order.foods.add(theFood)
-        order.message = message
-        order.save()
-        allIngredients = Ingredient.objects.distinct()
-        ingredientDictionary = json.loads(theFood.ingred)
-        ingredientsInFood = list(ingredientDictionary.keys())
-        notInFood = []
-        inFood = False
-        for ingredient in allIngredients:
-            for ing in ingredientsInFood:
-                if ing.upper() == ingredient.name.upper():
-                    inFood = True
-            if not inFood:
-                notInFood.append(ingredient.name)
+                notInFood.append(ingredient)
             inFood = False
         return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
 
+def amountchange(request):
+    print(request.POST)
+    id = request.POST.get("ingredientid")
+    amountChange = int(request.POST[f'addition{id}'])
+
+    if amountChange == -2:
+        change = "None"
+    elif amountChange == -1:
+        change = "Less"
+    elif amountChange == 0:
+        change = "Standard"
+    elif amountChange == 1:
+        change = "Extra"
+    elif amountChange == 2:
+        change = "Extra Extra"
+    else:
+        change = "Invalid"
+
+    return render(request, "basic/partials/amountchange.html", {'change':change})
                                                                  
+def addFoodToOrder(request):
+    foodName = request.POST.get("foodName")
+    foods = Food.objects.distinct()
+    for food in foods:
+        if food.name.upper() == foodName.upper():
+            if food.menu:
+                theFood = food
+    code_cat = theFood.code[:1]
+    code_food = theFood.code[1:2]
+    #find the highest number code for this food type
+    high_code = Food.objects.filter(
+        code__startswith=code_cat + code_food
+        ).values_list('code', flat=True).order_by('-code').first()
+    # Copy the highest number
+    high_number = high_code[2:]
+    # copy into a custom item
+    theFood.pk = None
+    theFood.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
+    theFood.menu = False
+
+    allIngredients = Ingredient.objects.distinct()
+    ingredientDictionary = json.loads(theFood.ingred)
+    ingredientsInFoodNames = list(ingredientDictionary.keys())
+    ingredientsInFood = []
+    for ingredient in allIngredients:
+        for ing in ingredientsInFoodNames:
+            if ing.upper() == ingredient.name.upper():
+                ingredientsInFood.append(ingredient)
+
+    notInFood = []
+    inFood = False
+    for ingredient in allIngredients:
+        for ing in ingredientsInFoodNames:
+            if ing.upper() == ingredient.name.upper():
+                inFood = True
+        if not inFood:
+            notInFood.append(ingredient)
+        inFood = False
+    
+    newIngredients = {}
+    changesToFood = ''
+    for x in request.POST:
+        #find the ingredient with the id x that matches addition'x'
+        if "addition" in str(x):
+            additionID = int(str(x)[8:])
+            isInFood = True
+            for thisIngredient in ingredientsInFood:
+                if additionID == thisIngredient.idnumber:
+                    ingredient = thisIngredient
+            for thisIngredient in notInFood:
+                if additionID == thisIngredient.idnumber:
+                    ingredient = thisIngredient
+                    isInFood = False
+            
+            if isInFood:
+                newAmount = ingredientDictionary.get(ingredient.name) + int(request.POST.get(str(x)))
+            else:
+                newAmount = int(request.POST.get(str(x)))
+            
+            if newAmount < 0 or int(request.POST.get(str(x))) == -1:
+                newAmount = 0
+            if int(request.POST.get(str(x))) == 2:
+                changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == 1:
+                changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == -1:
+                if newAmount == 0:
+                    changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+                else:
+                    changesToFood = changesToFood + "Add less " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == -2:
+                changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+            newIngredients[ingredient.name] = newAmount
+    theFood.ingred = json.dumps(newIngredients)
+    if changesToFood == '':
+        changesToFood = "Standard ingredients.\n"
+    changesToFood = changesToFood + request.POST.get("message")
+    theFood.message = changesToFood
+    theFood.save()
+    #use json.dumps(some dictionary) to pass json of ingredients
+
+    orders = Order.objects.distinct()
+    #note: this method of finding the current order will not work if multiple machines are creating
+    #orders at once. This method should be tweaked.
+    for currentOrder in orders:
+        if currentOrder.number == len(Order.objects.distinct()):
+            order = currentOrder
+    order.foods.add(theFood)
+    order.save()
+
+    foodsInOrder = order.foods.all()
+    total = 0
+    for food in foodsInOrder:
+        total += food.price
+    order.price = total
+    order.save()
+    return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder,
+                                                                  'total': total})
+
+def meal_items(request):
+    allMeals = Meal.objects.distinct()
+    meals = []
+    for meal in allMeals:
+        if meal.menu == True:
+            meals.append(meal)
+
+    return render(request, "basic/partials/meal_items.html", {'meals': meals})
+
+def customizeMeal(request):
+    print(request.GET.get("mealName"))
+
+    return render(request, "basic/partials/customizeMeal.html")

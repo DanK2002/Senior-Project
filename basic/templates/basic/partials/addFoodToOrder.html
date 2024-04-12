@@ -1,0 +1,14 @@
+{{foodName}} was added to order.
+<br>
+<br>
+<u>Order Summary:</u>
+{% for food in foodsInOrder %}
+    <br>
+    <br>
+    <a><u>{{food.name}}</u></a>
+    <br>
+    <a>{{food.message}}</a>
+{% endfor %}
+<br>
+<br>
+<a><u>Total</u> {{total}}</a>
