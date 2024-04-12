@@ -17,11 +17,11 @@
                     <div class="order-box" id="order_{{ order.id }}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
-                        <form id="mark_completed_form_{{ order.id }}" hx-post="{% url 'mark_completed' order.id %}">
+                        <form id="mark_completed_form_{{ order.id }}" hx-post="{% url 'basic:mark_completed' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Completed</button>
                         </form>
-                        <form id="remove_ready_form_{{ order.id }}" hx-post="{% url 'remove_ready' order.id %}">
+                        <form id="remove_ready_form_{{ order.id }}" hx-post="{% url 'basic:remove_ready' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Revert: In Progress</button>
                         </form>

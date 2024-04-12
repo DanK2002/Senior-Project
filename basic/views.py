@@ -936,8 +936,8 @@ def ordercreation(request):
 
     orderNumber = len(Order.objects.distinct()) + 1
 
-    order = Order(number = orderNumber, time_est = '0001-01-01', time_submitted = '0001-01-01', time_ready = '0001-01-01',
-                time_completed = '0001-01-01', price = 0.0, employee_submitted = user, message = '')
+    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+                   price = 0.0, employee_submitted = user, message = '')
 
     order.save()
 
