@@ -1094,13 +1094,24 @@ def addFoodToOrder(request):
     order.save()
 
     foodsInOrder = order.foods.all()
+    mealsInOrder = order.meals.all()
     total = 0
     for food in foodsInOrder:
         total += food.price
+    for meal in mealsInOrder:
+        total += meal.price
     order.price = total
     order.save()
+
+    mealInstructions = []
+    for meal in mealsInOrder:
+        instruction = meal.name + ":\n"
+        for food in meal.foods.all():
+            instruction = instruction + food.name + "; " + food.message + ". "
+        mealInstructions.append(instruction)
+
     return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder,
-                                                                  'total': total})
+                                                                  'total': total, 'mealInstructions': mealInstructions})
 
 def meal_items(request):
     allMeals = Meal.objects.distinct()
@@ -1112,6 +1123,188 @@ def meal_items(request):
     return render(request, "basic/partials/meal_items.html", {'meals': meals})
 
 def customizeMeal(request):
-    print(request.GET.get("mealName"))
+    allMeals = Meal.objects.distinct()
+    for meal in allMeals:
+        if meal.name.upper() == request.GET.get("mealName").upper():
+            if meal.menu == True:
+                newMeal = meal
+                thisMeal = meal
+    foodsInMeal = thisMeal.foods.all()
+    code_meal = newMeal.code[:1]
+        
+    high_code = Meal.objects.filter(
+        code__startswith=code_meal
+        ).values_list('code', flat=True).order_by('-code').first()
+        
+    high_number = high_code[1:]
+    # copy into a custom item
+    newMeal.pk = None
+    newMeal.code = f'{code_meal}{str(int(high_number) + 1)}'
+    newMeal.menu = False
+    newMeal.save()
 
-    return render(request, "basic/partials/customizeMeal.html")
+    for food in foodsInMeal:
+        # Generate a new code from db data #
+        code_cat = food.code[:1]
+        code_food = food.code[1:2]
+            
+        high_code = Food.objects.filter(
+            code__startswith=code_cat + code_food
+            ).values_list('code', flat=True).order_by('-code').first()
+            
+        high_number = high_code[2:]
+        # copy into a custom item
+        food.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
+        food.menu = False
+        food.pk = None
+        food.message = "This is a test message"
+        food.save()
+        newMeal.foods.add(food)
+    newMeal.save()
+
+    return render(request, "basic/partials/customizeMeal.html", {'meal': newMeal, 'foods': foodsInMeal})
+
+def customizeFoodInMeal(request):
+    if request.method == 'GET':
+        foodName = request.GET.get("foodName")
+        foods = Food.objects.distinct()
+        for food in foods:
+            if food.name.upper() == foodName.upper():
+                if food.menu == True:
+                    theFood = food
+        allIngredients = Ingredient.objects.distinct()
+        ingredientDictionary = json.loads(theFood.ingred)
+        ingredientsInFoodNames = list(ingredientDictionary.keys())
+        ingredientsInFood = []
+        for ingredient in allIngredients:
+            for ing in ingredientsInFoodNames:
+                if ing.upper() == ingredient.name.upper():
+                    ingredientsInFood.append(ingredient)
+        notInFood = []
+        inFood = False
+        for ingredient in allIngredients:
+            for ing in ingredientsInFoodNames:
+                if ing.upper() == ingredient.name.upper():
+                    inFood = True
+            if not inFood:
+                notInFood.append(ingredient)
+            inFood = False
+        return render(request, "basic/partials/customizeFoodInMeal.html", {'food': theFood, 'inFood': ingredientsInFood,
+                                                                 'notInFood': notInFood})
+
+def editFoodInMeal(request):
+    foodName = request.POST.get("foodName")
+    foods = Food.objects.distinct()
+    for food in foods:
+        if food.name.upper() == foodName.upper():
+            if food.menu:
+                theFood = food
+    code_cat = theFood.code[:1]
+    code_food = theFood.code[1:2]
+    #find the highest number code for this food type
+    high_code = Food.objects.filter(
+        code__startswith=code_cat + code_food
+        ).values_list('code', flat=True).order_by('-code').first()
+    # Copy the highest number
+    high_number = high_code[2:]
+    # copy into a custom item
+    theFood.pk = None
+    theFood.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
+    theFood.menu = False
+
+    allIngredients = Ingredient.objects.distinct()
+    ingredientDictionary = json.loads(theFood.ingred)
+    ingredientsInFoodNames = list(ingredientDictionary.keys())
+    ingredientsInFood = []
+    for ingredient in allIngredients:
+        for ing in ingredientsInFoodNames:
+            if ing.upper() == ingredient.name.upper():
+                ingredientsInFood.append(ingredient)
+
+    notInFood = []
+    inFood = False
+    for ingredient in allIngredients:
+        for ing in ingredientsInFoodNames:
+            if ing.upper() == ingredient.name.upper():
+                inFood = True
+        if not inFood:
+            notInFood.append(ingredient)
+        inFood = False
+    
+    newIngredients = {}
+    changesToFood = ''
+    for x in request.POST:
+        #find the ingredient with the id x that matches addition'x'
+        if "addition" in str(x):
+            additionID = int(str(x)[8:])
+            isInFood = True
+            for thisIngredient in ingredientsInFood:
+                if additionID == thisIngredient.idnumber:
+                    ingredient = thisIngredient
+            for thisIngredient in notInFood:
+                if additionID == thisIngredient.idnumber:
+                    ingredient = thisIngredient
+                    isInFood = False
+            
+            if isInFood:
+                newAmount = ingredientDictionary.get(ingredient.name) + int(request.POST.get(str(x)))
+            else:
+                newAmount = int(request.POST.get(str(x)))
+            
+            if newAmount < 0 or int(request.POST.get(str(x))) == -1:
+                newAmount = 0
+            if int(request.POST.get(str(x))) == 2:
+                changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == 1:
+                changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == -1:
+                if newAmount == 0:
+                    changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+                else:
+                    changesToFood = changesToFood + "Add less " + ingredient.name + ".\n"
+            elif int(request.POST.get(str(x))) == -2:
+                changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+            newIngredients[ingredient.name] = newAmount
+    theFood.ingred = json.dumps(newIngredients)
+    if changesToFood == '':
+        changesToFood = "Standard ingredients.\n"
+    changesToFood = changesToFood + request.POST.get("message")
+    theFood.message = changesToFood
+    theFood.save()
+
+    return render(request, "basic/partials/editFoodInMeal.html")
+
+def addMealToOrder(request):
+    meals = Meal.objects.all()
+    for meal in meals:
+        if meal.code == request.GET.get("mealCode"):
+            addedMeal = meal
+    orders = Order.objects.distinct()
+    #note: this method of finding the current order will not work if multiple machines are creating
+    #orders at once. This method should be tweaked.
+    for currentOrder in orders:
+        if currentOrder.number == len(Order.objects.distinct()):
+            order = currentOrder
+    order.meals.add(addedMeal)
+    order.save()
+
+    foodsInOrder = order.foods.all()
+    print(foodsInOrder)
+    mealsInOrder = order.meals.all()
+    total = 0
+    for food in foodsInOrder:
+        total += food.price
+    for meal in mealsInOrder:
+        total += meal.price
+    order.price = total
+    order.save()
+
+    mealInstructions = []
+    for meal in mealsInOrder:
+        instruction = meal.name + ":\n"
+        for food in meal.foods.all():
+            instruction = instruction + food.name + "; " + food.message + ". "
+        mealInstructions.append(instruction)
+
+    return render(request, "basic/partials/addMealToOrder.html", {"meal": addedMeal, "foods": foodsInOrder,
+                                                                  "mealInstructions": mealInstructions, "total": total})
