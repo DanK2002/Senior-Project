@@ -28,7 +28,7 @@ for x in range(5):
     wage = round(random.uniform(10.0, 30.0), 2)
     username = f"{last_name.lower()}{random.randint(0, 99):02d}"
     try:
-        user = User.objects.create(username=username, password="password123", first_name=first_name, last_name=last_name)
+        user = User.objects.create(username=username, password="Django@1", first_name=first_name, last_name=last_name)
         employee = Employee.objects.create(user=user, wage=wage)
         if x == 1:
             man = Group.objects.get(name="manager")
