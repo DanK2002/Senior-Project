@@ -50,7 +50,10 @@ class Meal(models.Model):
     price = models.FloatField(blank = False)
 
     def __str__(self):
-        return self.name
+        out = f"{self.code}, {self.name} with"
+        for food in self.foods.all():
+            out += f" {food.code}"
+        return out
 
 
 class Food(models.Model):
@@ -64,7 +67,7 @@ class Food(models.Model):
 #    ingred = models.ManyToManyField('Ingredient', blank=False)
     
     def __str__(self):
-        return self.name
+        return f"{self.code}, {self.name}"
 
 
 class Ingredient(models.Model):
