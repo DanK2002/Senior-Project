@@ -814,7 +814,7 @@ def mark_completed(request, order_id):
     return JsonResponse({'success': True})
 
 def clockin_out(request):
-    users = User.objects.all()
+    users = User.objects.all().order_by("username")
     employees = Employee.objects.all()
     employeeUsernames = []
     for employee in employees:
