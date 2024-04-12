@@ -1,7 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+    #overlay {
+        position: fixed;
+        display: block;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+        pointer-events: none; 
+    }
+
+    #backbutton {
+        position: absolute;
+        top: 75px;
+        left: 120px;
+        padding: 10px 15px;
+        background-color: #96D1FF;
+        border: 1px solid;
+        border-color: #2081c3;
+        border-radius: 8px;
+        color: #03191E;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+        transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        pointer-events: auto; 
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    }
+
+    #backbutton:hover {
+        background-color: #2081c3;
+        border-color: #96D1FF;
+        color: white;
+        cursor: pointer;
+    }
+
+    .title { 
+        text-align: center;
+        white-space: nowrap; 
+    }
+
+    .title > h1 { 
+        background-color: #2081c3;
+        border: 2px solid #96d1ff;
+        color: white;
+        border-radius: 14px;
+        width: 390px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 15px;
+        font-size: 58px;
+    }
+    
     table {
         border-collapse: collapse;
         width: 80%;
@@ -34,7 +91,7 @@
 
     .clockin {
         width: 100%;
-        height: 56px;
+        height: 54px;
         background-color: #2081c3;
         border: none;
         border-radius: 8px;
@@ -50,7 +107,7 @@
 
     .clockout {
         width: 100%;
-        height: 56px;
+        height: 54px;
         background-color: #941c2f;
         border: none;
         border-radius: 8px;
@@ -70,7 +127,13 @@
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' style="background-color:#f7f9f9;">
     <div class="main">
-        <br>
+        <div id="overlay">
+            <input type="button" id="backbutton" value="← Back to ←
+Landing Page" style="white-space:pre" onclick="document.location.href='{% url 'basic:landingpage' %}';"/>
+        </div>
+        <div class="title">
+            <h1>Clock In / Out</h1>
+        </div>
         <table class="table">
             <thead>
                 <tr>
