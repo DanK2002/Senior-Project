@@ -8,7 +8,7 @@ superuser = User.objects.get(username='senato68')
 # Clear all tables except the superuser
 User.objects.exclude(username=superuser.username).delete()
 Employee.objects.all().delete()
-Group.objects.delete()
+Group.objects.all().delete()
 Shift.objects.all().delete()
 Order.objects.all().delete()
 Ingredient.objects.all().delete()
