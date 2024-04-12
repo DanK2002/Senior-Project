@@ -1,18 +1,29 @@
 <table>
+  <thead>
     <tr>
       <th>Ingredient</th>
-      <th>Quantity</th>
+      <th id="modifyheader">Modify</th>
+      <th id="quantityheader">Quantity</th>
     </tr>
-    {% for ingredient in ingredients %}
-    <tr>
-      <td> 
-        {{ ingredient.name }} 
-        <input type="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}">
-        <button type="button" hx-target="#quantity{{ ingredient.idnumber }}" hx-trigger="click" 
-        hx-post="{% url 'basic:quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
-        hx-vars="ingredient:{{ ingredient.idnumber }}"> Submit </button>
-      </td>
-      <td> <div id="quantity{{ ingredient.idnumber }}"> {{ ingredient.quantity }} </div> </td>
-    </tr>
-    {% endfor %}
-  </table>
+  </thead>
+  {% for ingredient in ingredients %}
+  <tr>
+    <td> 
+      <div class="name"> {{ ingredient.name }} </div>
+    </td>
+    <td>
+      <div class="modify">
+        <input type="number" class="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}" value="0">
+        <button type="button" class="submit" id="submit{{ ingredient.idnumber }}" hx-target="#quantity{{ ingredient.idnumber }}" 
+                hx-trigger="click" hx-post="{% url 'basic:quantity' %}" hx-include="#amount{{ ingredient.idnumber }}" 
+                hx-vars="ingredient:{{ ingredient.idnumber }}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+            >>
+        </button>
+      </div>
+    </td>
+    <td>
+      <div id="quantity{{ ingredient.idnumber }}" class="quantity"> {{ ingredient.quantity }} </div>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

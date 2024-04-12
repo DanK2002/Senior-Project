@@ -1,50 +1,185 @@
-<div class="main">
-  <b><u> Inventory </u></b>
+<style>
+  .title { 
+      text-align: center;
+      white-space: nowrap; 
+  }
 
-  <br>
-  <br>
+  .title > h1 { 
+      background-color: #2081c3;
+      border: 2px solid #96d1ff;
+      color: white;
+      border-radius: 10px;
+      width: 290px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 15px;
+      font-size: 58px;
+  }
+  
+  #searchingredient {
+      width: 100%;
+      min-width: 350px;
+      white-space: nowrap;
+  }
 
-  Search for an ingredient:
-  <input type="text" name = "ingredientname" id="ingredientname" hx-get="{% url 'basic:searchInventory' %}"
-  hx-target="#table" hx-include="#ingredientname" hx-trigger="keyup changed"><br>
+  #searchingredient > #ingredientnamelabel:hover {
+      cursor: text;
+  }
 
-  <br>
-  <div id="table">
-    <table>
-      <tr>
-        <th>Ingredient</th>
-        <th>Quantity</th>
-      </tr>
-      {% for ingredient in ingredients %}
-      <tr>
-        <td> 
-          {{ ingredient.name }} 
-          <input type="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}">
-          <button type="button" hx-target="#quantity{{ ingredient.idnumber }}" hx-trigger="click" 
-          hx-post="{% url 'basic:quantity' %}" hx-include="#amount{{ ingredient.idnumber }}"
-          hx-vars="ingredient:{{ ingredient.idnumber }}"
-          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'> Submit </button>
-        </td>
-        <td> <div id="quantity{{ ingredient.idnumber }}"> {{ ingredient.quantity }} </div> </td>
-      </tr>
-      {% endfor %}
-    </table>
+  #searchingredient > #ingredientname {
+      width: 100%;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      padding: 10px 14px;
+      box-sizing: border-box;
+      text-align: left;
+      font-size: 18px;
+  }
+  
+  /* Custom break */
+  .break { margin: 14px auto; }
+
+
+  table {
+      border-collapse: collapse;
+      border: 0px transparent;
+      white-space: nowrap;
+      width: 100%;
+  }
+
+  td, th {
+      border: 1px solid #ddd;
+      padding: 8px;
+      white-space: nowrap;
+  }
+
+  th {
+      font-size: 44px;
+      padding: 16px 14px;
+      text-align: left;
+      background-color: #2081c3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+  }
+
+  tr { font-size: 26px; }
+
+  tr:nth-child(even) { background-color: #f2f2f2; }
+
+  tr:hover { background-color: #ddd; }
+
+
+  /* Modify column */
+  .modify {
+      display: flex;
+  }
+
+  /* Modify Header */
+  #modifyheader {
+      width: 175px;
+      text-align: center;
+  }
+
+  /* Number input */
+  .number {
+      margin-left: auto;
+      margin-right: 3px;
+      width: 70%;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 8px 12px;
+      box-sizing: border-box;
+      text-align: left;
+      font-size: 15px;
+  }
+
+  /* Submit Button */
+  .submit {
+      margin-right: auto;
+      width: 25%;
+      background-color: #2081c3;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+  }
+
+  .submit:hover {
+      background-color: #14609a;
+      cursor: pointer;
+  }
+
+
+  /* Quantity column */
+  .quantity {
+
+  }
+
+  /* Quantity Header */
+  #quantityheader { width: 300px; }
+</style>
+<body style="background-color:#f7f9f9;">
+  <div class="main">
+    <div class="title">
+      <h1>Inventory</h1>
+    </div>
+    <div id="searchingredient">
+      <label for="ingredientname" id="ingredientnamelabel"> Search for an ingredient: </label>
+      <input type="text" name="ingredientname" id="ingredientname" hx-target="#table" hx-include="#ingredientname"
+            hx-get="{% url 'basic:searchInventory' %}" hx-trigger="keyup changed">
+    </div>
+    <div class="break"></div>
+    <div id="table">
+      <table>
+        <thead>
+          <tr>
+            <th>Ingredient</th>
+            <th id="modifyheader">Modify</th>
+            <th id="quantityheader">Quantity</th>
+          </tr>
+        </thead>
+        {% for ingredient in ingredients %}
+        <tr>
+          <td> 
+            <div class="name"> {{ ingredient.name }} </div>
+          </td>
+          <td>
+            <div class="modify">
+              <input type="number" class="number" name="amount{{ ingredient.idnumber }}" id="amount{{ ingredient.idnumber }}" value="0">
+              <button type="button" class="submit" id="submit{{ ingredient.idnumber }}" hx-target="#quantity{{ ingredient.idnumber }}" 
+                      hx-trigger="click" hx-post="{% url 'basic:quantity' %}" hx-include="#amount{{ ingredient.idnumber }}" 
+                      hx-vars="ingredient:{{ ingredient.idnumber }}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                  >>
+              </button>
+            </div>
+          </td>
+          <td>
+            <div id="quantity{{ ingredient.idnumber }}" class="quantity"> {{ ingredient.quantity }} </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <br>
+    <button type="button" hx-post="{% url 'basic:addIngredient' %}" hx-target="#table"
+            hx-include="#ingredientTitle, #ingredientAmount" hx-trigger="click">Add New Ingredient</button>
+    <br>
+    <label> Ingredient Name </label>
+    <input type="text" name="ingredientTitle" id="ingredientTitle">
+    <br>
+    <label for="ingredientAmount"> Ingredient Amount </label>
+    <input type="number" name="ingredientAmount" id="ingredientAmount">
+    <br>
+    <br>
+    <button type="button" hx-post="{% url 'basic:removeIngredient' %}" hx-target="#table"
+            hx-include="#removedIngredientTitle" hx-trigger="click">Remove Ingredient</button>
+    <br>
+    <label for="removedIngredientTitle"> Ingredient Name </label>
+    <input type="text" name="removedIngredientTitle" id="removedIngredientTitle">
   </div>
-
-  <br>
-  <button type="button" hx-post="{% url 'basic:addIngredient' %}" hx-target="#table"
-  hx-include="#ingredientTitle, #ingredientAmount" hx-trigger="click">Add New Ingredient</button>
-  <br>
-  <label> Ingredient Name </label>
-  <input type="text" name="ingredientTitle" id="ingredientTitle">
-  <br>
-  <label> Ingredient Amount </label>
-  <input type="number" name="ingredientAmount" id="ingredientAmount">
-  <br>
-  <br>
-  <button type="button" hx-post="{% url 'basic:removeIngredient' %}" hx-target="#table"
-  hx-include="#removedIngredientTitle" hx-trigger="click">Remove Ingredient</button>
-  <br>
-  <label> Ingredient Name </label>
-  <input type="text" name="removedIngredientTitle" id="removedIngredientTitle">
-</div>
+</body>

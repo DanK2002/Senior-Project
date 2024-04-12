@@ -1,8 +1,59 @@
+/*
 .main {
-font-size: 28px; /* Increased text to enable scrolling */
-padding: 0px 10px;
+    font-size: 28px; /* Increased text to enable scrolling 
+    padding: 0px 10px;
 }
 
 table, th, td {
     border:1px solid black;
+} */
+
+table {
+    border-collapse: collapse;
+    border: 0px transparent;
+    white-space: nowrap;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    white-space: nowrap;
+}
+
+th {
+    font-size: 44px;
+    padding: 16px 14px;
+    text-align: left;
+    background-color: #2081c3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+tr { font-size: 26px; }
+
+tr:nth-child(even) { background-color: #f2f2f2; }
+
+tr:hover { background-color: #ddd; }
+
+
+/* Modify column */
+.modify {
+
+}
+
+/* Number input */
+.number {
+    width: 100px;
+}
+
+/* Submit Button */
+.submit {
+
+}
+
+
+/* Quantity column */
+.quantity {
+
 }
