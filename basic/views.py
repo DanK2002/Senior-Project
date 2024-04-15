@@ -1123,14 +1123,11 @@ def meal_items(request):
     return render(request, "basic/partials/meal_items.html", {'meals': meals})
 
 def customizeMeal(request):
-    allMeals = Meal.objects.distinct()
-    for meal in allMeals:
-        if meal.name.upper() == request.GET.get("mealName").upper():
-            if meal.menu == True:
-                newMeal = meal
-                thisMeal = meal
-    foodsInMeal = thisMeal.foods.all()
-    code_meal = newMeal.code[:1]
+    mealName = request.GET.get("mealName")
+    meal = Meal.objects.filter(name__iexact=mealName, menu=True).first()
+    
+    foodsInMeal = meal.foods.all()
+    code_meal = meal.code[:1]
         
     high_code = Meal.objects.filter(
         code__startswith=code_meal
@@ -1138,10 +1135,10 @@ def customizeMeal(request):
         
     high_number = high_code[1:]
     # copy into a custom item
-    newMeal.pk = None
-    newMeal.code = f'{code_meal}{str(int(high_number) + 1)}'
-    newMeal.menu = False
-    newMeal.save()
+    meal.pk = None
+    meal.code = f'{code_meal}{str(int(high_number) + 1)}'
+    meal.menu = False
+    meal.save()
 
     for food in foodsInMeal:
         # Generate a new code from db data #
@@ -1157,80 +1154,39 @@ def customizeMeal(request):
         food.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
         food.menu = False
         food.pk = None
-        food.message = "This is a test message"
+        food.message = ""
         food.save()
-        newMeal.foods.add(food)
-    newMeal.save()
+        meal.foods.add(food)
+    meal.save()
 
-    return render(request, "basic/partials/customizeMeal.html", {'meal': newMeal, 'foods': foodsInMeal})
+    return render(request, "basic/partials/customizeMeal.html", {'meal': meal, 'foods': meal.foods.all()})
 
 def customizeFoodInMeal(request):
     if request.method == 'GET':
-        foodName = request.GET.get("foodName")
-        foods = Food.objects.distinct()
-        for food in foods:
-            if food.name.upper() == foodName.upper():
-                if food.menu == True:
-                    theFood = food
-        allIngredients = Ingredient.objects.distinct()
+        foodCode = request.GET.get("foodCode")
+        theFood = Food.objects.filter(code=foodCode).first()
+
         ingredientDictionary = json.loads(theFood.ingred)
-        ingredientsInFoodNames = list(ingredientDictionary.keys())
-        ingredientsInFood = []
-        for ingredient in allIngredients:
-            for ing in ingredientsInFoodNames:
-                if ing.upper() == ingredient.name.upper():
-                    ingredientsInFood.append(ingredient)
-        notInFood = []
-        inFood = False
-        for ingredient in allIngredients:
-            for ing in ingredientsInFoodNames:
-                if ing.upper() == ingredient.name.upper():
-                    inFood = True
-            if not inFood:
-                notInFood.append(ingredient)
-            inFood = False
+
+        ingredientsInFood = Ingredient.objects.filter(name__in=ingredientDictionary.keys())
+        notInFood = Ingredient.objects.exclude(name__in=ingredientDictionary.keys())
+
         return render(request, "basic/partials/customizeFoodInMeal.html", {'food': theFood, 'inFood': ingredientsInFood,
                                                                  'notInFood': notInFood})
 
 def editFoodInMeal(request):
-    foodName = request.POST.get("foodName")
-    foods = Food.objects.distinct()
-    for food in foods:
-        if food.name.upper() == foodName.upper():
-            if food.menu:
-                theFood = food
-    code_cat = theFood.code[:1]
-    code_food = theFood.code[1:2]
-    #find the highest number code for this food type
-    high_code = Food.objects.filter(
-        code__startswith=code_cat + code_food
-        ).values_list('code', flat=True).order_by('-code').first()
-    # Copy the highest number
-    high_number = high_code[2:]
-    # copy into a custom item
-    theFood.pk = None
-    theFood.code = f'{code_cat}{code_food}{str(int(high_number) + 1)}'
-    theFood.menu = False
+    foodCode = request.POST.get("foodCode")
+    theFood = Food.objects.filter(code=foodCode).first()
 
-    allIngredients = Ingredient.objects.distinct()
     ingredientDictionary = json.loads(theFood.ingred)
-    ingredientsInFoodNames = list(ingredientDictionary.keys())
-    ingredientsInFood = []
-    for ingredient in allIngredients:
-        for ing in ingredientsInFoodNames:
-            if ing.upper() == ingredient.name.upper():
-                ingredientsInFood.append(ingredient)
-
-    notInFood = []
-    inFood = False
-    for ingredient in allIngredients:
-        for ing in ingredientsInFoodNames:
-            if ing.upper() == ingredient.name.upper():
-                inFood = True
-        if not inFood:
-            notInFood.append(ingredient)
-        inFood = False
+    ingredientsInFood = Ingredient.objects.filter(name__in=ingredientDictionary.keys())
+    notInFood = Ingredient.objects.exclude(name__in=ingredientDictionary.keys())
+    '''
+    <!-- min= "-{{ food.ingred[ingredient.name] }}"-->
+    newIngredients = ingredientsInFood.copy()
+    #compare amounts for message
     
+    '''
     newIngredients = {}
     changesToFood = ''
     for x in request.POST:
@@ -1238,6 +1194,7 @@ def editFoodInMeal(request):
         if "addition" in str(x):
             additionID = int(str(x)[8:])
             isInFood = True
+
             for thisIngredient in ingredientsInFood:
                 if additionID == thisIngredient.idnumber:
                     ingredient = thisIngredient
@@ -1253,21 +1210,28 @@ def editFoodInMeal(request):
             
             if newAmount < 0 or int(request.POST.get(str(x))) == -1:
                 newAmount = 0
+
             if int(request.POST.get(str(x))) == 2:
                 changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
             elif int(request.POST.get(str(x))) == 1:
                 changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
             elif int(request.POST.get(str(x))) == -1:
+
                 if newAmount == 0:
                     changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
                 else:
                     changesToFood = changesToFood + "Add less " + ingredient.name + ".\n"
+
             elif int(request.POST.get(str(x))) == -2:
                 changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+                
             newIngredients[ingredient.name] = newAmount
+
     theFood.ingred = json.dumps(newIngredients)
+
     if changesToFood == '':
         changesToFood = "Standard ingredients.\n"
+
     changesToFood = changesToFood + request.POST.get("message")
     theFood.message = changesToFood
     theFood.save()

@@ -5,14 +5,14 @@
 <br>
 <form id = "changesForm" name = "changesForm">
 <button hx-post="{% url 'basic:editFoodInMeal' %}" hx-target="#foodCustomizer" hx-include="#message, #changesForm"
-hx-vals='{"foodName": "{{food.name}}", "mealCode": "{{mealCode}}"}' hx-swap="innerHTML">Submit Item</button>
+hx-vals='{"foodCode": "{{food.code}}" }' hx-swap="innerHTML">Submit Item</button>
 <br>
 <br>
 <a> <u>Modify Ingredients In Food</u> </a>
 <br>
 {% for ingredient in inFood %}
-    <br>
-    <a> {{ingredient.name}}: </a>
+    <br> 
+    <a> {{ingredient.name}}: </a> 
     <input type="range" min="-2" max="2" step="1" value="0" hx-target="#change{{ingredient.idnumber}}"
     hx-post="{% url 'basic:amountchange' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     name="addition{{ingredient.idnumber}}" id="addition{{ingredient.idnumber}}"
