@@ -71,6 +71,8 @@
   tr:hover { background-color: #ddd; }
 
 
+  #ingredientheader { width: 48%; }
+
   /* Modify column */
   .modify {
       display: flex;
@@ -114,13 +116,48 @@
   }
 
 
-  /* Quantity column */
+  /* Quantity column
   .quantity {
 
   }
 
   /* Quantity Header */
   #quantityheader { width: 300px; }
+
+
+  .ingredientform > label { font-size: 24px; }
+
+  .ingredientform > h { font-weight: bold; }
+
+  /* Style inputs */
+  .ingredientform > input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 16px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  /* Style the submit button */
+  .ingredientform > button {
+    width: 100%;
+    background-color: #2081c3;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .ingredientform > button:hover {
+    background-color: #14609a;
+    cursor: pointer;
+  }
 </style>
 <body style="background-color:#f7f9f9;">
   <div class="main">
@@ -130,14 +167,14 @@
     <div id="searchingredient">
       <label for="ingredientname" id="ingredientnamelabel"> Search for an ingredient: </label>
       <input type="text" name="ingredientname" id="ingredientname" hx-target="#table" hx-include="#ingredientname"
-            hx-get="{% url 'basic:searchInventory' %}" hx-trigger="keyup changed">
+             hx-get="{% url 'basic:searchInventory' %}" hx-trigger="keyup changed">
     </div>
     <div class="break"></div>
     <div id="table">
       <table>
         <thead>
           <tr>
-            <th>Ingredient</th>
+            <th id="ingredientheader" style="width:500px;">Ingredient</th>
             <th id="modifyheader">Modify</th>
             <th id="quantityheader">Quantity</th>
           </tr>
@@ -164,22 +201,31 @@
         {% endfor %}
       </table>
     </div>
-
-    <br>
-    <button type="button" hx-post="{% url 'basic:addIngredient' %}" hx-target="#table"
-            hx-include="#ingredientTitle, #ingredientAmount" hx-trigger="click">Add New Ingredient</button>
-    <br>
-    <label> Ingredient Name </label>
-    <input type="text" name="ingredientTitle" id="ingredientTitle">
-    <br>
-    <label for="ingredientAmount"> Ingredient Amount </label>
-    <input type="number" name="ingredientAmount" id="ingredientAmount">
-    <br>
-    <br>
-    <button type="button" hx-post="{% url 'basic:removeIngredient' %}" hx-target="#table"
-            hx-include="#removedIngredientTitle" hx-trigger="click">Remove Ingredient</button>
-    <br>
-    <label for="removedIngredientTitle"> Ingredient Name </label>
-    <input type="text" name="removedIngredientTitle" id="removedIngredientTitle">
+    <div style="width:100%;">
+      <div style="float:left;width:48%;">
+        <form class="ingredientform">
+          <br><h><u>Add New Ingredient</u></h><div class="break"></div>
+          <label for="ingredientTitle"> Ingredient Name: </label>
+          <input type="text" name="ingredientTitle" id="ingredientTitle">
+          <label for="ingredientAmount"> Ingredient Amount: </label>
+          <input type="number" name="ingredientAmount" id="ingredientAmount" min="0">
+          <button type="button" hx-post="{% url 'basic:addIngredient' %}" hx-target="#table"
+                  hx-include="#ingredientTitle, #ingredientAmount" hx-trigger="click">
+              Add
+          </button>
+        </form>
+      </div>
+      <div style="float:right;width:49%;">
+        <form class="ingredientform">
+          <br><h><u>Remove Ingredient</u></h><br><div class="break"></div>
+          <label for="removedIngredientTitle"> Ingredient Name: </label>
+          <input type="text" name="removedIngredientTitle" id="removedIngredientTitle">
+          <button type="button" hx-post="{% url 'basic:removeIngredient' %}" hx-target="#table"
+                  hx-include="#removedIngredientTitle" hx-trigger="click">
+              Remove
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
 </body>
