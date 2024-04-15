@@ -1170,9 +1170,18 @@ def customizeFoodInMeal(request):
 
         ingredientsInFood = Ingredient.objects.filter(name__in=ingredientDictionary.keys())
         notInFood = Ingredient.objects.exclude(name__in=ingredientDictionary.keys())
-
-        return render(request, "basic/partials/customizeFoodInMeal.html", {'food': theFood, 'inFood': ingredientsInFood,
-                                                                 'notInFood': notInFood})
+        '''
+        low_bound = 2
+        for num in ingredientDictionary.values():
+                if num > low_bound:
+                    low_bound = num            
+        '''
+        return render(request, "basic/partials/customizeFoodInMeal.html", {
+            'food': theFood, 
+            'inFood': ingredientsInFood,
+            'notInFood': notInFood,
+            'ingredientDictionary': ingredientDictionary
+            })
 
 def editFoodInMeal(request):
     foodCode = request.POST.get("foodCode")
