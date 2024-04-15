@@ -609,7 +609,9 @@ def quantity(request):
             ing = ingredient
     # value = request.POST.get('amount')
     newValue = ing.quantity + int(request.POST[f'amount{ingredientID}'])
-    ing.quantity = ing.quantity + int(request.POST[f'amount{ingredientID}'])
+    if newValue < 0:
+        newValue = 0
+    ing.quantity = newValue
     ing.save()
 
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
@@ -625,13 +627,24 @@ def searchInventory(request):
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': newIngredients})
 
 def addIngredient(request):
-    ingredientName = request.POST.get("ingredientTitle")
-    ingredientAmount = int(request.POST.get("ingredientAmount"))
-    ingredientID = len(Ingredient.objects.distinct())
-    ingredient = Ingredient(name=ingredientName, quantity=ingredientAmount, idnumber=ingredientID)
-    ingredient.save()
     ingredients = Ingredient.objects.distinct()
+    ingredientName = request.POST.get("ingredientTitle").strip()
+    
+    if ingredientName: # Check to see if the name is not the empty string
+        nameExists = False
+        for ingredient in ingredients:
+            if ingredient.name.upper() == ingredientName.upper():
+                nameExists = True
+                break
+        if not nameExists: # If the name is not already taken, add the ingredient
+            ingredientAmount = int(request.POST.get("ingredientAmount"))
+            if ingredientAmount < 0: # If trying to add negative amount, set to 0 by default
+                ingredientAmount = 0
+            ingredientID = ingredients.last().idnumber + 1 # Get the highest taken id and iterate for a new id
+            ingredient = Ingredient(name=ingredientName, quantity=ingredientAmount, idnumber=ingredientID)
+            ingredient.save()
 
+    ingredients = Ingredient.objects.all()
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
 
 def removeIngredient(request):
