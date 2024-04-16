@@ -11,6 +11,8 @@ import csv
 import json
 from datetime import timedelta, datetime
 from django.contrib.auth.decorators import login_required
+from django.db.models import IntegerField
+from django.db.models.functions import Cast, Substr
 
 # Create your views here.
 
@@ -1131,7 +1133,9 @@ def customizeMeal(request):
         
     high_code = Meal.objects.filter(
         code__startswith=code_meal
-        ).values_list('code', flat=True).order_by('-code').first()
+        ).annotate(
+            code_number=Cast(Substr('code', 2), output_field=IntegerField())
+        ).values_list('code', flat=True).order_by('-code_number').first()
         
     high_number = high_code[1:]
     # copy into a custom item
@@ -1147,7 +1151,9 @@ def customizeMeal(request):
             
         high_code = Food.objects.filter(
             code__startswith=code_cat + code_food
-            ).values_list('code', flat=True).order_by('-code').first()
+            ).annotate(
+            code_number=Cast(Substr('code', 3), output_field=IntegerField())
+        ).values_list('code', flat=True).order_by('-code_number').first()
             
         high_number = high_code[2:]
         # copy into a custom item
@@ -1170,12 +1176,7 @@ def customizeFoodInMeal(request):
 
         ingredientsInFood = Ingredient.objects.filter(name__in=ingredientDictionary.keys())
         notInFood = Ingredient.objects.exclude(name__in=ingredientDictionary.keys())
-        '''
-        low_bound = 2
-        for num in ingredientDictionary.values():
-                if num > low_bound:
-                    low_bound = num            
-        '''
+ 
         return render(request, "basic/partials/customizeFoodInMeal.html", {
             'food': theFood, 
             'inFood': ingredientsInFood,
@@ -1221,18 +1222,18 @@ def editFoodInMeal(request):
                 newAmount = 0
 
             if int(request.POST.get(str(x))) == 2:
-                changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
+                changesToFood += f"Add extra extra {ingredient.name}.\n"
             elif int(request.POST.get(str(x))) == 1:
-                changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
+                changesToFood += f"Add extra {ingredient.name}.\n"
             elif int(request.POST.get(str(x))) == -1:
 
                 if newAmount == 0:
-                    changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+                    changesToFood += f"Remove {ingredient.name}.\n"
                 else:
-                    changesToFood = changesToFood + "Add less " + ingredient.name + ".\n"
+                    changesToFood += f"Add less {ingredient.name}.\n"
 
             elif int(request.POST.get(str(x))) == -2:
-                changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
+                changesToFood += f"Remove {ingredient.name}.\n"
                 
             newIngredients[ingredient.name] = newAmount
 

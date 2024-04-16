@@ -5,6 +5,8 @@ from basic.models import Ingredient, Food, Meal, Employee, Shift, Order
 from django.contrib.auth.models import User, Group
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import IntegerField
+from django.db.models.functions import Cast, Substr
 
 fake = Faker()
 Faker.seed(7666777707777886)
@@ -368,7 +370,9 @@ for order_data in orders_data:
         #find the highest number code for this food type
         high_code = Food.objects.filter(
             code__startswith=code_cat + code_food
-            ).values_list('code', flat=True).order_by('-code').first()
+            ).annotate(
+                code_number=Cast(Substr('code', 3), output_field=IntegerField())
+            ).values_list('code', flat=True).order_by('-code_number').first()
         # Copy the highest number
         high_number = high_code[2:]
         # copy into a custom item
@@ -389,7 +393,9 @@ for order_data in orders_data:
         
         high_code = Meal.objects.filter(
             code__startswith=code_meal
-            ).values_list('code', flat=True).order_by('-code').first()
+            ).annotate(
+                code_number=Cast(Substr('code', 2), output_field=IntegerField())
+            ).values_list('code', flat=True).order_by('-code_number').first()
         
         high_number = high_code[1:]
         # copy into a custom item
@@ -407,7 +413,9 @@ for order_data in orders_data:
             
             high_code = Food.objects.filter(
                 code__startswith=code_cat + code_food
-                ).values_list('code', flat=True).order_by('-code').first()
+                ).annotate(
+                code_number=Cast(Substr('code', 3), output_field=IntegerField())
+            ).values_list('code', flat=True).order_by('-code_number').first()
             
             high_number = high_code[2:]
             # copy into a custom item
