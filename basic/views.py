@@ -778,7 +778,8 @@ def mark_ready(request, order_id):
     # Update the time_ready field for the order
     order.time_ready = timezone.now()  # Assuming you have imported timezone
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order marked as ready!"
+    return HttpResponse(message)
 
 def ready(request):
     ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
@@ -821,20 +822,23 @@ def mark_completed(request, order_id):
     # Update the time_ready field for the order
     order.time_completed = timezone.now()  # Assuming you have imported timezone
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order marked as Completed!"
+    return HttpResponse(message)
 
 def remove_ready(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.time_ready = None
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order Reverted!"
+    return HttpResponse(message)
 
 def remove_completed(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.time_completed = None
     order.time_ready = timezone.now()
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order Reverted!"
+    return HttpResponse(message)
 
 def clockin_out(request):
     users = User.objects.all()

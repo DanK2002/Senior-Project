@@ -76,9 +76,9 @@
     </div>
     
     <div id="button-container" hx-target="#button-container" hx-swap="innerHTML">
-        <button class="large-button" hx-get="{% url 'basic:back-inprogress' %}" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">In Progress</button>
-        <button class="large-button" hx-get="{% url 'basic:back-ready' %}" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Ready</button>
-        <button class="large-button" hx-get="{% url 'basic:back-completed' %}" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Completed</button>
+        <button class="large-button" hx-get="../back-inprogress/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">In Progress</button>
+        <button class="large-button" hx-get="../back-ready/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Ready</button>
+        <button class="large-button" hx-get="../back-completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Completed</button>
     </div>
 
 </body>
