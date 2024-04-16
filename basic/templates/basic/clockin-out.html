@@ -128,8 +128,10 @@
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' style="background-color:#f7f9f9;">
     <div class="main">
         <div id="overlay">
-            <input type="button" id="backbutton" value="← Back to ←
-Landing Page" style="white-space:pre" onclick="document.location.href='{% url 'basic:landingpage' %}';"/>
+            <a href="{% url 'basic:landingpage' %}">
+                <input type="button" id="backbutton" value="← Back to ←
+Landing Page" style="white-space:pre"/>
+            </a>
         </div>
         <div class="title">
             <h1>Clock In / Out</h1>

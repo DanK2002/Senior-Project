@@ -1,33 +1,87 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-    
+        button {
+            width: 250px;
+            height: 230px;
+            background-color: #96D1FF;
+            border: 3px solid;
+            border-color: #2081c3;
+            border-radius: 24px;
+            color: #03191E;
+            font-weight: 900;
+            font-size: 23px;
+            margin: 8px 15px;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+        }
+
+        button:hover {
+            background-color: #2081c3;
+            border-color: #96D1FF;
+            cursor: pointer;
+            color: white;
+        }
+
+        /* Make the images white on mouse hover */
+        button:hover > #img { filter: invert(1); }
     </style>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script> 
+</head>
+<body>        
+    <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
+    <h2>Actions:</h2>
+    <a href="{% url 'basic:clockin-out' %}">
+        <button id="clockin-out_button">
+            <img id="img" src="../../../static/clock.png" alt="buttonpng"/>
+            Clock In/Out
+        </button>
+    </a>
+    
+    <!-- Displays relevant actions based on the groups the user belongs to. -->
 
-      <script src="https://unpkg.com/htmx.org@1.9.10"></script> 
+    {% if "manager" in groups %}
+    <a href="{% url 'basic:manageemployees' %}">
+        <button id="employees_button">
+            <img id="img" src="../../../static/employees.png" alt="buttonpng"/>
+            Employees
+        </button>
+    </a>
+    <a href="{% url 'basic:managemenu' %}">
+        <button id="menu_button">
+            <img id="img" src="../../../static/menu.png" alt="buttonpng"/>
+            Menu
+        </button>
+    </a>
+    <a href="{% url 'basic:inventory' %}">
+        <button id="inventory_button">
+            <img id="img" src="../../../static/inventory.png" alt="buttonpng"/>
+            Inventory
+        </button>
+    </a>
+    <a href="{% url 'basic:sales' %}">
+        <button id="sales_button">
+            <img id="img" src="../../../static/sales.png" alt="buttonpng"/>
+            Sales
+        </button>
+    </a>
+    {% endif %}
 
-    </head>
-    <body>        
-        <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
-        <h2>Actions:</h2>
-        <a href="{% url 'basic:clockin-out' %}">Clock in/out</a>
-        
-        <!-- Displays relevant actions based on the groups the user belongs to. -->
+    {% if "foh" in groups %}
+    <a href="{% url 'basic:order' %}">
+        <button id="foh_orders_button">
+            <img id="img" src="../../../static/orders.png" alt="buttonpng"/>
+            FOH Orders
+        </button>
+    </a>
+    {% endif %}
 
-        {% if "manager" in groups %}
-            <a href="../manageemployees/">Employees</a>
-            <a href="../managemenu">Menu</a>
-            <a href="../inventory">Inventory</a>
-            <a href="../sales">Sales</a>
-        {% endif %}
-
-        {% if "foh" in groups %}
-            <a href="../order/">View Orders</a>
-        {% endif %}
-
-        <!-- Will be different for BoH, but keeping this for now -->
-        {% if "boh" in groups %}
-            <a href="../order/">View Orders</a>
-        {% endif %}
-    </body>
+    {% if "boh" in groups %}
+    <a href="{% url 'basic:back-order' %}">
+        <button id="boh_orders_button">
+            <img id="img" src="../../../static/orders.png" alt="buttonpng"/>
+            BOH Orders
+        </button>
+    </a>
+    {% endif %}
+</body>
 </html>
