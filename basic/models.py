@@ -43,22 +43,30 @@ class Order(models.Model):
         return f"Order #{self.number} submitted by {self.employee_submitted}"
 
 class Meal(models.Model):
+    menu = models.BooleanField(blank = False, default=False)
+    code = models.CharField(max_length=10, blank=True)
     name  = models.CharField(max_length=100)
     foods = models.ManyToManyField('Food', blank=False)
     price = models.FloatField(blank = False)
 
     def __str__(self):
-        return self.name
+        out = f"{self.code}, {self.name} with"
+        for food in self.foods.all():
+            out += f" {food.code}"
+        return out
 
 
 class Food(models.Model):
+    menu = models.BooleanField(blank = False, default=False)
+    code = models.CharField(max_length=10, blank=True)
     name = models.CharField(max_length=100)
     price = models.FloatField(null = False)
     category = models.CharField(max_length=100)
     ingred = models.JSONField(default=dict)
+#    ingred = models.ManyToManyField('Ingredient', blank=False)
     
     def __str__(self):
-        return self.name
+        return f"{self.code}, {self.name}"
 
 
 class Ingredient(models.Model):

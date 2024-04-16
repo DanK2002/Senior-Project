@@ -347,7 +347,6 @@ def fetch_food_details(request):
         original_ingred = food.ingred
         return render(request, 'basic/partials/edit_view_food.html',  {'form': form, 'ingred_list': original_ingred})
     
-
 def update_food(request):
     if request.method == 'POST':
         selected_category = request.POST.get('category')
@@ -366,7 +365,6 @@ def add_food(request):
                 category=form.cleaned_data['category'],
                 price=form.cleaned_data['price']
             )
-
             # Save the new food item to the database
             new_food.save()
 
@@ -404,7 +402,9 @@ def ingredient_list(request):
     if request.POST.get('original_name'):
         ingredients = Ingredient.objects.all().values_list('name', flat=True)
         selected_food = Food.objects.get(name=request.POST.get('original_name'))
+        print(selected_food)
         ingred_list = selected_food.ingred
+        print(ingred_list)
         return render(request, 'basic/partials/ingredient_list.html', {'ingredients': ingredients, 'ingred_list': ingred_list})
     else:
         ingredients = Ingredient.objects.all().values_list('name', flat=True)  # Get only the names
