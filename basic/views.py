@@ -1021,7 +1021,9 @@ def addFoodToOrder(request):
     #find the highest number code for this food type
     high_code = Food.objects.filter(
         code__startswith=code_cat + code_food
-        ).values_list('code', flat=True).order_by('-code').first()
+        ).annotate(
+            code_number=Cast(Substr('code', 3), output_field=IntegerField())
+        ).values_list('code', flat=True).order_by('-code_number').first()
     # Copy the highest number
     high_number = high_code[2:]
     # copy into a custom item
