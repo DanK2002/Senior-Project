@@ -5,7 +5,7 @@
 <br>
 <form id = "changesForm" name = "changesForm">
 <button hx-post="{% url 'basic:addFoodToOrder' %}" hx-target="#foodCustomizer" hx-include="#message, #changesForm"
-hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML">Submit Item</button>
+hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML" class="btn btn-outline-primary">Submit Item</button>
 <br>
 <br>
 <p> <u>Modify Ingredients In Food</u> </p>
