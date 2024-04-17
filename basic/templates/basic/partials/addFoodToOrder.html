@@ -5,9 +5,9 @@
 {% for food in foodsInOrder %}
     <br>
     <br>
-    <a><u>{{food.name}}</u></a>
+    <u>{{food.name}}</u>
     <br>
-    <a>{{food.message}}</a>
+    {{food.message}}
 {% endfor %}
 <br>
 {% for mealInstruction in mealInstructions %}
@@ -19,5 +19,5 @@
 <br>
 <a><u>Total</u> {{total}}</a>
 <a href="{% url 'basic:order' %}">
-    <button>Finish Order</button>
+    <button class="btn btn-success">Finish Order</button>
 </a>

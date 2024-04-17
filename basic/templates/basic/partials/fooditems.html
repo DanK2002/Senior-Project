@@ -1,6 +1,5 @@
 <div>
-<a><u>{{category}}</u></a>
-    <br>
+<h3><u>{{category}}</u></h3>
     {% for food in foods %}
         <br>
         <button hx-get="{% url 'basic:customizeFood' %}" hx-target="#customizeFood"

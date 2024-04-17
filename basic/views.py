@@ -1272,3 +1272,8 @@ def addMealToOrder(request):
 
     return render(request, "basic/partials/addMealToOrder.html", {"meal": addedMeal, "foods": foodsInOrder,
                                                                   "mealInstructions": mealInstructions, "total": total})
+
+def ordersummary(request):
+    return render(request, "basic/partials/ordersummary.html",)
+
+

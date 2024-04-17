@@ -9,7 +9,7 @@
       z-index: 1;
       top: 0;
       left: 0;
-      background-color: #111;
+      background-color: #941C2F;
       overflow-x: hidden;
       padding-top: 20px;
     }
@@ -23,6 +23,30 @@
     }
     
     .sidenav a:hover {
+      color: #f1f1f1;
+    }
+
+    .summary {
+      height: 100%;
+      width: 160px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      background-color: #941C2F;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+
+    .summary a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #dfd0d0;
+      display: block;
+    }
+    
+    .summary a:hover {
       color: #f1f1f1;
     }
     
@@ -40,15 +64,25 @@
     table, th, td {
         border:1px solid black;
     }
+
+    .heading {
+      text-align: center;
+      color: #F7F9F9;
+    }
+    
     </style>
     
     <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
     <div class="sidenav">
-        <a><u>Categories</u></a>
+        <h3 class="heading"><u>Categories</u></h4>
         {% for category in categories %}
             <a hx-get="{% url 'basic:fooditems' %}" hx-target="#itemlist" 
             hx-vals='{"categoryName": "{{category}}"}'> {{ category }} </a>
@@ -57,5 +91,15 @@
     </div>
 
     <div class="main" id="itemlist"></div>
+
+    <div class="summary" id="summary">
+      <h3 class="heading"><u>Order Summary</u></h4>
+
+      <p><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-target="#itemlist" 
+        hx-vals='{"addFoodToOrder": "{{total}}"}'><u>Total: {{total}}</u></a></p>
+      <a href="{% url 'basic:order' %}">
+        <button class="btn btn-success">Finish Order</button>
+      </a>
+    </div>
 
 </body>
