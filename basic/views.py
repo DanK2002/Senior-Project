@@ -982,8 +982,12 @@ def customizeFood(request):
             if not inFood:
                 notInFood.append(ingredient)
             inFood = False
-        return render(request, "basic/partials/customizeFood.html", {'food': theFood, 'inFood': ingredientsInFood,
-                                                                 'notInFood': notInFood})
+        return render(request, "basic/partials/customizeFood.html", {
+            'food': theFood, 
+            'inFood': ingredientsInFood,
+            'notInFood': notInFood,
+            'ingredientDictionary': ingredientDictionary            
+            })
 
 def amountchange(request):
     print(request.POST)

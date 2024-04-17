@@ -10,10 +10,11 @@ hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML">Submit Item</button>
 <br>
 <a> <u>Modify Ingredients In Food</u> </a>
 <br>
+{% load custom_filters %}
 {% for ingredient in inFood %}
     <br>
     <a> {{ingredient.name}}: </a>
-    <input type="range" min="-2" max="2" step="1" value="0" hx-target="#change{{ingredient.idnumber}}"
+    <input type="range" min="-{{ ingredientDictionary|dict_key:ingredient.name }}" max="2" step="1" value="0" hx-target="#change{{ingredient.idnumber}}"
     hx-post="{% url 'basic:amountchange' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     name="addition{{ingredient.idnumber}}" id="addition{{ingredient.idnumber}}"
     hx-include="#addition{{ingredient.idnumber}}" hx-vars="ingredientid:{{ ingredient.idnumber }}"> 
