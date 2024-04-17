@@ -932,7 +932,7 @@ def landingpage(request):
                     }
                 )
 @login_required
-def ordercreation(request):
+def ordercreation1(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 
     #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
@@ -941,7 +941,37 @@ def ordercreation(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = '')
+                   price = 0.0, employee_submitted = user, message = 'Dine In Order')
+
+    order.save()
+
+    return render(request, "basic/ordercreation.html", {'categories': categories})
+
+def ordercreation2(request):
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    user = request.user
+
+    orderNumber = len(Order.objects.distinct()) + 1
+
+    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+                   price = 0.0, employee_submitted = user, message = 'Take Out Order')
+
+    order.save()
+
+    return render(request, "basic/ordercreation.html", {'categories': categories})
+
+def ordercreation3(request):
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    user = request.user
+
+    orderNumber = len(Order.objects.distinct()) + 1
+
+    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+                   price = 0.0, employee_submitted = user, message = 'Drive Through Order')
 
     order.save()
 

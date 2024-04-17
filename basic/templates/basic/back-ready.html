@@ -13,10 +13,10 @@
     <div id="large-box">
         <div class="orders-container">
             {% if ready_orders %}
-                {% for order in ready_orders %}
+                {% for order in ready_orders|dictsortreversed:"time_est" %}
                     <div class="order-box" id="order_{{ order.id }}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
-                        <p>Est. Time: {{ order.time_est }}</p>
+                        <p>{{ order.message }}</p>
                         <form id="mark_completed_form_{{ order.id }}" hx-post="{% url 'basic:mark_completed' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Completed</button>
