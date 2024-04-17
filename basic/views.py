@@ -941,7 +941,7 @@ def ordercreation1(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Dine In Order')
+                   price = 0.0, employee_submitted = user, message = 'Order: Dine In')
 
     order.save()
 
@@ -956,7 +956,7 @@ def ordercreation2(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Take Out Order')
+                   price = 0.0, employee_submitted = user, message = 'Order: Take Out')
 
     order.save()
 
@@ -971,7 +971,7 @@ def ordercreation3(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Drive Through Order')
+                   price = 0.0, employee_submitted = user, message = 'Order: Drive Through')
 
     order.save()
 
