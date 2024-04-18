@@ -1,3 +1,4 @@
+<div id="orderSummary" name="orderSummary">
 {{foodName}} was added to order.
 <br>
 <br>
@@ -18,6 +19,11 @@
 <br>
 <br>
 <a><u>Total</u> {{total}}</a>
+<br>
+<button hx-get="{% url 'basic:removedItem' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+hx-target="#orderSummary">Remove Items From Order</button>
+<br>
 <a href="{% url 'basic:order' %}">
     <button>Finish Order</button>
 </a>
+</div>

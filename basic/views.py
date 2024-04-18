@@ -1269,7 +1269,6 @@ def addMealToOrder(request):
     order.save()
 
     foodsInOrder = order.foods.all()
-    print(foodsInOrder)
     mealsInOrder = order.meals.all()
     total = 0
     for food in foodsInOrder:
@@ -1288,3 +1287,31 @@ def addMealToOrder(request):
 
     return render(request, "basic/partials/addMealToOrder.html", {"meal": addedMeal, "foods": foodsInOrder,
                                                                   "mealInstructions": mealInstructions, "total": total})
+
+def removedItem(request):
+    orders = Order.objects.distinct()
+    #note: this method of finding the current order will not work if multiple machines are creating
+    #orders at once. This method should be tweaked.
+    for currentOrder in orders:
+        if currentOrder.number == len(Order.objects.distinct()):
+            order = currentOrder
+
+    foodsInOrder = order.foods.all()
+    mealsInOrder = order.meals.all()
+    total = order.price
+    if request.GET.get("code") != None:
+        code = request.GET.get("code")
+        for food in foodsInOrder:
+            if food.code == code:
+                order.price = total - food.price
+                order.foods.remove(food)
+        for meal in mealsInOrder:
+            if meal.code == code:
+                order.price = total - meal.price
+                order.meals.remove(meal)
+    order.save()
+    foodsInOrder = order.foods.all()
+    mealsInOrder = order.meals.all()
+    total = order.price
+    
+    return render(request, "basic/partials/removedItem.html", {"foods": foodsInOrder, "meals": mealsInOrder, "total": total})
