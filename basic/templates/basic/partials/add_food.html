@@ -7,7 +7,7 @@
   <div class="food-details">
     <form method="POST" action="{% url 'basic:add_food' %}">
       {% csrf_token %}
-      {{ form.as_p }}
+      {{ add_food_form.as_p }}
 
       <!-- Add New Ingredient button -->
       <div class="add-ingredient-container">

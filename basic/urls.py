@@ -37,6 +37,10 @@ urlpatterns = [
     path('remove_food/', views.remove_food, name='remove_food'),
     path('add_food/', views.add_food, name='add_food'),
     path('ingredient_list/', views.ingredient_list, name='ingredient_list'),
+    path('fetch_meal_details/', views.fetch_meal_details, name='fetch_meal_details'),
+    path('add_meal/', views.add_meal, name='add_meal'),
+    path('edit_view_meal/', views.edit_view_meal, name='edit_view_meal'),
+    path('remove_meal/', views.remove_meal, name='remove_meal'),
 
 
 ]

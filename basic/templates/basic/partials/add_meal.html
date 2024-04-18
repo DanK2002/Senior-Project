@@ -1,0 +1,19 @@
+<div id="add-meal-container">
+    <div class="add-meal-title"> 
+      Add a New Meal 
+    </div>
+  
+    <!-- Name and Price fields -->
+    <div class="meal-details">
+      <form method="POST" action="{% url 'basic:add_meal' %}">
+        {% csrf_token %}
+        {{ add_meal_form.as_p }}
+  
+        <!-- Save button for the new food item -->
+        <div class="save-cancel-container">
+          <button type="submit" class="save-button">Save New Meal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

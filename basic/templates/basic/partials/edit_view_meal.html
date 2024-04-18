@@ -1,0 +1,19 @@
+<div id="view-meal-details" hx-swap="outerHTML">
+    <form method="POST" id="edit-meal-form" hx-post="{% url 'basic:edit_view_meal' %}">
+        <div class="edit-meal-title"> 
+            Edit/View Meal 
+          </div>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" id="original_name" name="original_name" value="{{ form.initial_name.value }}">
+        <!-- Save and Cancel buttons for editing an existing food -->
+        <button type="reset" class="cancel-button">Cancel</button>
+        <button type="submit">Save</button>
+        <!-- Form for removing meal -->
+        <form method="POST" id="remove-meal-form" hx-post="{% url 'basic:remove_meal' %}">
+            {% csrf_token %}
+            <input type="hidden" name="meal_name" value="{{ form.initial_name.value }}">
+            <button type="submit" class="remove-meal-button">Remove Meal</button>
+        </form>
+    </form>
+</div>
