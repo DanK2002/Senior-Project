@@ -70,11 +70,8 @@
 
     <p class="heading"><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-target="#itemlist" 
       hx-vals='{"addFoodToOrder": "{{total}}"}'><u>Total: {{total}}</u></a></p>
-    <a href="{% url 'basic:order' %}">
-      <button class="btn btn-success btn-block">Finish Order</button>
-    </a>
+    
     {% for food in foods %}
-    <br>
     <br>
     <a><u>{{food.name}}</u></a>
     <br>
@@ -86,7 +83,9 @@
     <a>{{mealInstruction}}</a>
     <br>
 {% endfor %}
+<a href="{% url 'basic:order' %}">
+    <button class="btn btn-success btn-block">Finish Order</button>
+</a>
 <br>
 <br>
-<p><u>Total</u> {{total}}</p>
 </div>

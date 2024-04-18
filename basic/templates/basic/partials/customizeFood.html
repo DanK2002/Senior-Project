@@ -1,3 +1,22 @@
+<head>
+    <style>
+        input[type=range] {
+            width: 50%; /* Set the width of the track */
+            height: 10px; /* Set the height of the track */
+            background: #d3d3d3; /* Track background color */
+            border-radius: 5px; /* Rounded corners */
+        }
+    
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; /* Set the width of the thumb */
+            height: 20px; /* Set the height of the thumb */
+            background: #4CAF50; /* Thumb color */
+            border-radius: 50%; /* Rounded corners */
+            cursor: pointer; /* Cursor on hover */
+        }
+    </style>
+</head>
 <div id="foodCustomizer">
 <p><u>{{food.name}}</u></p>
 <br>

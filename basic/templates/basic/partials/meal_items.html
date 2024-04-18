@@ -57,7 +57,6 @@
 </head>
 <div>
     <p><u>Meals</u></p>
-    <br>
     {% for meal in meals %}
         <br>
         <button hx-get="{% url 'basic:customizeMeal' %}" hx-target="#customizeMeal"
@@ -71,5 +70,5 @@
 </div>
 
 <div class ="summary" id ="summary" hx-swap-oob ="true">
-    <p><a hx-get="{% url 'basic:addMealToOrder' %}" hx-vals='{"addMealToOrder": "{{total}}"}'><u>Total: {{total}}</u></a></p>
+    <p><a hx-get="{% url 'basic:addMealToOrder' %}" hx-vals='{"addMealToOrder": "{{total}}"}'><u></u></a></p>
 </div>
