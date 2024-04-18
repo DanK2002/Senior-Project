@@ -61,7 +61,7 @@ try:
     shift = Shift.objects.create(start=start_time, end=end_time, employee=employee)
 except Exception as e:
     print(f"Error creating shift: {e}")
-
+    
 
 # Define ingredients and their quantities using a dictionary
 ingredients_data = {
@@ -244,8 +244,7 @@ for food in foods_data:
     food['code'] = code
 
 # Loop through the foods list and save each food
-for food_data in foods_data:
-    print(food_data)
+for food_data in foods_data:   
     ingredient_list = json.dumps(food_data['ingredients'])
     food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
                 price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
@@ -294,8 +293,7 @@ for meal in meals_data:
     # Generate code
     code = meal_letter + str(counts[meal_letter])
     # Assign code to the meal itee
-    meal['code'] = code
-    print(meal)
+    meal['code'] = code   
 
 # Loop through the meals list and save each meal
 for meal_data in meals_data:
@@ -329,15 +327,14 @@ for t in range(3):
     end_times.append(ready_times[t] + timedelta(minutes=fake.random_int(min=1, max=5)))
 
 emp =  User.objects.exclude(username='senato68').filter().first()
-print("Employee submitted: ", emp)
 
 orders_data = [
     {
         'number': 1,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['Krabby Patty', 'Krusty Dog', 'Fries'],
         'meals': [],
         'price': 13.97,
@@ -345,10 +342,10 @@ orders_data = [
     },
     {
         'number': 2,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': [],
         'meals': ['Good Meal'],
         'price': 9.99,
@@ -356,10 +353,10 @@ orders_data = [
     },
     {
         'number': 3,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['Steamed Hams', 'Krusty Dog'],
         'meals': ['Good Meal'],
         'price': 19.97,
@@ -367,10 +364,10 @@ orders_data = [
     },
     {
         'number': 4,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['Krusty Krab Pizza', 'Diet Dr Kelp'],
         'meals': [],
         'price': 13.37,
@@ -378,10 +375,10 @@ orders_data = [
     },
     {
         'number': 5,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['Seaweed Salad', 'Seaweed Salad', 'Seaweed Salad'],
         'meals': [],
         'price': 12.34,
@@ -389,10 +386,10 @@ orders_data = [
     },
     {
         'number': 6,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['None Pizza With Left Beef'],
         'meals': ['Krabby Patty Combo'],
         'price': 99.99,
@@ -400,10 +397,10 @@ orders_data = [
     },
     {
         'number': 7,
-        'time_est': '',
-        'time_submitted': '',
-        'time_ready': '',
-        'time_completed': '',
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': [],
         'meals': ['Good Meal','Good Meal', 'Krabby Patty Combo'],
         'price': 17.38,
@@ -419,19 +416,12 @@ for o in range(len(orders_data)):
     if o < len(end_times):
         orders_data[o]['time_completed'] = end_times[o]
 
-print(orders_data)
-
-print("order made")
-
 for order_data in orders_data:
-    print("in the loop")
-    user_exists = User.objects.get(username=order_data['employee_submitted'])
-    print(user_exists)
-    print('username valid')
+    user_exists = User.objects.get(username=order_data['employee_submitted'])  
     order = Order(number = order_data['number'],
                   time_est = order_data['time_est'],
                   time_submitted = order_data['time_submitted'],
-                  time_ready = None,
+                  time_ready = order_data['time_ready'],
                   time_completed = order_data['time_completed'],
                   price = order_data['price'],
                   employee_submitted = user_exists,
@@ -465,7 +455,6 @@ for order_data in orders_data:
         # get the menu item
         meal = Meal.objects.filter(name=meal_name, menu=True).first()
         old_meal = Meal.objects.filter(name=meal_name, menu=True).first()
-        print(meal)
         # Generate a new code from db data #
         code_meal = meal.code[:1]
         
@@ -481,9 +470,7 @@ for order_data in orders_data:
         meal.code = f'{code_meal}{str(int(high_number) + 1)}'
         meal.menu = False
         meal.save()
-        print(old_meal.foods.all())
         for food in old_meal.foods.all():
-            print(food)
             old_code = food.code
             # Generate a new code from db data #
             code_cat = food.code[:1]
