@@ -23,7 +23,7 @@ newGroup = Group(name = 'manager')
 newGroup.save()
 
 # generate employees (and associated users [and assign groups])
-for x in range(5):
+for x in range(10):
     fake_name = fake.name().split()
     first_name = fake_name[0]
     last_name = fake_name[-1]
@@ -53,6 +53,14 @@ for employee in Employee.objects.all():
             shift = Shift.objects.create(start=start_time, end=end_time, employee=employee)
         except Exception as e:
             print(f"Error creating shift: {e}")
+
+# open shift (no end time)
+employee = Employee.objects.all().first()
+start_time = fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone())
+try:
+    shift = Shift.objects.create(start=start_time, end=end_time, employee=employee)
+except Exception as e:
+    print(f"Error creating shift: {e}")
 
 
 # Define ingredients and their quantities using a dictionary
@@ -193,8 +201,6 @@ foods_data = [
 
 ### Code to dynamically generate unique food codes
 # Dictionary to store used letters for category and foos
-categories = Food.objects.values_list('category', flat=True).distinct()
-foods = Food.objects.values_list('name', flat=True).distinct()
 cat_letters = {}
 food_letters = {}
 
@@ -301,11 +307,26 @@ for meal_data in meals_data:
         
     meal.save()
 
-fake = Faker()
+start_times = [fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone())]
 
-start_times = [fake.date_time_between(start_date='-3d', end_date='now', tzinfo=timezone.get_current_timezone()),
-               fake.date_time_between(start_date='-2d', end_date='now', tzinfo=timezone.get_current_timezone()),
-               fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone()),]
+est_times = []
+ready_times = []
+end_times = []
+
+for t in range(len(start_times)):
+    est_times.append(start_times[t] + timedelta(minutes=fake.random_int(min=1, max=12)))
+
+for t in range(5):
+    ready_times.append(start_times[t] + timedelta(minutes=fake.random_int(min=1, max=10)))
+
+for t in range(3):
+    end_times.append(ready_times[t] + timedelta(minutes=fake.random_int(min=1, max=5)))
 
 emp =  User.objects.exclude(username='senato68').filter().first()
 print("Employee submitted: ", emp)
@@ -313,9 +334,10 @@ print("Employee submitted: ", emp)
 orders_data = [
     {
         'number': 1,
-        'time_est': start_times[0] + timedelta(minutes=9),
-        'time_submitted': start_times[0],
-        'time_completed': start_times[0] + timedelta(minutes=9),
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
         'foods': ['Krabby Patty', 'Krusty Dog', 'Fries'],
         'meals': [],
         'price': 13.97,
@@ -323,9 +345,10 @@ orders_data = [
     },
     {
         'number': 2,
-        'time_est': start_times[1] + timedelta(minutes=10),
-        'time_submitted': start_times[1],
-        'time_completed': start_times[1] + timedelta(minutes=9),
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
         'foods': [],
         'meals': ['Good Meal'],
         'price': 9.99,
@@ -333,15 +356,70 @@ orders_data = [
     },
     {
         'number': 3,
-        'time_est': start_times[2] + timedelta(minutes=3),
-        'time_submitted': start_times[2],
-        'time_completed': start_times[2] + timedelta(minutes=4),
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
         'foods': ['Steamed Hams', 'Krusty Dog'],
         'meals': ['Good Meal'],
         'price': 19.97,
         'employee_submitted': emp,
+    },
+    {
+        'number': 4,
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
+        'foods': ['Krusty Krab Pizza', 'Diet Dr Kelp'],
+        'meals': [],
+        'price': 13.37,
+        'employee_submitted': emp,
+    },
+    {
+        'number': 5,
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
+        'foods': ['Seaweed Salad', 'Seaweed Salad', 'Seaweed Salad'],
+        'meals': [],
+        'price': 12.34,
+        'employee_submitted': emp,
+    },
+    {
+        'number': 6,
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
+        'foods': ['None Pizza With Left Beef'],
+        'meals': ['Krabby Patty Combo'],
+        'price': 99.99,
+        'employee_submitted': emp,
+    },
+    {
+        'number': 7,
+        'time_est': '',
+        'time_submitted': '',
+        'time_ready': '',
+        'time_completed': '',
+        'foods': [],
+        'meals': ['Good Meal','Good Meal', 'Krabby Patty Combo'],
+        'price': 17.38,
+        'employee_submitted': emp,
     }
 ]
+
+for o in range(len(orders_data)):
+    orders_data[o]['time_est'] = est_times[o]
+    orders_data[o]['time_submitted'] = start_times[o]
+    if o < len(ready_times):
+        orders_data[o]['time_ready'] = ready_times[o]
+    if o < len(end_times):
+        orders_data[o]['time_completed'] = end_times[o]
+
+print(orders_data)
 
 print("order made")
 
