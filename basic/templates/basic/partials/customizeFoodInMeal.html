@@ -1,3 +1,22 @@
+<head>
+    <style>
+        input[type=range] {
+            width: 50%; /* Set the width of the track */
+            height: 10px; /* Set the height of the track */
+            background: #d3d3d3; /* Track background color */
+            border-radius: 5px; /* Rounded corners */
+        }
+    
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; /* Set the width of the thumb */
+            height: 20px; /* Set the height of the thumb */
+            background: #4CAF50; /* Thumb color */
+            border-radius: 50%; /* Rounded corners */
+            cursor: pointer; /* Cursor on hover */
+        }
+    </style>
+</head>
 <div id="foodCustomizer">
 <br>
 <a><u>{{food.name}}</u></a>
@@ -11,7 +30,7 @@ hx-vals='{"foodCode": "{{food.code}}" }' hx-swap="innerHTML">Submit Item</button
 <a>Message</a> <input type="text" name = "message" id="message">
 <br>
 <br>
-<a> <u>Modify Ingredients In Food</u> </a>
+<p> <u>Modify Ingredients In Food</u> </p>
 <br>
 {% load custom_filters %}
 {% for ingredient in inFood %}
@@ -24,11 +43,11 @@ hx-vals='{"foodCode": "{{food.code}}" }' hx-swap="innerHTML">Submit Item</button
     <div id="change{{ingredient.idnumber}}">Standard</div>
 {% endfor %}
 <br>
-<a> <u>Add Extra Ingredients</u> </a>
+<p> <u>Add Extra Ingredients</u> </p>
 <br>
 {% for ingredient in notInFood %}
     <br>
-    <a> {{ingredient.name}}: </a>
+    <p> {{ingredient.name}}: </p>
     <input type="range" min="0" max="2" step="1" value="0" hx-target="#change{{ingredient.idnumber}}"
     hx-post="{% url 'basic:amountchange' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
     name="addition{{ingredient.idnumber}}" id="addition{{ingredient.idnumber}}"

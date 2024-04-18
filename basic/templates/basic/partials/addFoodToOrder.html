@@ -1,15 +1,85 @@
-<div id="orderSummary" name="orderSummary">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    
+    .summary {
+      height: 100%;
+      width: 160px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      background-color: #941C2F;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+
+    .summary a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #dfd0d0;
+      display: block;
+    }
+    
+    .summary a:hover {
+      color: #f1f1f1;
+    }
+    
+    .main {
+      margin-left: 160px; /* Same as the width of the sidenav */
+      font-size: 28px; /* Increased text to enable scrolling */
+      padding: 0px 10px;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+
+    table, th, td {
+        border:1px solid black;
+    }
+
+    .heading {
+      text-align: center;
+      color: #F7F9F9;
+    }
+    
+    </style>
+    
+    <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+
+
 {{foodName}} was added to order.
+
+
+
+
+
+
+
 <br>
 <br>
-<u>Order Summary:</u>
-{% for food in foodsInOrder %}
+<div class ="summary" id ="summary" hx-swap-oob ="true">
+
+    <h3 class="heading"><u>Order Summary</u></h3>
+
+    <p class="heading"><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-target="#itemlist" 
+      hx-vals='{"addFoodToOrder": "{{total}}"}'><u>Total: {{total}}</u></a></p>
+    {% for food in foodsInOrder %}
     <br>
+    <p class="heading">
+    <u>{{food.name}}</u>
     <br>
-    <a><u>{{food.name}}</u></a>
-    <br>
-    <a>{{food.message}}</a>
-{% endfor %}
+    {{food.message}}
+    {% endfor %}
 <br>
 {% for mealInstruction in mealInstructions %}
     <br>
@@ -23,6 +93,9 @@
 hx-target="#orderSummary">Remove Items From Order</button>
 <br>
 <a href="{% url 'basic:order' %}">
-    <button>Finish Order</button>
+    <button class="btn btn-success btn-block">Finish Order</button>
 </a>
+<br>
+<br>
 </div>
+</p>

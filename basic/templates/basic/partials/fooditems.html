@@ -1,11 +1,74 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    
+    .summary {
+      height: 100%;
+      width: 160px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      right: 0;
+      background-color: #941C2F;
+      overflow-x: hidden;
+      padding-top: 20px;
+    }
+
+    .summary a {
+      padding: 6px 8px 6px 16px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #dfd0d0;
+      display: block;
+    }
+    
+    .summary a:hover {
+      color: #f1f1f1;
+    }
+    
+    .main {
+      margin-left: 160px; /* Same as the width of the sidenav */
+      font-size: 28px; /* Increased text to enable scrolling */
+      padding: 0px 10px;
+    }
+    
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
+
+    table, th, td {
+        border:1px solid black;
+    }
+
+    .heading {
+      text-align: center;
+      color: #F7F9F9;
+    }
+   
+    </style>
+    
+    <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
 <div>
-<a><u>{{category}}</u></a>
-    <br>
+<h3><u>{{category}}</u></h3>
     {% for food in foods %}
         <br>
         <button hx-get="{% url 'basic:customizeFood' %}" hx-target="#customizeFood"
-        hx-vals='{"foodName": "{{food.name}}"}'> {{ food.name }} </button>
+        hx-vals='{"foodName": "{{food.name}}"}' class="btn btn-outline-primary"> {{ food.name }} </button>
     {% endfor %}
 </div>
 <br>
-<div id="customizeFood"></div>
+
+<div id="customizeFood">
+
+</div>
+
+<div class ="summary" id ="summary" hx-swap-oob ="true">
+    <p><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-vals='{"addFoodToOrder": "{{total}}"}'><u></u></a></p>
+</div>
