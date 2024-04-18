@@ -1,11 +1,14 @@
 <div id="foodCustomizer">
+<br>
 <a><u>{{food.name}}</u></a>
 <br>
-<a>Message</a> <input type="text" name = "message" id="message">
 <br>
 <form id = "changesForm" name = "changesForm">
 <button hx-post="{% url 'basic:editFoodInMeal' %}" hx-target="#foodCustomizer" hx-include="#message, #changesForm"
 hx-vals='{"foodCode": "{{food.code}}" }' hx-swap="innerHTML">Submit Item</button>
+<br>
+<br>
+<a>Message</a> <input type="text" name = "message" id="message">
 <br>
 <br>
 <a> <u>Modify Ingredients In Food</u> </a>
