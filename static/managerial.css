@@ -76,6 +76,7 @@ li {
 }
 
 .secondary-container {
+    width: 75%;
     border-radius: 4px;
     border-width: 0px;
     border-top-width: 10px;
@@ -107,4 +108,27 @@ li {
 .form-input > input {
     height: 2em;
     width: 50%;
+}
+
+.sales-table {
+    text-align: left;
+    width: 100%;
+    border: 5px solid var(--steelBlue);
+}
+  
+.sales-table > tr > td, .sales-table > thead > th {
+    border: 1px solid var(--steelBlue);
+    padding: 8em;
+}
+
+.sales-table > tr:nth-child(even){background-color: var(--lightSkyBlue);}
+
+.sales-table > tr:hover {background-color: var(--seaSalt);}
+
+.sales-table > thead > th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: var(--burgundy);
+    color: var(--seaSalt);
 }

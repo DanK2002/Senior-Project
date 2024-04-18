@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from basic.models import Employee, Shift, Order, Ingredient, Food, Meal
 
 # Retrieve the superuser by username
-superuser = User.objects.get(username='senato68')
+superuser = User.objects.get(username='billie')
 
 # Clear all tables except the superuser
 User.objects.exclude(username=superuser.username).delete()

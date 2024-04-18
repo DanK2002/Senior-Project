@@ -1,3 +1,9 @@
 <div class = "accent">
     Shift saved successfully.
 </div>
+
+<select id = "shift-list" name = "shift-list" class = "dropdown" hx-swap-oob = "true">
+    {% for shift in shifts %}
+    <option value = "{{ shift.start|date:'Y-m-d H:i:s' }} ">From {{ shift.start }} to {{ shift.end }}</option>
+    {% endfor %}
+</select>

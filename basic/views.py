@@ -125,11 +125,12 @@ def manageemployees(request):
 def new_employee_form(request):
     print(request.POST)         # For debugging purposes; logs request in console
     form =  AddEmployeeForm()
+    users = User.objects.all()
     return render(
         request,
         "basic/partials/new_employee.html",
         {
-            'add_form' : form,
+            'add_form' : form
         }
     )
     
@@ -172,7 +173,8 @@ def save_new_employee(request):
             'selectedUser' : newUser,
             'selectedEmployee' : newEmployee,
             'shifts' : [],
-            'groups' : groups
+            'groups' : groups,
+            'users' : users
         }
     )
 
@@ -215,7 +217,8 @@ def edit_employee(request):
     # Populate the form with pre-existing data
     editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
                                     "last_name": selectedUser.last_name,
-                                    "wage" : selectedEmployee.wage})
+                                    "wage" : selectedEmployee.wage,
+                                    "user_groups" : inGroups})
     return render(
         request,
         "basic/partials/edit_employee.html",
@@ -296,7 +299,8 @@ def remove_employee(request):
     selectedUsername = request.POST.get('select-employees')     # Get the username requested
     selectedUser = User.objects.get(username=selectedUsername)  # Find that user
     selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
-    employeeName = selectedUser.first_name + selectedUser.last_name
+    first_name = selectedUser.first_name
+    last_name = selectedUser.last_name
     print(selectedUser.first_name + selectedUser.last_name)
     Shift.objects.filter(employee = selectedEmployee).delete()  # Delete their shifts
     Employee.objects.get(user = selectedUser).delete()          # Delete the employee
@@ -305,7 +309,9 @@ def remove_employee(request):
         request,
         "basic/partials/remove_employee.html",
         {
-            'name' : employeeName
+            'first_name' : first_name,
+            'last_name' : last_name,
+            'users' : users
         }
     )
 
@@ -395,9 +401,16 @@ def edit_shift(request):
     selectedUser = User.objects.get(username = request.POST.get('user'))
     selectedEmployee = Employee.objects.get(user = selectedUser)
     originalShift = Shift.objects.get(employee = selectedEmployee, start = request.POST.get('shift-list'))
+    
+    start_date = originalShift.start.strftime("%Y-%m-%d")
+    start_time = originalShift.start.strftime("%H:%M:%S")
+    end_date = originalShift.end.strftime("%Y-%m-%d")
+    end_time = originalShift.end.strftime("%H:%M:%S")
     shiftForm = EditEmployeeShifts({
-        "start_time" : originalShift.start,
-        "end_time" : originalShift.end
+        "start_date" : start_date,
+        "start_time" : start_time,
+        "end_date" : end_date,
+        "end_time" : end_time
     })
     return render(
         request,
@@ -414,9 +427,13 @@ def remove_shift(request):
     selectedUser = User.objects.get(username = request.POST.get('user'))
     selectedEmployee = Employee.objects.get(user = selectedUser)
     Shift.objects.get(employee = selectedEmployee, start = request.POST.get('shift-list')).delete()
+    shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
     return render(
         request,
-        "basic/partials/remove_shift.html"
+        "basic/partials/remove_shift.html",
+        {
+            'shifts' : shifts
+        }
     )
 
 # User wants to save changes to an existing shift
@@ -427,12 +444,18 @@ def save_existing_shift(request):
         selectedUser = User.objects.get(username = request.POST.get('user'))
         selectedEmployee = Employee.objects.get(user = selectedUser)
         originalShift = Shift.objects.get(employee = selectedEmployee, start = request.POST.get('original-shift'))
-        originalShift.start = request.POST.get('start_time')
-        originalShift.end = request.POST.get('end_time')
+        start_datetime = request.POST.get('start_date') + ' ' + request.POST.get('start_time')
+        end_datetime = request.POST.get('end_date') + ' ' + request.POST.get('end_time')
+        originalShift.start = start_datetime
+        originalShift.end = end_datetime
         originalShift.save()
+        shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
         return render(
             request,
-            "basic/partials/saved_shift.html"
+            "basic/partials/saved_shift.html",
+            {
+                "shifts" : shifts
+            }
         )
     elif request.method == "GET":
         return render(
@@ -445,12 +468,18 @@ def save_new_shift(request):
     if request.method == "POST":
         selectedUser = User.objects.get(username = request.POST.get('user'))
         selectedEmployee = Employee.objects.get(user = selectedUser)
-        Shift.objects.create(start = request.POST.get('start_time'),
-                          end = request.POST.get('end_time'),
+        start_datetime = request.POST.get('start_date') + ' ' + request.POST.get('start_time')
+        end_datetime = request.POST.get('end_date') + ' ' + request.POST.get('end_time')
+        Shift.objects.create(start = start_datetime,
+                          end = end_datetime,
                           employee = selectedEmployee)
+        shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
         return render(
             request,
-            "basic/partials/saved_shift.html"
+            "basic/partials/saved_shift.html",
+            {
+                'shifts' : shifts
+            }
         )
     elif request.method == "GET":
         return render(

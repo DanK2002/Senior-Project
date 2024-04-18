@@ -20,9 +20,5 @@
                 hx-trigger = "click" hx-target = "#edit-one-shift" hx-swap = "innerHTML" />
         </form>
 </div>
-<form>
-    <input type="button" value = "Refresh shift list" class = "btn"
-            hx-post = "{% url 'basic:edit-shifts' %}" hx-trigger = "click, click from:.refresh-shift delay: 1s"
-            hx-target = "#parent-shift-list" hx-swap = "innerHTML" hx-include = "{{ selectedUser }}" />
-</form>
+
 <div id="edit-one-shift"></div>
