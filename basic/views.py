@@ -482,7 +482,7 @@ def managemenu(request):
     else:
         foods = None
     
-    html_content = render(request, "basic/managemenu.html", 
+    return render(request, "basic/managemenu.html", 
                   {'categories': categories, 
                    'selected_category': selected_category,
                    'selected_food': selected_food,

@@ -418,8 +418,6 @@ fake = Faker()
 
 start_times = [fake.date_time_between(start_date='-3d', end_date='now', tzinfo=timezone.get_current_timezone()),
                fake.date_time_between(start_date='-2d', end_date='now', tzinfo=timezone.get_current_timezone()),
-start_times = [fake.date_time_between(start_date='-3d', end_date='now', tzinfo=timezone.get_current_timezone()),
-               fake.date_time_between(start_date='-2d', end_date='now', tzinfo=timezone.get_current_timezone()),
                fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone()),]
 
 emp =  User.objects.exclude(username='senato68').filter().first()
