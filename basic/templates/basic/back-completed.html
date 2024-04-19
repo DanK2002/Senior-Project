@@ -13,10 +13,11 @@
     <div id="large-box">
         <div class="orders-container">
             {% if completed_orders %}
-                {% for order in completed_orders %}
+                {% for order in completed_orders|dictsortreversed:"time_est" %}
                     <div class="order-box">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Time Completed: {{ order.time_completed}}</p>
+                        <p>{{ order.message }}</p>
                         <p>Price: {{ order.price}}</p>
                         <form id="remove_completed_form_{{ order.id }}" hx-post="{% url 'basic:remove_completed' order.id %}">
                             {% csrf_token %}
@@ -30,7 +31,7 @@
         </div>
     </div>
 
-    <div class="button-container2" hx-target="body" hx-swap="outerHTML">
+    <div id="button-container2" hx-target="body" hx-swap="outerHTML">
         <button class="button" hx-get="../back-order/">Back to Menu</button>
     </div>
 

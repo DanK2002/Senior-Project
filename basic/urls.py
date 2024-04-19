@@ -53,7 +53,9 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),
 
-    path("ordercreation/", views.ordercreation, name="ordercreation"),
+    path("ordercreation1/", views.ordercreation1, name="ordercreation1"),
+    path("ordercreation2/", views.ordercreation2, name="ordercreation2"),
+    path("ordercreation3/", views.ordercreation3, name="ordercreation3"),
     path("partials/fooditems/", views.fooditems, name="fooditems"),
     path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
     path("partials/amountchange/", views.amountchange, name="amountchange"),
