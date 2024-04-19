@@ -30,7 +30,7 @@
         font-size: 28px; /* Increased text to enable scrolling */
         padding: 80px 160px;
       }
-      
+        
       @media screen and (max-height: 450px) {
         .sidenav {padding-top: 15px;}
         .sidenav a {font-size: 18px;}
@@ -71,19 +71,36 @@
     <button type="submit">Update Category</button>
   </form>
 
-  <form class="food-dropdown" method="post" 
-    hx-target = "#add-food-container"
-    hx-swap ="outerHTML"
-    hx-trigger="change"
+  <!-- Drop down list for meals -->
+  <form class="meal-dropdown" method="get" 
+  hx-target = "#add-meal-container"
+  hx-swap ="outerHTML"
+  hx-trigger="change"
+  action="{% url 'basic:fetch_meal_details' %}">
+    {% csrf_token %}
+    <label for="meal_name">Meals:</label>
+    <select id="meal_name" name="meal_name" hx-get="{% url 'basic:fetch_meal_details' %}" hx-trigger="change">
+      <option value="">Select a Meal</option>
+      {% for meal in meals %}
+      <option value="{{ meal.name }}">{{ meal.name }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <!-- Drop down list for food items in selected category -->
+<form class="food-dropdown" method="post" 
+hx-target = "#add-food-container"
+hx-swap ="outerHTML"
+hx-trigger="change"
     hx-get="{% url 'basic:fetch_food_details' %}"> 
     {% csrf_token %}
     <label for="food_name">Foods:</label>
     <select id="food_name" name="food_name" hx-post="category">
       <option value="">Select a Food</option>
       {% for food in foods %}
-        <option value="{{ food }}" {% if selected_food == food %} selected {% endif %}>{{ food }}</option>
-      {% endfor %}
-    </select>
+        <option value="{{ food.name }}" {% if selected_food == food %} selected {% endif %}>{{ food.name }}</option>
+        {% endfor %}
+      </select>
     <input type="hidden" name="category" value="{{ selected_category }}">
   </form>
 
@@ -92,27 +109,27 @@
   <div hx-target="#edit-category-response" hx-swap="outerHTML">
     <button id="edit-category-button" hx-get="{% url 'basic:edit_category_form' %}?selected_category={{ selected_category }}">Edit Category Name</button>
   </div>
-
+  
   
   <!-- Edit Category Form Placeholder -->
   <div id="edit-category-response">
     
   </div>
-
+  <!-- Add food form to add a new food -->
   <div id="add-food-container" hx-target="view-food-details" hx-swap="outerHTML">
     {% include 'basic/partials/add_food.html' %}
   </div>
+  <!--Replaces add food form with details of selected food item -->
   <div id="food-details">
     <div id="view-food-details"></div>
   </div>
-
-<!-- Add New Ingredient -->
-<div class="add-ingredient-container">
-  <div class="add-ingredient-box">
-    <a href="#">+</a>
-    Add New Ingredient
+  <!-- Add Meal form -->
+  <div id="add-meal-container" hx-target="view-meal-details" hx-swap="outerHTML">
+    {% include 'basic/partials/add_meal.html' %}
   </div>
-</div>
-  
+  <!--Edit/view food form-->
+  <div id="meal-details">
+    <div id="view-meal-details"></div>
+  </div>
   
 </body>

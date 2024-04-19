@@ -86,14 +86,19 @@ ingredients_data = {
 
 # Loop through the ingredients dictionary and save each ingredient
 i = 0
+i = 0
 for ingredient_name, quantity in ingredients_data.items():
     ingredient = Ingredient(name=ingredient_name, quantity=quantity, idnumber=i)
+    ingredient = Ingredient(name=ingredient_name, quantity=quantity, idnumber=i)
     ingredient.save()
+    i += 1
     i += 1
 
 # Define foods and their ingredients using dictionaries
 foods_data = [
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Krabby Patty',
@@ -104,12 +109,16 @@ foods_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'Krusty Dog',
         'price': 3.99,
         'category': 'Sandwich',
         'ingredients': {'Hot Dog Bun': 1, 'Hot Dog': 1, 'Ketchup': 2, 'Mustard': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Steamed Hams',
@@ -120,12 +129,16 @@ foods_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'Good Burger',
         'price': 4.99,
         'category': 'Sandwich',
         'ingredients': {'Burger Bun': 2, 'Beef Patty': 1, 'Sliced Cheddar Cheese': 1, 'Onion': 1, 'Ketchup': 2, 'Mayo': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Krusty Krab Pizza',
@@ -136,12 +149,16 @@ foods_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'None Pizza With Left Beef',
         'price': 8.99,
         'category': 'Pizza',
         'ingredients': {'Pizza Dough': 1, 'Beef Topping': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Fries',
@@ -152,12 +169,16 @@ foods_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'Onion Rings',
         'price': 2.99,
         'category': 'Side',
         'ingredients': {'Frozen Onion Rings': 2}
     },
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Seaweed Salad',
@@ -168,6 +189,8 @@ foods_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'Orange Soda',
         'price': 1.99,
         'category': 'Drink',
@@ -176,12 +199,16 @@ foods_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'Dr Kelp',
         'price': 1.99,
         'category': 'Drink',
         'ingredients': {'Dr Kelp': 1}
     },
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Diet Dr Kelp',
@@ -237,10 +264,59 @@ for food in foods_data:
     # Assign code to the food itee
     food['code'] = code
 
+### Code to dynamically generate unique food codes
+# Dictionary to store used letters for category and foos
+categories = Food.objects.values_list('category', flat=True).distinct()
+foods = Food.objects.values_list('name', flat=True).distinct()
+cat_letters = {}
+food_letters = {}
+
+# Dictionary to store counts for category - food pair
+counts = {}
+
+for food in foods_data:
+    category = food['category']
+    food_name = food['name']
+    # Extract the first letter of the category for the code
+    index = 0
+    category_letter = category[index].upper() 
+    # If the first letter is already used, find the next available letter
+    if category not in cat_letters.keys():
+        while category_letter in cat_letters.values():
+            index += 1
+            category_letter = category[index].upper()
+    else:
+        category_letter = cat_letters[category]    
+    # Extract the first letter of the food name for the code
+    index = 0
+    food_letter = food_name[0].upper()
+    # If the first letter is already used, find the next available letter
+    if food_name not in food_letters.keys():
+        while food_letter in food_letters.values():
+            index += 1
+            food_letter = food_name[index].upper()
+    else:
+        food_letter = food_letters[food_name]   
+    # Update used letters
+    if category not in cat_letters.keys():
+        cat_letters[category] = category_letter
+    if food_name not in food_letters.keys():
+        food_letters[food_name] = food_letter    
+    # Update counts dictionary
+    pair = (category_letter, food_letter)
+    counts[pair] = counts.get(pair, 0) + 1 
+    # Generate code
+    code = category_letter + food_letter + str(counts[pair])
+    # Assign code to the food itee
+    food['code'] = code
+
 # Loop through the foods list and save each food
 for food_data in foods_data:
     print(food_data)
+    print(food_data)
     ingredient_list = json.dumps(food_data['ingredients'])
+    food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
+                price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
     food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
                 price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
 
@@ -249,11 +325,15 @@ meals_data = [
     {
         'menu': True,
         'code': '',
+        'menu': True,
+        'code': '',
         'name': 'Good Meal',
         'price': 9.99,
         'foods': ['Good Burger', 'Fries', 'Orange Soda']
     },
     {
+        'menu': True,
+        'code': '',
         'menu': True,
         'code': '',
         'name': 'Krabby Patty Combo',
@@ -291,18 +371,53 @@ for meal in meals_data:
     meal['code'] = code
     print(meal)
 
+meals = Food.objects.values_list('name', flat=True).distinct()
+meal_letters = {}
+
+### Code to dynamically generate unique food codes
+# Dictionary to store counts for category - food pair
+counts = {}
+for meal in meals_data:
+    meal_name = meal['name']
+    # Extract the first letter of the meal name for the code
+    index = 0
+    meal_letter = meal_name[0].upper()
+    # If the first letter is already used, find the next available letter
+    if meal_name not in meal_letters.keys():
+        while meal_letter in meal_letters.values():
+            index += 1
+            meal_letter = meal_name[index].upper()
+    else:
+        meal_letter = meal_letters[meal_name]
+    # Update used letters
+    if meal_name not in meal_letters.keys():
+        meal_letters[meal_name] = meal_letter
+    # Update counts dictionary
+    counts[meal_letter] = counts.get(meal_letter, 0) + 1
+    # Generate code
+    code = meal_letter + str(counts[meal_letter])
+    # Assign code to the meal itee
+    meal['code'] = code
+    print(meal)
+
 # Loop through the meals list and save each meal
 for meal_data in meals_data:
+    meal = Meal.objects.create(menu=meal_data['menu'], code=meal_data['code'], name=meal_data['name'], price=meal_data['price'])
     meal = Meal.objects.create(menu=meal_data['menu'], code=meal_data['code'], name=meal_data['name'], price=meal_data['price'])
     for food_name in meal_data['foods']:
         # get the menu item
         food = Food.objects.filter(name=food_name, menu=True).first()
+        # get the menu item
+        food = Food.objects.filter(name=food_name, menu=True).first()
         meal.foods.add(food)
+        
         
     meal.save()
 
 fake = Faker()
 
+start_times = [fake.date_time_between(start_date='-3d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date='-2d', end_date='now', tzinfo=timezone.get_current_timezone()),
 start_times = [fake.date_time_between(start_date='-3d', end_date='now', tzinfo=timezone.get_current_timezone()),
                fake.date_time_between(start_date='-2d', end_date='now', tzinfo=timezone.get_current_timezone()),
                fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone()),]
@@ -353,6 +468,7 @@ for order_data in orders_data:
     order = Order(number = order_data['number'],
                   time_est = order_data['time_est'],
                   time_submitted = order_data['time_submitted'],
+                  time_ready = None,
                   time_ready = None,
                   time_completed = order_data['time_completed'],
                   price = order_data['price'],
@@ -428,4 +544,3 @@ for order_data in orders_data:
         order.meals.add(meal)
     print('meals saved')
     order.save()
-

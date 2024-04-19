@@ -5,13 +5,25 @@
 
   <!-- Name, Category, and Price fields -->
   <div class="food-details">
-    <form method="POST">
+    <form method="POST" action="{% url 'basic:add_food' %}">
       {% csrf_token %}
-      {{ form.as_p }}
-      <!-- Save and Cancel buttons for adding a food -->
+      {{ add_food_form.as_p }}
+
+      <!-- Add New Ingredient button -->
+      <div class="add-ingredient-container">
+        <div class="add-ingredient-box">
+          <button type="button" class="add-ingredient-button" hx-get="{% url 'basic:ingredient_list' %}" hx-target="#ingredient-list-container">Add Ingredients</button>
+        </div>
+      </div>
+      <div id="ingredient-list-container">
+        <!-- Include the ingredient list here -->
+        {% include 'basic/partials/ingredient_list.html' %}
+      </div>
+
+      <!-- Save button for the new food item -->
       <div class="save-cancel-container">
-        <button type="submit" class="save-button">Save</button>
-        <button type="reset" class="cancel-button">Cancel</button>
+        <button type="submit" class="save-button">Save New Food</button>
       </div>
     </form>
   </div>
+</div>
