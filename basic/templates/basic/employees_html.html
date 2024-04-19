@@ -8,13 +8,6 @@
       Employees
     </h1>
     <div class = "container">
-    <!-- Refreshes the employee list. Currently, the list automatically refreshes upon deleting a user,
-         But it does not automatically refresh when saving a new user. For some reason. Will fix next week. -->
-    <form method="POST">
-      <input type="button" value="Refresh Employee List" class = "btn"
-            hx-trigger = "click, click from:.refresh-list delay:1s" hx-post = "{% url 'basic:view-all-employees' %}"
-            hx-target = "#view-employees" hx-swap = "innerHTML" />
-    </form>
   
     <form method = "POST">
         <div id="view-employees">

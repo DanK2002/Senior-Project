@@ -10,11 +10,14 @@
         {{ editEmployee }}
       </div>
       <br />
-      <input hidden name = "user" value = "{{ selectedUser.username }}" />
+      <input hidden name = "user" value = "{{ selectedUser.username }}"/>
+      <input hidden name = "select-employees" value = "{{ selectedUser.username }}"/>
       <input type="button" name = "Save" value = "Save"  class = "btn"
             hx-post="{% url 'basic:edit-employee-save' %}" hx-trigger="click" 
             hx-target="#employee-info" hx-swap = "innerHTML" hx-include = "#edit-employee-form" />
-      <input type="submit" name = "Cancel" value = "Cancel" class = "btn-rmv" />
+      <input type="button" name = "Cancel" value = "Cancel" class = "btn-rmv"
+            hx-trigger = "click" hx-post="{% url 'basic:view-employee' %}" hx-include= "#edit-employee-form"
+            hx-swap="innerHTML" hx-target="#employee-info" />
     </form>
     <div id="edit-shifts">
       <form id = "show-shifts">

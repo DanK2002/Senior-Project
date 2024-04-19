@@ -2,6 +2,12 @@ import json
 from django import forms
 from .models import Food, Ingredient
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+class TimeInput(forms.TimeInput):
+    input_type = 'time'
+
 class AddFoodForm(forms.Form):
     name = forms.CharField(label='Name', max_length=100)
     category = forms.CharField(label='Category', max_length=100)
@@ -69,6 +75,24 @@ class EditEmployeeForm(forms.Form):
     user_groups = forms.MultipleChoiceField(choices = GROUP_CHOICES, widget=forms.CheckboxSelectMultiple)
 
 class EditEmployeeShifts(forms.Form):
-    start_time = forms.DateTimeField()
-    end_time = forms.DateTimeField()
+    start_date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+        input_formats=["%Y-%m-%d"]
+    )
+    start_time = forms.TimeField(
+        required=True,
+        widget=forms.TimeInput(format="%H:%i:%s", attrs={"type": "time"}),
+        input_formats=["%H:%i:%s"]
+    )
+    end_date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+        input_formats=["%Y-%m-%d"]
+    )
+    end_time = forms.DateTimeField(
+        required=True,
+        widget=forms.TimeInput(format="%H:%i:%s", attrs={"type": "time"}),
+        input_formats=["%H:%i:%s"]
+    )
     

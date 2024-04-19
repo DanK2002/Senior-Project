@@ -1,3 +1,6 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'managerial.css' %}">
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -51,15 +54,17 @@
     <a href="../sales">Sales</a>
   </div>
 
+  <div class = "container">
   <h1>Manage Menu</h1>
   
+  <div class = "secondary-container">
   <!-- Display Selected Category -->
   <div class="selected-category-container">
     <p>Category: {{ selected_category }}</p>
   </div>
 
   <!-- Drop-down list for categories -->
-  <form class="category-dropdown" method="post">
+  <form class="category-dropdown form-input" method="post">
     {% csrf_token %}
     <label for="category">Category:</label>
     <select id="category" name="category">
@@ -68,7 +73,7 @@
         <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
       {% endfor %}
     </select>
-    <button type="submit">Update Category</button>
+    <button type="submit" class = "btn">Update Category</button>
   </form>
 
   <!-- Drop down list for meals -->
@@ -103,18 +108,22 @@ hx-trigger="change"
       </select>
     <input type="hidden" name="category" value="{{ selected_category }}">
   </form>
-
   
   <!-- Edit Category Button -->
   <div hx-target="#edit-category-response" hx-swap="outerHTML">
-    <button id="edit-category-button" hx-get="{% url 'basic:edit_category_form' %}?selected_category={{ selected_category }}">Edit Category Name</button>
+    <button class = "btn" id="edit-category-button" hx-get="{% url 'basic:edit_category_form' %}?selected_category={{ selected_category }}">Edit Category Name</button>
   </div>
+  
+
   
   
   <!-- Edit Category Form Placeholder -->
   <div id="edit-category-response">
     
   </div>
+  </div>
+
+  <div class = "secondary-container">
   <!-- Add food form to add a new food -->
   <div id="add-food-container" hx-target="view-food-details" hx-swap="outerHTML">
     {% include 'basic/partials/add_food.html' %}
