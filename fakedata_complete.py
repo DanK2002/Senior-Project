@@ -23,7 +23,7 @@ newGroup = Group(name = 'manager')
 newGroup.save()
 
 # generate employees (and associated users [and assign groups])
-for x in range(5):
+for x in range(10):
     fake_name = fake.name().split()
     first_name = fake_name[0]
     last_name = fake_name[-1]
@@ -54,6 +54,14 @@ for employee in Employee.objects.all():
         except Exception as e:
             print(f"Error creating shift: {e}")
 
+# open shift (no end time)
+employee = Employee.objects.all().first()
+start_time = fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone())
+try:
+    shift = Shift.objects.create(start=start_time, end=end_time, employee=employee)
+except Exception as e:
+    print(f"Error creating shift: {e}")
+    
 
 # Define ingredients and their quantities using a dictionary
 ingredients_data = {
@@ -220,54 +228,6 @@ foods_data = [
 
 ### Code to dynamically generate unique food codes
 # Dictionary to store used letters for category and foos
-categories = Food.objects.values_list('category', flat=True).distinct()
-foods = Food.objects.values_list('name', flat=True).distinct()
-cat_letters = {}
-food_letters = {}
-
-# Dictionary to store counts for category - food pair
-counts = {}
-
-for food in foods_data:
-    category = food['category']
-    food_name = food['name']
-    # Extract the first letter of the category for the code
-    index = 0
-    category_letter = category[index].upper() 
-    # If the first letter is already used, find the next available letter
-    if category not in cat_letters.keys():
-        while category_letter in cat_letters.values():
-            index += 1
-            category_letter = category[index].upper()
-    else:
-        category_letter = cat_letters[category]    
-    # Extract the first letter of the food name for the code
-    index = 0
-    food_letter = food_name[0].upper()
-    # If the first letter is already used, find the next available letter
-    if food_name not in food_letters.keys():
-        while food_letter in food_letters.values():
-            index += 1
-            food_letter = food_name[index].upper()
-    else:
-        food_letter = food_letters[food_name]   
-    # Update used letters
-    if category not in cat_letters.keys():
-        cat_letters[category] = category_letter
-    if food_name not in food_letters.keys():
-        food_letters[food_name] = food_letter    
-    # Update counts dictionary
-    pair = (category_letter, food_letter)
-    counts[pair] = counts.get(pair, 0) + 1 
-    # Generate code
-    code = category_letter + food_letter + str(counts[pair])
-    # Assign code to the food itee
-    food['code'] = code
-
-### Code to dynamically generate unique food codes
-# Dictionary to store used letters for category and foos
-categories = Food.objects.values_list('category', flat=True).distinct()
-foods = Food.objects.values_list('name', flat=True).distinct()
 cat_letters = {}
 food_letters = {}
 
@@ -311,9 +271,7 @@ for food in foods_data:
     food['code'] = code
 
 # Loop through the foods list and save each food
-for food_data in foods_data:
-    print(food_data)
-    print(food_data)
+for food_data in foods_data:   
     ingredient_list = json.dumps(food_data['ingredients'])
     food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
                 price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
@@ -368,8 +326,7 @@ for meal in meals_data:
     # Generate code
     code = meal_letter + str(counts[meal_letter])
     # Assign code to the meal itee
-    meal['code'] = code
-    print(meal)
+    meal['code'] = code   
 
 meals = Food.objects.values_list('name', flat=True).distinct()
 meal_letters = {}
@@ -397,8 +354,7 @@ for meal in meals_data:
     # Generate code
     code = meal_letter + str(counts[meal_letter])
     # Assign code to the meal itee
-    meal['code'] = code
-    print(meal)
+    meal['code'] = code   
 
 # Loop through the meals list and save each meal
 for meal_data in meals_data:
@@ -414,21 +370,36 @@ for meal_data in meals_data:
         
     meal.save()
 
-fake = Faker()
+start_times = [fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone()),
+               fake.date_time_between(start_date=f'-{fake.random_int(min=1, max=7)}d', end_date='now', tzinfo=timezone.get_current_timezone())]
 
-start_times = [fake.date_time_between(start_date='-3d', end_date='now', tzinfo=timezone.get_current_timezone()),
-               fake.date_time_between(start_date='-2d', end_date='now', tzinfo=timezone.get_current_timezone()),
-               fake.date_time_between(start_date='-1d', end_date='now', tzinfo=timezone.get_current_timezone()),]
+est_times = []
+ready_times = []
+end_times = []
+
+for t in range(len(start_times)):
+    est_times.append(start_times[t] + timedelta(minutes=fake.random_int(min=1, max=12)))
+
+for t in range(5):
+    ready_times.append(start_times[t] + timedelta(minutes=fake.random_int(min=1, max=10)))
+
+for t in range(3):
+    end_times.append(ready_times[t] + timedelta(minutes=fake.random_int(min=1, max=5)))
 
 emp =  User.objects.exclude(username='senato68').filter().first()
-print("Employee submitted: ", emp)
 
 orders_data = [
     {
         'number': 1,
-        'time_est': start_times[0] + timedelta(minutes=9),
-        'time_submitted': start_times[0],
-        'time_completed': start_times[0] + timedelta(minutes=9),
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['Krabby Patty', 'Krusty Dog', 'Fries'],
         'meals': [],
         'price': 13.97,
@@ -436,9 +407,10 @@ orders_data = [
     },
     {
         'number': 2,
-        'time_est': start_times[1] + timedelta(minutes=10),
-        'time_submitted': start_times[1],
-        'time_completed': start_times[1] + timedelta(minutes=9),
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': [],
         'meals': ['Good Meal'],
         'price': 9.99,
@@ -446,28 +418,75 @@ orders_data = [
     },
     {
         'number': 3,
-        'time_est': start_times[2] + timedelta(minutes=3),
-        'time_submitted': start_times[2],
-        'time_completed': start_times[2] + timedelta(minutes=4),
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
         'foods': ['Steamed Hams', 'Krusty Dog'],
         'meals': ['Good Meal'],
         'price': 19.97,
         'employee_submitted': emp,
+    },
+    {
+        'number': 4,
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
+        'foods': ['Krusty Krab Pizza', 'Diet Dr Kelp'],
+        'meals': [],
+        'price': 13.37,
+        'employee_submitted': emp,
+    },
+    {
+        'number': 5,
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
+        'foods': ['Seaweed Salad', 'Seaweed Salad', 'Seaweed Salad'],
+        'meals': [],
+        'price': 12.34,
+        'employee_submitted': emp,
+    },
+    {
+        'number': 6,
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
+        'foods': ['None Pizza With Left Beef'],
+        'meals': ['Krabby Patty Combo'],
+        'price': 99.99,
+        'employee_submitted': emp,
+    },
+    {
+        'number': 7,
+        'time_est': None,
+        'time_submitted': None,
+        'time_ready': None,
+        'time_completed': None,
+        'foods': [],
+        'meals': ['Good Meal','Good Meal', 'Krabby Patty Combo'],
+        'price': 17.38,
+        'employee_submitted': emp,
     }
 ]
 
-print("order made")
+for o in range(len(orders_data)):
+    orders_data[o]['time_est'] = est_times[o]
+    orders_data[o]['time_submitted'] = start_times[o]
+    if o < len(ready_times):
+        orders_data[o]['time_ready'] = ready_times[o]
+    if o < len(end_times):
+        orders_data[o]['time_completed'] = end_times[o]
 
 for order_data in orders_data:
-    print("in the loop")
-    user_exists = User.objects.get(username=order_data['employee_submitted'])
-    print(user_exists)
-    print('username valid')
+    user_exists = User.objects.get(username=order_data['employee_submitted'])  
     order = Order(number = order_data['number'],
                   time_est = order_data['time_est'],
                   time_submitted = order_data['time_submitted'],
-                  time_ready = None,
-                  time_ready = None,
+                  time_ready = order_data['time_ready'],
                   time_completed = order_data['time_completed'],
                   price = order_data['price'],
                   employee_submitted = user_exists,
@@ -501,7 +520,6 @@ for order_data in orders_data:
         # get the menu item
         meal = Meal.objects.filter(name=meal_name, menu=True).first()
         old_meal = Meal.objects.filter(name=meal_name, menu=True).first()
-        print(meal)
         # Generate a new code from db data #
         code_meal = meal.code[:1]
         
@@ -517,9 +535,7 @@ for order_data in orders_data:
         meal.code = f'{code_meal}{str(int(high_number) + 1)}'
         meal.menu = False
         meal.save()
-        print(old_meal.foods.all())
         for food in old_meal.foods.all():
-            print(food)
             old_code = food.code
             # Generate a new code from db data #
             code_cat = food.code[:1]
