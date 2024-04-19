@@ -152,14 +152,10 @@
         font-weight: bold;
     }
 
-    input[type=submit]:hover {
-        background-color: #14609a;
-    }
+    input[type=submit]:hover { background-color: #14609a; }
 
     /* Custom break */
-    .break {
-        margin: 20px auto;
-    }
+    .break { margin: 20px auto; }
 </style>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
@@ -173,10 +169,10 @@
                 <div class="modal-header">Enter password for {{ username }}:</div>
                 <div class="modal-body">
                     <label for="username">Username:</label>
-                    <input id="username" type="text" name="username" value="{{ username }}">
+                    <input id="username" type="text" name="username" value="{{ username }}" required>
                     <div class="break"></div>
                     <label for="password">Password:</label>
-                    <input id="password" type="password" name="password">
+                    <input id="password" type="password" name="password" required>
                 </div>
                 <input type="submit" value="Submit">
             </form>
