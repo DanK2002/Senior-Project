@@ -2,6 +2,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
     
+    body {
+      margin-right: 160px; /* Same as the width of the sidenav */
+      font-size: 28px; /* Increased text to enable scrolling */
+      padding: 80px 160px;
+    }
+    
     .sidenav {
       height: 100%;
       width: 160px;
@@ -97,7 +103,7 @@
     <div class="summary" id="summary">
       <h3 class="heading"><u>Order Summary</u></h3>
 
-      <p><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-vals='{"addFoodToOrder": "{{total}}"}'>Total: {{ total }}<u></u></a></p>
+      <p><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-vals='{"addFoodToOrder": "{{total}}"}'><u></u></a></p>
       <a href="{% url 'basic:order' %}">
         <button class="btn btn-success btn-block">Finish Order</button>
       </a>

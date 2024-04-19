@@ -2,6 +2,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
     
+    body {
+      margin-right: 160px; /* Same as the width of the sidenav */
+      font-size: 28px; /* Increased text to enable scrolling */
+      padding: 80px 160px;
+    }
+
     .summary {
       height: 100%;
       width: 160px;
@@ -55,13 +61,14 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 </head>
-<div>
-<h3><u>{{category}}</u></h3>
-    {% for food in foods %}
-        <br>
-        <button hx-get="{% url 'basic:customizeFood' %}" hx-target="#customizeFood"
-        hx-vals='{"foodName": "{{food.name}}"}' class="btn btn-outline-primary"> {{ food.name }} </button>
-    {% endfor %}
+<div style="text-align: center;">
+    <h1 class="display-1"><u>{{category}}</u></h1>
+        {% for food in foods %}
+            <br>
+            <button hx-get="{% url 'basic:customizeFood' %}" hx-target="#customizeFood"
+            hx-vals='{"foodName": "{{food.name}}"}' class="btn btn-outline-primary"> {{ food.name }} </button>
+        {% endfor %}
+        <hr style="border-color: #941C2F; border-width: 2px;">
 </div>
 <br>
 
@@ -70,5 +77,26 @@
 </div>
 
 <div class ="summary" id ="summary" hx-swap-oob ="true">
-    <p><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-vals='{"addFoodToOrder": "{{total}}"}'><u></u></a></p>
+
+    <h3 class="heading"><u>Order Summary</u></h3>
+
+    <p class="heading"><a hx-get="{% url 'basic:addFoodToOrder' %}" hx-target="#itemlist" 
+      hx-vals='{"addFoodToOrder": "{{total}}"}'><u></u></a></p>
+    {% for food in foodsInOrder %}
+    <br>
+    <p class="heading">
+    <u>{{food.name}}</u>
+    <br>
+    {{food.message}}
+    {% endfor %}
+<br>
+{% for mealInstruction in mealInstructions %}
+    <br>
+    <a>{{mealInstruction}}</a>
+{% endfor %}
+<a href="{% url 'basic:order' %}">
+    <button class="btn btn-success btn-block">Finish Order</button>
+</a>
+<br>
+<br>
 </div>
