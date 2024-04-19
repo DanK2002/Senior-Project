@@ -663,7 +663,7 @@ def salesSummary(request):
 
         orders = Order.objects.filter(time_completed__date__range=(start_date, end_date))
     else:
-        orders = Order.objects.all()
+        orders = Order.objects.exclude(time_completed=None)
     
     orders_total = 0
 
