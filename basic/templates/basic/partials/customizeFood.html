@@ -20,7 +20,7 @@
 <div id="foodCustomizer">
 <p><u>{{food.name}}</u></p>
 <br>
-<p>Message</p> <input type="text" name = "message" id="message">
+<p>Message</p> <input type="text" class="form-control-sm" placeholder="Enter message" name = "message" id="message">
 <br>
 <form id = "changesForm" name = "changesForm">
 <button hx-post="{% url 'basic:addFoodToOrder' %}" hx-target="#foodCustomizer" hx-include="#message, #changesForm"
@@ -39,6 +39,7 @@ hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML" class="btn btn-outli
     <div id="change{{ingredient.idnumber}}">Standard</div>
 {% endfor %}
 <br>
+<hr style="border-color: #941C2F; border-width: 2px;">
 <p> <u>Add Extra Ingredients</u> </p>
 <br>
 {% for ingredient in notInFood %}
