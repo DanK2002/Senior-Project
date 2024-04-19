@@ -7,7 +7,6 @@ from .forms import *
 from django.contrib.auth import authenticate, login as auth_login
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib import messages
 
 
 # Create your views here.
@@ -433,16 +432,13 @@ def remove_food(request):
 
 def remove_meal(request):
     if request.method == 'POST':
-        print("INHERE")
         meal_name = request.POST.get('meal_name')
         print(meal_name)
         meal = get_object_or_404(Meal, name=meal_name)
         meal.delete()
-        print("DELETED")
-        form = AddMealForm()
-        return render(request, 'basic/partials/add_meal.html', {'form': form})
+        add_meal_form = AddMealForm()
+        return render(request, 'basic/partials/add_meal.html', {'add_meal_form': add_meal_form})
     else:
-        print("IN HERE")
         return redirect('basic:managemenu')
     
 def fetch_food_details(request):
