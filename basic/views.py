@@ -1108,8 +1108,6 @@ def addFoodToOrder(request):
         total += food.price
     for meal in mealsInOrder:
         total += meal.price
-    order.price = total
-    order.save()
 
     mealInstructions = []
     for meal in mealsInOrder:
@@ -1275,8 +1273,6 @@ def addMealToOrder(request):
         total += food.price
     for meal in mealsInOrder:
         total += meal.price
-    order.price = total
-    order.save()
 
     mealInstructions = []
     for meal in mealsInOrder:
@@ -1298,20 +1294,21 @@ def removedItem(request):
 
     foodsInOrder = order.foods.all()
     mealsInOrder = order.meals.all()
-    total = order.price
     if request.GET.get("code") != None:
         code = request.GET.get("code")
         for food in foodsInOrder:
             if food.code == code:
-                order.price = total - food.price
                 order.foods.remove(food)
         for meal in mealsInOrder:
             if meal.code == code:
-                order.price = total - meal.price
                 order.meals.remove(meal)
     order.save()
     foodsInOrder = order.foods.all()
     mealsInOrder = order.meals.all()
-    total = order.price
+    total = 0
+    for food in foodsInOrder:
+        total += food.price
+    for meal in mealsInOrder:
+        total += meal.price
     
     return render(request, "basic/partials/removedItem.html", {"foods": foodsInOrder, "meals": mealsInOrder, "total": total})
