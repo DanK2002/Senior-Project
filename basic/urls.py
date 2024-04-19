@@ -26,6 +26,8 @@ urlpatterns = [
     path('mark_completed/<int:order_id>/', views.mark_completed, name='mark_completed'),
     path('remove_completed/<int:order_id>/', views.remove_completed, name='remove_completed'),
     path('remove_ready/<int:order_id>/', views.remove_ready, name='remove_ready'),
+    path('get-food-details/<int:order_id>/', views.get_food_details, name='get_food_details'),
+
 
 
 
