@@ -1,0 +1,25 @@
+<div id="summary" name="summary">
+<u>Items in Order:</u>
+<br>
+{% for food in foods %}
+    <br>
+    {{food.name}}
+    <button hx-get="{% url 'basic:removedItem' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-target="#summary" hx-vars="code:'{{ food.code }}'">Remove Item</button>
+    <br>
+{% endfor %}
+{% for meal in meals %}
+    <br>
+    {{meal.name}}
+    <button hx-get="{% url 'basic:removedItem' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    hx-target="#summary" hx-vars="code:'{{ meal.code }}'">Remove Item</button>
+    <br>
+{% endfor %}
+<br>
+<br>
+<a><u>Total</u> {{total}}</a>
+<br>
+<a href="{% url 'basic:order' %}">
+    <button>Finish Order</button>
+</a>
+</div>

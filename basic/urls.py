@@ -26,6 +26,8 @@ urlpatterns = [
     path('mark_completed/<int:order_id>/', views.mark_completed, name='mark_completed'),
     path('remove_completed/<int:order_id>/', views.remove_completed, name='remove_completed'),
     path('remove_ready/<int:order_id>/', views.remove_ready, name='remove_ready'),
+    path('get-food-details/<int:order_id>/', views.get_food_details, name='get_food_details'),
+
 
 
 
@@ -53,7 +55,9 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("landingpage/", views.landingpage, name="landingpage"),
 
-    path("ordercreation/", views.ordercreation, name="ordercreation"),
+    path("ordercreation1/", views.ordercreation1, name="ordercreation1"),
+    path("ordercreation2/", views.ordercreation2, name="ordercreation2"),
+    path("ordercreation3/", views.ordercreation3, name="ordercreation3"),
     path("partials/fooditems/", views.fooditems, name="fooditems"),
     path("partials/customizeFood/", views.customizeFood, name="customizeFood"),
     path("partials/amountchange/", views.amountchange, name="amountchange"),
@@ -63,6 +67,7 @@ urlpatterns = [
     path("partials/customizeFoodInMeal/", views.customizeFoodInMeal, name="customizeFoodInMeal"),
     path("partials/editFoodInMeal/", views.editFoodInMeal, name="editFoodInMeal"),
     path("partials/addMealToOrder/", views.addMealToOrder, name="addMealToOrder"),
+    path("partials/removedItem/", views.removedItem, name="removedItem"),
     
     path("managemenu/", views.managemenu, name="managemenu"),
     path('edit_category_form/', views.edit_category_form, name='edit_category_form'),
@@ -70,6 +75,13 @@ urlpatterns = [
     path('edit_view_food/', views.edit_view_food, name='edit_view_food'),
     path('fetch_food_details/', views.fetch_food_details, name='fetch_food_details'),
     path('update_food/', views.update_food, name='update_food'),
+    path('remove_food/', views.remove_food, name='remove_food'),
+    path('add_food/', views.add_food, name='add_food'),
+    path('ingredient_list/', views.ingredient_list, name='ingredient_list'),
+    path('fetch_meal_details/', views.fetch_meal_details, name='fetch_meal_details'),
+    path('add_meal/', views.add_meal, name='add_meal'),
+    path('edit_view_meal/', views.edit_view_meal, name='edit_view_meal'),
+    path('remove_meal/', views.remove_meal, name='remove_meal'),
 
 
     path("view-shifts/", views.view_shifts, name="view-shifts"),

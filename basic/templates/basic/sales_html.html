@@ -1,35 +1,42 @@
-<h2>Sales</h2>
-<div class="sales-section">
-    <div class="button-section">
-        <button 
-            type="button" 
-            hx-target="#summary-report" 
-            hx-swap="innerHTML"
-            hx-trigger="click" 
-            hx-get="{% url 'basic:summary-report' %}"
-            hx-vals='js:{
-                "start_date": document.getElementById("start_date").value, 
-                "end_date": document.getElementById("end_date").value
-            }'
-        >Generate Summary Report</button>
-        <a href="{% url 'basic:csv-report' %}" download="summary_report.csv">
-            <button type="button">Generate Raw CSV</button>
-        </a>
-        
+{% load static %}
+<link rel="stylesheet" href="{% static 'managerial.css' %}">
+
+<div class = "container">
+    <div class = "secondary-container">
+    <h2>Sales</h2>
+    <div class="sales-section">
+        <div class="button-section">
+            <button 
+                type="button" class = "btn"
+                hx-target="#summary-report" 
+                hx-swap="innerHTML"
+                hx-trigger="click" 
+                hx-get="{% url 'basic:summary-report' %}"
+                hx-vals='js:{
+                    "start_date": document.getElementById("start_date").value, 
+                    "end_date": document.getElementById("end_date").value
+                }'
+            >Generate Summary Report</button>
+            <a href="{% url 'basic:csv-report' %}" download="summary_report.csv">
+                <button type="button" class = "btn">Generate Raw CSV</button>
+            </a>
+            
+        </div>
+        <div class="date-range">
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" autocomplete="off">
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" autocomplete="off">
+        </div>
     </div>
-    <div class="date-range">
-        <label for="start_date">Start Date:</label>
-        <input type="date" id="start_date" name="start_date" autocomplete="off">
-        <label for="end_date">End Date:</label>
-        <input type="date" id="end_date" name="end_date" autocomplete="off">
+
+    <hr id="section-seperator" /> 
+
+    <h2>Summary</h2>
+    <div class="summary-section">
+        <div id="summary-report">
+            <!-- Summary report here -->
+        </div>
     </div>
 </div>
-
-<hr id="section-seperator" /> 
-
-<h2>Summary</h2>
-<div class="summary-section">
-    <div id="summary-report">
-        <!-- Summary report here -->
-    </div>
 </div>

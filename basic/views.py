@@ -1,6 +1,6 @@
 from collections import defaultdict
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, JsonResponse, HttpResponse
+from django.http import Http404, JsonResponse, HttpResponse, HttpResponseRedirect
 import json
 from .models import *
 from django.utils import timezone
@@ -13,6 +13,9 @@ from datetime import timedelta, datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import IntegerField
 from django.db.models.functions import Cast, Substr
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Create your views here.
 
@@ -127,11 +130,12 @@ def manageemployees(request):
 def new_employee_form(request):
     print(request.POST)         # For debugging purposes; logs request in console
     form =  AddEmployeeForm()
+    users = User.objects.all()
     return render(
         request,
         "basic/partials/new_employee.html",
         {
-            'add_form' : form,
+            'add_form' : form
         }
     )
     
@@ -174,7 +178,8 @@ def save_new_employee(request):
             'selectedUser' : newUser,
             'selectedEmployee' : newEmployee,
             'shifts' : [],
-            'groups' : groups
+            'groups' : groups,
+            'users' : users
         }
     )
 
@@ -217,7 +222,8 @@ def edit_employee(request):
     # Populate the form with pre-existing data
     editEmployee = EditEmployeeForm({"first_name": selectedUser.first_name,
                                     "last_name": selectedUser.last_name,
-                                    "wage" : selectedEmployee.wage})
+                                    "wage" : selectedEmployee.wage,
+                                    "user_groups" : inGroups})
     return render(
         request,
         "basic/partials/edit_employee.html",
@@ -298,7 +304,8 @@ def remove_employee(request):
     selectedUsername = request.POST.get('select-employees')     # Get the username requested
     selectedUser = User.objects.get(username=selectedUsername)  # Find that user
     selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
-    employeeName = selectedUser.first_name + selectedUser.last_name
+    first_name = selectedUser.first_name
+    last_name = selectedUser.last_name
     print(selectedUser.first_name + selectedUser.last_name)
     Shift.objects.filter(employee = selectedEmployee).delete()  # Delete their shifts
     Employee.objects.get(user = selectedUser).delete()          # Delete the employee
@@ -307,7 +314,9 @@ def remove_employee(request):
         request,
         "basic/partials/remove_employee.html",
         {
-            'name' : employeeName
+            'first_name' : first_name,
+            'last_name' : last_name,
+            'users' : users
         }
     )
 
@@ -397,9 +406,16 @@ def edit_shift(request):
     selectedUser = User.objects.get(username = request.POST.get('user'))
     selectedEmployee = Employee.objects.get(user = selectedUser)
     originalShift = Shift.objects.get(employee = selectedEmployee, start = request.POST.get('shift-list'))
+    
+    start_date = originalShift.start.strftime("%Y-%m-%d")
+    start_time = originalShift.start.strftime("%H:%M:%S")
+    end_date = originalShift.end.strftime("%Y-%m-%d")
+    end_time = originalShift.end.strftime("%H:%M:%S")
     shiftForm = EditEmployeeShifts({
-        "start_time" : originalShift.start,
-        "end_time" : originalShift.end
+        "start_date" : start_date,
+        "start_time" : start_time,
+        "end_date" : end_date,
+        "end_time" : end_time
     })
     return render(
         request,
@@ -416,9 +432,13 @@ def remove_shift(request):
     selectedUser = User.objects.get(username = request.POST.get('user'))
     selectedEmployee = Employee.objects.get(user = selectedUser)
     Shift.objects.get(employee = selectedEmployee, start = request.POST.get('shift-list')).delete()
+    shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
     return render(
         request,
-        "basic/partials/remove_shift.html"
+        "basic/partials/remove_shift.html",
+        {
+            'shifts' : shifts
+        }
     )
 
 # User wants to save changes to an existing shift
@@ -429,12 +449,18 @@ def save_existing_shift(request):
         selectedUser = User.objects.get(username = request.POST.get('user'))
         selectedEmployee = Employee.objects.get(user = selectedUser)
         originalShift = Shift.objects.get(employee = selectedEmployee, start = request.POST.get('original-shift'))
-        originalShift.start = request.POST.get('start_time')
-        originalShift.end = request.POST.get('end_time')
+        start_datetime = request.POST.get('start_date') + ' ' + request.POST.get('start_time')
+        end_datetime = request.POST.get('end_date') + ' ' + request.POST.get('end_time')
+        originalShift.start = start_datetime
+        originalShift.end = end_datetime
         originalShift.save()
+        shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
         return render(
             request,
-            "basic/partials/saved_shift.html"
+            "basic/partials/saved_shift.html",
+            {
+                "shifts" : shifts
+            }
         )
     elif request.method == "GET":
         return render(
@@ -447,12 +473,18 @@ def save_new_shift(request):
     if request.method == "POST":
         selectedUser = User.objects.get(username = request.POST.get('user'))
         selectedEmployee = Employee.objects.get(user = selectedUser)
-        Shift.objects.create(start = request.POST.get('start_time'),
-                          end = request.POST.get('end_time'),
+        start_datetime = request.POST.get('start_date') + ' ' + request.POST.get('start_time')
+        end_datetime = request.POST.get('end_date') + ' ' + request.POST.get('end_time')
+        Shift.objects.create(start = start_datetime,
+                          end = end_datetime,
                           employee = selectedEmployee)
+        shifts = Shift.objects.filter(employee = selectedEmployee).order_by('start')
         return render(
             request,
-            "basic/partials/saved_shift.html"
+            "basic/partials/saved_shift.html",
+            {
+                'shifts' : shifts
+            }
         )
     elif request.method == "GET":
         return render(
@@ -465,37 +497,26 @@ def save_new_shift(request):
 def managemenu(request):
     selected_category = request.POST.get('category') #get selected category
     categories = Food.objects.values_list('category', flat=True).distinct()
+    meals = Meal.objects.all()
     selected_category = None
     selected_food = None
-    form = AddFoodForm()
+    add_food_form = AddFoodForm()
+    add_meal_form = AddMealForm()
     if request.method == 'POST':
         selected_category = request.POST.get('category')
         selected_food = request.POST.get('food')
-        form = AddFoodForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            category = form.cleaned_data['category']
-            price = form.cleaned_data['price']
-            new_food = Food.objects.create(name=name, category=category, price=price)
-            new_food.save()
-            return redirect('basic:managemenu') 
     
     if selected_category:
         foods = Food.objects.filter(category=selected_category)
     else:
         foods = None
     
-    html_content = render(request, "basic/managemenu.html", 
+    return render(request, "basic/managemenu.html", 
                   {'categories': categories, 
                    'selected_category': selected_category,
                    'selected_food': selected_food,
-                   'foods': foods, 'form': form}).content.decode('utf-8')
-    css_content = render(request, "basic/inventory_css.html").content.decode('utf-8')
-    
-    return render(request, "basic/sidenav.html", { 
-        'html_content': html_content,
-        'css_content': css_content
-    })
+                   'foods': foods,
+                    'meals':meals, 'add_food_form': add_food_form, 'add_meal_form': add_meal_form})
 
 
 def edit_category_form(request):
@@ -520,46 +541,11 @@ def edit_category(request):
         for food in foods_to_update:
             food.category = new_category_name
             food.save()
-        return redirect('basic:managemenu')
-
-
-def edit_view_food(request):
-    form = EditFoodForm()
-    if request.method == 'POST':
-        form = EditFoodForm(request.POST)
-        if form.is_valid():
-            # Retrieve the data submitted in the form
-            new_name = form.cleaned_data['initial_name']
-            new_category = form.cleaned_data['initial_category']
-            new_price = form.cleaned_data['initial_price']
-            
-            original_name = request.POST.get('original_name')
-            original_food = get_object_or_404(Food, name=original_name)
-            original_food.name = new_name
-            original_food.category = new_category
-            original_food.price = new_price
-            original_food.save()
-
-            return redirect('basic:managemenu')
-
-    return render(request, 'basic/partials/edit_view_food.html', {'form': form})
-
-def fetch_food_details(request):
-    if request.method == 'GET':
-        food_name = request.GET.get('food_name')
-        food = Food.objects.get(name=food_name)
-        form = EditFoodForm(initial={'initial_name': food.name, 'initial_category': food.category, 'initial_price': food.price})
-
-        return render(request, 'basic/partials/edit_view_food.html',  {'form': form})
-    
-
-def update_food(request):
-    if request.method == 'POST':
-        selected_category = request.POST.get('category')
-        selected_food = request.POST.get('food')
-        print("Selected Category:", selected_category)
-        print("Selected Food:", selected_food)
-        return redirect('basic:managemenu', category=selected_category, food=selected_food)
+        selected_category = new_category_name
+        return JsonResponse({'Category name successfully changed': True})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 def add_food(request):
     if request.method == 'POST':
@@ -571,28 +557,278 @@ def add_food(request):
                 category=form.cleaned_data['category'],
                 price=form.cleaned_data['price']
             )
-            # Save the new food item to the database
+                
             new_food.save()
+
+            # Generate and assign food code
+            food_code = add_food_code(new_food)
+            new_food.code = food_code
+            new_food.save()
+
+            # Process ingredients and quantities
+            ingred_data = {}
+            for ingredient_name, quantity in request.POST.items():
+                if ingredient_name.startswith('ingredient_'):
+                    ingredient_name = ingredient_name.split('_')[1]
+                    try:
+                        quantity = int(quantity)
+                        if quantity > 0:
+                            ingred_data[ingredient_name] = quantity
+                    except Ingredient.DoesNotExist:
+                        pass
+
+            # Update ingred field of the new food item and save
+            new_food.ingred = ingred_data
+            new_food.save()
+
             return redirect('basic:managemenu')
     else:
         form = AddFoodForm()
     return render(request, 'basic/partials/add_food.html', {'form': form})
 
-def edit_food(request, food_name):
-    food = get_object_or_404(Food, name='initial_food')
-
+def add_meal(request):
     if request.method == 'POST':
-        form = EditFoodForm(request.POST)
+        form = AddMealForm(request.POST)
         if form.is_valid():
-            food.name = form.cleaned_data['initial_food']
-            food.category = form.cleaned_data['initial_category']
-            food.price = form.cleaned_data['initial_price']
-            food.save()
+            # Create a new Food object with form data
+            new_meal = Meal(
+                name=form.cleaned_data['name'],
+                price=form.cleaned_data['price']
+            )
+                
+            new_meal.save()
+
+            new_meal.foods.set(form.cleaned_data['foods'])
+            # Generate and assign meal code
+            meal_code = add_meal_code(new_meal)
+            new_meal.code = meal_code
+            new_meal.save()
             return redirect('basic:managemenu')
     else:
-        form = EditFoodForm(initial={'initial_food': food.name, 'initial_category': food.category, 'initial_price': food.price})
+        form = AddMealForm()
+    all_food_items = Food.objects.all()
+    return render(request, 'basic/partials/add_meal.html', {'form': form, 'all_food_items':all_food_items})
 
-    return render(request, 'basic/partials/edit_food.html', {'form': form})
+def edit_view_food(request):
+    edit_view_food_form = EditFoodForm()
+    add_food_form = AddFoodForm()
+    if request.method == 'POST':
+        edit_view_food_form = EditFoodForm(request.POST)
+        if edit_view_food_form.is_valid():
+            new_name = edit_view_food_form.cleaned_data['initial_name']
+            new_category = edit_view_food_form.cleaned_data['initial_category']
+            new_price = edit_view_food_form.cleaned_data['initial_price']
+
+            original_name = request.POST.get('original_name')
+            original_food = get_object_or_404(Food, name=original_name)
+            original_food.name = new_name
+            original_food.category = new_category
+            original_food.price = new_price
+
+             # Process ingredients and quantities
+            ingred_data = {}
+            for ingredient_name, quantity in request.POST.items():
+                if ingredient_name.startswith('ingredient_'):
+                    ingredient_id = ingredient_name.split('_')[1]
+                    try:
+                        ingredient = Ingredient.objects.get(id=ingredient_id)
+                        quantity = int(quantity)
+                        if quantity >= 0:
+                            ingred_data[ingredient.name] = quantity
+                    except Ingredient.DoesNotExist:
+                        return redirect('basic:managemenu')
+            
+            # Update the ingredients of the food
+            original_food.ingred = ingred_data
+            original_food.save()
+            return render(request, 'basic/partials/edit_view_food.html', {'edit_view_food_form': edit_view_food_form})
+
+    return render(request, 'basic/partials/edit_view_food.html', {'edit_view_food_form': edit_view_food_form})
+
+def edit_view_meal(request):
+    form = EditMealForm()
+    add_meal_form = AddMealForm()
+    if request.method == 'POST':
+        form=EditMealForm(request.POST)
+        if form.is_valid():
+            new_name = form.cleaned_data['initial_name']
+            new_price = form.cleaned_data['initial_price']
+            foods_selected = form.cleaned_data['foods']
+
+            original_name = request.POST.get('original_name')
+            original_meal = get_object_or_404(Meal, name=original_name)
+            original_meal.name = new_name
+            original_meal.price = new_price
+            original_meal.foods.set(foods_selected)
+            original_meal.save()
+        return render(request, 'basic/partials/add_meal.html', {'form': form, 'add_meal_form': add_meal_form})
+    return render(request, 'basic/partials/edit_view_food.html', {'form': form})
+
+def remove_food(request):
+    if request.method == 'POST':
+        food_name = request.POST.get('original_name')
+        food = Food.objects.filter(name=food_name).first()
+        if food:
+            food.delete()
+            return JsonResponse({'message': 'Food item removed successfully'}, status=200)
+        else:
+            return JsonResponse({'error': 'Food item not found'}, status=404)
+
+def remove_meal(request):
+    if request.method == 'POST':
+        meal_name = request.POST.get('meal_name')
+        print(meal_name)
+        meal = get_object_or_404(Meal, name=meal_name)
+        meal.delete()
+        add_meal_form = AddMealForm()
+        return render(request, 'basic/partials/add_meal.html', {'add_meal_form': add_meal_form})
+    else:
+        return redirect('basic:managemenu')
+    
+def fetch_food_details(request):
+    if request.method == 'GET':
+        food_name = request.GET.get('food_name')
+        food = Food.objects.get(name=food_name)
+        initial_data = {
+            'initial_name': food.name,
+            'initial_category': food.category,
+            'initial_price': food.price
+        }
+        form = EditFoodForm(initial = initial_data, instance=food)
+        return render(request, 'basic/partials/edit_view_food.html',  {'form': form})
+
+def fetch_meal_details(request):
+    if request.method == 'GET':
+        meal_name = request.GET.get('meal_name')
+        meal = get_object_or_404(Meal, name=meal_name)
+        form = EditMealForm(initial={'initial_name': meal.name, 'initial_price': meal.price},  meal_instance=meal)
+        return render(request, 'basic/partials/edit_view_meal.html', {'form': form})
+    
+def update_food(request):
+    if request.method == 'POST':
+        selected_category = request.POST.get('category')
+        selected_food = request.POST.get('food')
+        print("Selected Category:", selected_category)
+        print("Selected Food:", selected_food)
+        return redirect('basic:managemenu', category=selected_category, food=selected_food)
+
+
+def ingredient_list(request):
+    if request.POST.get('original_name'):
+        ingredients = Ingredient.objects.all().values_list('name', flat=True)
+        selected_food = Food.objects.get(name=request.POST.get('original_name'))
+        print(selected_food)
+        ingred_list = selected_food.ingred
+        print(ingred_list)
+        return render(request, 'basic/partials/ingredient_list.html', {'ingredients': ingredients, 'ingred_list': ingred_list})
+    else:
+        ingredients = Ingredient.objects.all().values_list('name', flat=True)  # Get only the names
+        return render(request, 'basic/partials/ingredient_list.html', {'ingredients': ingredients})
+
+def add_food_code(new_food):
+    # Dictionary to store used letters for category and foos
+    cat_letters = {}
+    food_letters = {}
+
+    # Dictionary to store counts for category - food pair
+    counts = {}
+
+    foods = Food.objects.all()
+    for food in foods:
+        category = food.category
+        food_name = food.name
+        # Extract the first letter of the category for the code
+        index = 0
+        category_letter = category[index].upper() 
+        # If the first letter is already used, find the next available letter
+        if category not in cat_letters.keys():
+            while category_letter in cat_letters.values():
+                index += 1
+                category_letter = category[index].upper()
+        else:
+            category_letter = cat_letters[category]    
+        # Extract the first letter of the food name for the code
+        index = 0
+        food_letter = food_name[0].upper()
+        # If the first letter is already used, find the next available letter
+        if food_name not in food_letters.keys():
+            while food_letter in food_letters.values():
+                index += 1
+                food_letter = food_name[index].upper()
+        else:
+            food_letter = food_letters[food_name]   
+        # Update used letters
+        if category not in cat_letters.keys():
+            cat_letters[category] = category_letter
+        if food_name not in food_letters.keys():
+            food_letters[food_name] = food_letter    
+        # Update counts dictionary
+        pair = (category_letter, food_letter)
+        counts[pair] = counts.get(pair, 0) + 1 
+        
+        # Generate code
+        if (food == new_food):
+            code = category_letter + food_letter + str(counts[pair])
+            return code
+        
+def add_meal_code(new_meal):
+    meals = Meal.objects.all()
+    meal_letters = {}
+    # Dictionary to store counts for category - food pair
+    counts = {}
+    for meal in meals:
+        print("meal:" + meal.name)
+        meal_name = meal.name
+        # Extract the first letter of the meal name for the code
+        index = 0
+        meal_letter = meal_name[0].upper()
+        # If the first letter is already used, find the next available letter
+        if meal_name not in meal_letters.keys():
+            while meal_letter in meal_letters.values():
+                index += 1
+                meal_letter = meal_name[index].upper()
+        else:
+            meal_letter = meal_letters[meal_name]
+        # Update used letters
+        if meal_name not in meal_letters.keys():
+            meal_letters[meal_name] = meal_letter
+        # Update counts dictionary
+        counts[meal_letter] = counts.get(meal_letter, 0) + 1
+        # Generate code
+        if(meal == new_meal):
+            code = meal_letter + str(counts[meal_letter])
+            print("CODE:" + code)
+            return code
+
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect('basic:landingpage')
+        else:
+            error_message = "Invalid username or password."
+            return render(request, 'basic/login.html', {'error_message': error_message})
+    else:
+        return render(request, "basic/login.html")
+    
+def landingpage(request):
+    user = request.user
+    groups = []
+    for group in user.groups.all():
+        groups.append(group.name)
+    return render(request, 
+                    "basic/landingpage.html",
+                    {
+                      'user': user,
+                      'groups' : groups,
+                    }
+                )
+         
+# End Kayla's Domain ------------------------------------------------------
+
 
 def inventory(request):
     ingredients = Ingredient.objects.distinct()
@@ -611,7 +847,9 @@ def quantity(request):
             ing = ingredient
     # value = request.POST.get('amount')
     newValue = ing.quantity + int(request.POST[f'amount{ingredientID}'])
-    ing.quantity = ing.quantity + int(request.POST[f'amount{ingredientID}'])
+    if newValue < 0:
+        newValue = 0
+    ing.quantity = newValue
     ing.save()
 
     return render(request, "basic/partials/quantity.html", {'newValue': newValue})
@@ -627,13 +865,24 @@ def searchInventory(request):
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': newIngredients})
 
 def addIngredient(request):
-    ingredientName = request.POST.get("ingredientTitle")
-    ingredientAmount = int(request.POST.get("ingredientAmount"))
-    ingredientID = len(Ingredient.objects.distinct())
-    ingredient = Ingredient(name=ingredientName, quantity=ingredientAmount, idnumber=ingredientID)
-    ingredient.save()
     ingredients = Ingredient.objects.distinct()
+    ingredientName = request.POST.get("ingredientTitle").strip()
+    
+    if ingredientName: # Check to see if the name is not the empty string
+        nameExists = False
+        for ingredient in ingredients:
+            if ingredient.name.upper() == ingredientName.upper():
+                nameExists = True
+                break
+        if not nameExists: # If the name is not already taken, add the ingredient
+            ingredientAmount = int(request.POST.get("ingredientAmount"))
+            if ingredientAmount < 0: # If trying to add negative amount, set to 0 by default
+                ingredientAmount = 0
+            ingredientID = ingredients.last().idnumber + 1 # Get the highest taken id and iterate for a new id
+            ingredient = Ingredient(name=ingredientName, quantity=ingredientAmount, idnumber=ingredientID)
+            ingredient.save()
 
+    ingredients = Ingredient.objects.all()
     return render(request, "basic/partials/inventoryTable.html", {'ingredients': ingredients})
 
 def removeIngredient(request):
@@ -780,7 +1029,8 @@ def mark_ready(request, order_id):
     # Update the time_ready field for the order
     order.time_ready = timezone.now()  # Assuming you have imported timezone
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order marked as ready!"
+    return HttpResponse(message)
 
 def ready(request):
     ready_orders = Order.objects.filter(time_completed__isnull=True, time_ready__isnull=False)
@@ -823,23 +1073,32 @@ def mark_completed(request, order_id):
     # Update the time_ready field for the order
     order.time_completed = timezone.now()  # Assuming you have imported timezone
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order marked as Completed!"
+    return HttpResponse(message)
 
 def remove_ready(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.time_ready = None
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order Reverted!"
+    return HttpResponse(message)
 
 def remove_completed(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.time_completed = None
     order.time_ready = timezone.now()
     order.save()
-    return JsonResponse({'success': True})
+    message = "Order Reverted!"
+    return HttpResponse(message)
+
+def get_food_details(request, order_id):
+    order = get_object_or_404(Order, pk=order_id)
+    foods_list = [food.name for food in order.foods.all()]  # Assuming 'name' is the field you want to display
+    food_details = ', '.join(foods_list)
+    return JsonResponse(food_details, safe=False)
 
 def clockin_out(request):
-    users = User.objects.all()
+    users = User.objects.all().order_by("username")
     employees = Employee.objects.all()
     employeeUsernames = []
     for employee in employees:
@@ -930,7 +1189,7 @@ def landingpage(request):
                     }
                 )
 @login_required
-def ordercreation(request):
+def ordercreation1(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 
     #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
@@ -939,7 +1198,37 @@ def ordercreation(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = '')
+                   price = 0.0, employee_submitted = user, message = 'Order: Dine In')
+
+    order.save()
+
+    return render(request, "basic/ordercreation.html", {'categories': categories})
+
+def ordercreation2(request):
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    user = request.user
+
+    orderNumber = len(Order.objects.distinct()) + 1
+
+    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+                   price = 0.0, employee_submitted = user, message = 'Order: Take Out')
+
+    order.save()
+
+    return render(request, "basic/ordercreation.html", {'categories': categories})
+
+def ordercreation3(request):
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    #fakeUser = User.objects.create(username='username', password="password", first_name='first_name', last_name='last_name')
+    user = request.user
+
+    orderNumber = len(Order.objects.distinct()) + 1
+
+    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+                   price = 0.0, employee_submitted = user, message = 'Order: Drive Through')
 
     order.save()
 
@@ -1108,8 +1397,6 @@ def addFoodToOrder(request):
         total += food.price
     for meal in mealsInOrder:
         total += meal.price
-    order.price = total
-    order.save()
 
     mealInstructions = []
     for meal in mealsInOrder:
@@ -1269,15 +1556,12 @@ def addMealToOrder(request):
     order.save()
 
     foodsInOrder = order.foods.all()
-    print(foodsInOrder)
     mealsInOrder = order.meals.all()
     total = 0
     for food in foodsInOrder:
         total += food.price
     for meal in mealsInOrder:
         total += meal.price
-    order.price = total
-    order.save()
 
     mealInstructions = []
     for meal in mealsInOrder:
@@ -1288,3 +1572,32 @@ def addMealToOrder(request):
 
     return render(request, "basic/partials/addMealToOrder.html", {"meal": addedMeal, "foods": foodsInOrder,
                                                                   "mealInstructions": mealInstructions, "total": total})
+
+def removedItem(request):
+    orders = Order.objects.distinct()
+    #note: this method of finding the current order will not work if multiple machines are creating
+    #orders at once. This method should be tweaked.
+    for currentOrder in orders:
+        if currentOrder.number == len(Order.objects.distinct()):
+            order = currentOrder
+
+    foodsInOrder = order.foods.all()
+    mealsInOrder = order.meals.all()
+    if request.GET.get("code") != None:
+        code = request.GET.get("code")
+        for food in foodsInOrder:
+            if food.code == code:
+                order.foods.remove(food)
+        for meal in mealsInOrder:
+            if meal.code == code:
+                order.meals.remove(meal)
+    order.save()
+    foodsInOrder = order.foods.all()
+    mealsInOrder = order.meals.all()
+    total = 0
+    for food in foodsInOrder:
+        total += food.price
+    for meal in mealsInOrder:
+        total += meal.price
+    
+    return render(request, "basic/partials/removedItem.html", {"foods": foodsInOrder, "meals": mealsInOrder, "total": total})

@@ -12,10 +12,14 @@
     <div id="large-box">
         <div class="orders-container">
             {% if in_progress_orders %}
-                {% for order in in_progress_orders %}
+                {% for order in in_progress_orders|dictsortreversed:"time_est" %}
                     <div class="order-box">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
+                        <div class="message-box"> 
+                            <button class="message-button" hx-trigger="click" hx-get="{% url 'basic:get_food_details' order.id %}">{{ order.message }}</button>
+                        </div>
+                        <p>Price: ${{ order.price}}</p>
                     </div>
                 {% endfor %}
             {% else %}
@@ -24,7 +28,7 @@
         </div>
     </div>
 
-    <div class="button-container2" hx-target="body" hx-swap="outerHTML">
+    <div id="button-container2" hx-target="body" hx-swap="outerHTML">
         <button class="button" hx-get="../order/">Back to Menu</button>
     </div>
 

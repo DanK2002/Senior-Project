@@ -19,4 +19,3 @@ potato = Ingredient.objects.filter(name="Burger Bun").first()
 
 food.ingred = {potato: 2, 'Crab Patty': 1, 'Sliced American Cheese': 1, 'Lettuce': 1, 'Onion': 1, 'Parmesean': 1, 'Ketchup': 2, 'Mustard': 2}
 print(food.ingred)
-

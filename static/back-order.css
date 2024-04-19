@@ -1,0 +1,76 @@
+#button-container {
+    text-align: center; /* Center align the content */
+}
+
+#button-container2 {
+    text-align: center;
+    border: 2px solid #03191e; 
+    box-shadow: 0 4px 8px #03191e; 
+    max-width: 95px;
+}
+
+#button-container3 {
+    border: 2px solid #03191e; 
+    box-shadow: 0 4px 8px #03191e; 
+    max-width: 145px;
+}
+
+
+.button {
+    background-color: #941c2f;
+    color: #f7f9f9;
+}
+
+#large-box {
+    margin: 40px auto; /* Center the box horizontally with some margin */
+    width: 80%; /* Set the width of the box */
+    height: 450px; /* Set the height of the box */
+    background-color: #2081c3; /* Set the background color of the box */
+    border: 2px solid #03191e; /* Add a border to the box */
+    border-style: double; /* Add another border style */
+    border-width: 8px;
+    border-color: #03191e;
+    text-align: center;
+    overflow-y: auto;
+    border-radius: 20px;
+}
+
+.order-box {
+    margin: 15px auto; /* Add margin between each order box */
+    width: 60%; /* Add padding to the order box */
+    border: 1px solid #03191e; /* Add border to the order box */
+    background-color: #f7f9f9; /* Set background color of the order box */
+    box-shadow: 0 4px 8px #03191e; 
+}
+
+.title {
+    border: 2px solid #03191e; 
+    padding: 10px; 
+    text-align: center; 
+    background-color: #2081c3;
+    width: 250px; 
+    height: 10x; 
+    margin: auto; 
+    margin-bottom: 20px;
+}
+
+.sub-title {
+    border: 2px solid #03191e; 
+    padding: 10px; 
+    text-align: center; 
+    background-color: #96d1ff;
+    width: 500px; 
+    height: 10x; 
+    margin: auto; 
+    margin-bottom: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px #03191e; 
+}
+
+.large-button {
+    border: 2px solid #03191e;
+    font-size: 1.2em;
+    padding: 20px 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px #03191e;
+}
