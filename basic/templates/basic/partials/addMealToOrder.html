@@ -87,7 +87,7 @@
 <a><u>Total</u> {{total}}</a>
 <br>
 <button hx-get="{% url 'basic:removedItem' %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-hx-target="#orderSummary">Remove Items From Order</button>
+hx-target="#itemlist">Remove Items From Order</button>
 <br>
 <a href="{% url 'basic:order' %}">
     <button class="btn btn-success btn-block">Finish Order</button>
