@@ -18,9 +18,14 @@
                         <form id="order_form_{{ order.id }}" hx-post="{% url 'basic:mark_ready' order.id %}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
                         <p>Est. Time: {{ order.time_est }}</p>
-                        <div class="message-box"> 
-                            <button class="message-button" hx-trigger="click" hx-get="{% url 'basic:get_food_details' order.id %}">{{ order.message }}</button>
+                        <div class="order-message-box">
+                            <p>{{ order.message }}</p>
                         </div>
+                        {% for food in order.foods.all %}
+                            <input type="checkbox" id="food_{{ food.id }}">
+                            <b><label for="food_{{ food.id }}">{{ food.name }}: {{ food.message }}</label><br></b>
+                        {% endfor %}
+                        <p>Price: {{ order.price}}</p>
                         <form id="order_form_{{ order.id }}" hx-post="{% url 'basic:mark_ready' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Ready</button>
