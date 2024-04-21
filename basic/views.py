@@ -842,9 +842,8 @@ def remove_completed(request, order_id):
 
 def get_food_details(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
-    foods_list = [food.name for food in order.foods.all()]  # Assuming 'name' is the field you want to display
-    food_details = ', '.join(foods_list)
-    return JsonResponse(food_details, safe=False)
+    food_details = '<br>'.join([food.name + ': ' + food.message.replace('\n', '').replace("", '') for food in order.foods.all()])
+    return HttpResponse(food_details)
 
 def clockin_out(request):
     users = User.objects.all()
