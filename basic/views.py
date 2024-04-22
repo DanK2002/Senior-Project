@@ -1198,7 +1198,7 @@ def ordercreation1(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Order: Dine In')
+                    employee_submitted = user, message = 'Order: Dine In')
 
     order.save()
 
@@ -1341,6 +1341,7 @@ def addFoodToOrder(request):
     
     newIngredients = {}
     changesToFood = ''
+    totalUpcharge = 0
     for x in request.POST:
         #find the ingredient with the id x that matches addition'x'
         if "addition" in str(x):
@@ -1363,8 +1364,10 @@ def addFoodToOrder(request):
                 newAmount = 0
             if int(request.POST.get(str(x))) == 2:
                 changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == 1:
                 changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == -1:
                 if newAmount == 0:
                     changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
@@ -1378,6 +1381,7 @@ def addFoodToOrder(request):
         changesToFood = "Standard ingredients.\n"
     changesToFood = changesToFood + request.POST.get("message")
     theFood.message = changesToFood
+    theFood.price += totalUpcharge
     theFood.save()
     #use json.dumps(some dictionary) to pass json of ingredients
 
@@ -1463,6 +1467,7 @@ def customizeMeal(request):
 def customizeFoodInMeal(request):
     if request.method == 'GET':
         foodCode = request.GET.get("foodCode")
+        mealCode = request.GET.get("mealCode")
         theFood = Food.objects.filter(code=foodCode).first()
 
         ingredientDictionary = json.loads(theFood.ingred)
@@ -1474,12 +1479,15 @@ def customizeFoodInMeal(request):
             'food': theFood, 
             'inFood': ingredientsInFood,
             'notInFood': notInFood,
-            'ingredientDictionary': ingredientDictionary
+            'ingredientDictionary': ingredientDictionary,
+            'mealCode': mealCode
             })
 
 def editFoodInMeal(request):
     foodCode = request.POST.get("foodCode")
+    mealCode = request.POST.get("mealCode")
     theFood = Food.objects.filter(code=foodCode).first()
+    meal = Meal.objects.filter(code=mealCode).first()
 
     ingredientDictionary = json.loads(theFood.ingred)
     ingredientsInFood = Ingredient.objects.filter(name__in=ingredientDictionary.keys())
@@ -1492,6 +1500,7 @@ def editFoodInMeal(request):
     '''
     newIngredients = {}
     changesToFood = ''
+    totalUpcharge = 0
     for x in request.POST:
         #find the ingredient with the id x that matches addition'x'
         if "addition" in str(x):
@@ -1516,8 +1525,10 @@ def editFoodInMeal(request):
 
             if int(request.POST.get(str(x))) == 2:
                 changesToFood += f"Add extra extra {ingredient.name}.\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == 1:
                 changesToFood += f"Add extra {ingredient.name}.\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == -1:
 
                 if newAmount == 0:
@@ -1537,6 +1548,8 @@ def editFoodInMeal(request):
 
     changesToFood = changesToFood + request.POST.get("message")
     theFood.message = changesToFood
+    meal.price += totalUpcharge
+    meal.save()
     theFood.save()
 
     return render(request, "basic/partials/editFoodInMeal.html")

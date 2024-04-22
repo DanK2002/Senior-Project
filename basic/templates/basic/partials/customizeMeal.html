@@ -3,7 +3,7 @@
     <br>
     {% for food in foods %}
         <button hx-target="#customizeFoodInMeal" hx-get="{% url 'basic:customizeFoodInMeal' %}"
-        hx-vals='{"foodCode": "{{food.code}}"}' class="btn btn-outline-primary">{{food.name}}</button>
+        hx-vals='{"foodCode": "{{food.code}}", "mealCode": "{{meal.code}}"}' class="btn btn-outline-primary">{{food.name}}</button>
         <br>
     {% endfor %}
     <br>
