@@ -1,0 +1,27 @@
+<h1>Adjust Order Price</h1>
+<div id = "select-order">
+    <form id = "order-filters">
+        Order status:
+        <br />
+        <label for = "completed">Complete Orders</label>
+        <input type = "radio" id = "completed" value = "completed" name = "order-status" />
+        <label for = "incompleted">Incompleted Orders</label>
+        <input type = "radio" id = "incompleted" value = "incompleted" name = "order-status" />
+        <br />
+
+        <label for = "select-employee">Orders from: </label>
+        <select name = "select-employee" id = "select-employee">
+            {% for user in users %}
+                <option value = "{{ user.username }}">{{ user.first_name }} {{ user.last_name }}</option>
+            {% endfor %}
+        </select>
+        <br />
+
+        <label for = "order-date">Orders on:</label>
+        <input type = "date" name = "order-date" id = "order-date" />
+
+        <input type = "button" class = "btn" value = "Search orders" />
+    </form> 
+</div>
+
+<div id = "show-orders"></div>
