@@ -1,12 +1,38 @@
 <div id="view-food-details">
     <form method="POST" id="edit-food-form">
+        <div class="edit-meal-title"> 
+            Edit/View Food 
+        </div>
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" id = "original_name" name="original_name" value="{{ form.initial_name.value }}">
         <!-- Save and Cancel buttons for editing an existing food -->
         <button type="reset" class="cancel-button">Cancel</button>
-        <button type="button" class="remove-food-button" hx-post="{% url 'basic:remove_food' %}">Remove Food</button>
+        <button type="submit" class="btn"
+            hx-post="{% url 'basic:edit_view_food' %}"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#view-food-details"
+            hx-include = "#edit-food-form">
+        Save</button>
+        <button type="submit" class="btn"
+            hx-post="{% url 'basic:save_food_as_new_food' %}"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#view-food-details"
+            hx-include="#edit-food-form"
+        >Save as new food</button>
 
-        <button type="submit" formaction="{% url 'basic:edit_view_food' %}">Save</button>
+    </form>
+    <form method="POST" id="remove-food-form" >
+        {% csrf_token %}
+        <input type="hidden" name="food_name" value="{{ form.initial_name.value }}">
+        <button type="submit" class="remove-food-button btn-rmv" 
+            hx-post="{% url 'basic:remove_food' %}"
+            hx-trigger = "click" 
+            hx-swap= "outerHTML" 
+            hx-target = "#view-food-details" 
+            hx-include = "#remove-food-form"
+        >Remove Food</button>
     </form>
 </div>
