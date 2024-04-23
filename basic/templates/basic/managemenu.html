@@ -48,10 +48,10 @@
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   <div class="sidenav">
     <a><u>Categories</u></a>
-    <a><b>Employees</b></a>
-    <a href="../managemenu">Menu</a>
-    <a href="../inventory">Inventory</a>
-    <a href="../sales">Sales</a>
+    <a href="{% url 'basic:manageemployees' %}">Employees</a>
+    <a><b>Menu</b></a>
+    <a href="{% url 'basic:inventory' %}">Inventory</a>
+    <a href="{% url 'basic:sales' %}">Sales</a>
   </div>
 
   <div class = "container">
