@@ -3,6 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@^1.6.0/dist/htmx.min.js"></script>
     <style>
+        button:hover { cursor: pointer; }
+        
         #button-container {
             text-align: center; 
             text-align: center; 
@@ -16,12 +18,16 @@
             margin: 20 10px;
         }
 
-        #button-container3 {
-            border: 2px solid #03191e; 
-            box-shadow: 0 4px 8px #03191e; 
+        #backbutton {
             max-width: 145px;
             margin: 20 10px;
+            border: 2px solid #03191e;
+            box-shadow: 0 4px 8px #03191e;
         }
+
+        #backbutton:hover {
+            cursor: pointer;
+        }  
 
         #large-box {
             margin: 40px auto; /* Center the box horizontally with some margin */
@@ -54,7 +60,7 @@
             border-radius: 20px;
         }
 
-        .button {
+        .button, input[type=button] {
             background-color: #941c2f;
             color: #f7f9f9;
         }
@@ -158,9 +164,10 @@
         <button class="large-button" hx-get="../completed/" hx-trigger="click" hx-swap="outerHTML" style="background-color: #96d1ff;">Completed</button>
     </div>
 
-    <div id="button-container3" hx-target="body" hx-swap="outerHTML">
-        <button class="button" hx-get="../landingpage/">Back to Landing Page</button>
-    </div>
+    <a href="{% url 'basic:landingpage' %}">
+        <input type="button" id="backbutton" value="Back to Landing
+Page" style="white-space: pre;"/>
+    </a>
 
 </body>
 
