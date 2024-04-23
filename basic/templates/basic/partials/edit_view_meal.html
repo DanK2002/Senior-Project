@@ -8,8 +8,13 @@
         <input type="hidden" id="original_name" name="original_name" value="{{ form.initial_name.value }}">
         <!-- Save and Cancel buttons for editing an existing food -->
         <button type="reset" class="cancel-button">Cancel</button>
-        <button type="submit" class="btn" hx-post="{% url 'basic:edit_view_meal' %}"
-        hx-trigger = "click" hx-swap= "outerHTML" hx-target = "#view-meal-details" hx-include = "#edit-meal-form">Save</button>
+        <button type="submit" class="btn" 
+            hx-post="{% url 'basic:edit_view_meal' %}"
+            hx-trigger = "click" 
+            hx-swap= "outerHTML" 
+            hx-target = "#view-meal-details"
+            hx-include = "#edit-meal-form">
+        Save</button>
     </form>
     <!-- Form for removing meal -->
     <form method="POST" id="remove-meal-form" >

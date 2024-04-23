@@ -59,7 +59,11 @@
   </div>
 
   <!-- Drop-down list for categories -->
-  <form class="category-dropdown" method="post">
+  <form class="category-dropdown" method="post"
+  hx-target = "#food-dropdown"
+  hx-swap ="outerHTML"
+  hx-trigger="change"
+    hx-get="{% url 'basic:fetch_food_details' %}">
     {% csrf_token %}
     <label for="category">Category:</label>
     <select id="category" name="category">
@@ -87,6 +91,8 @@
     </select>
   </form>
 
+  <div id = "food-dropdown"></div>
+
   <!-- Drop down list for food items in selected category -->
 <form class="food-dropdown" method="post" 
 hx-target = "#add-food-container"
@@ -95,7 +101,7 @@ hx-trigger="change"
     hx-get="{% url 'basic:fetch_food_details' %}"> 
     {% csrf_token %}
     <label for="food_name">Foods:</label>
-    <select id="food_name" name="food_name" hx-post="category">
+    <select id="food_name" name="food_name">
       <option value="">Select a Food</option>
       {% for food in foods %}
         <option value="{{ food.name }}" {% if selected_food == food %} selected {% endif %}>{{ food.name }}</option>

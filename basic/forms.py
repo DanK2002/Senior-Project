@@ -12,7 +12,6 @@ class AddMealForm(forms.Form):
     price = forms.DecimalField(label='Price', max_digits=10, decimal_places=2)
     foods = forms.ModelMultipleChoiceField(queryset=Food.objects.all(), widget=forms.CheckboxSelectMultiple)
 
-
 class EditFoodForm(forms.Form):
     initial_name = forms.CharField(label='Name', max_length=100)
     initial_category = forms.CharField(label='Category', max_length=100)
