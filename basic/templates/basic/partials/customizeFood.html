@@ -21,8 +21,6 @@
 <br>
 <a><u>{{food.name}}</u></a>
 <br>
-<p>Message</p> <input type="text" class="form-control-sm" placeholder="Enter message" name = "message" id="message">
-<br>
 <form id = "changesForm" name = "changesForm">
 <button hx-post="{% url 'basic:addFoodToOrder' %}" hx-target="#foodCustomizer" hx-include="#message, #changesForm"
 hx-vals='{"foodName": "{{food.name}}"}' hx-swap="innerHTML">Submit Item</button>
