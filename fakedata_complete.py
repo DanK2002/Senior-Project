@@ -96,11 +96,9 @@ ingredients_data = {
 
 # Loop through the ingredients dictionary and save each ingredient
 i = 0
-i = 0
 for ingredient_name, quantity in ingredients_data.items():
     ingredient = Ingredient(name=ingredient_name, quantity=quantity, idnumber=i, upcharge=0.5)
     ingredient.save()
-    i += 1
     i += 1
 
 # Define foods and their ingredients using dictionaries
