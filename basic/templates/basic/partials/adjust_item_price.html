@@ -1,0 +1,15 @@
+<form id = "adjust-price-form">
+    <input hidden name = "order-number" value = "{{ order-number }}" />
+    {% if food %}
+    <input hidden name = "food-code" value = "{{ food.code }}" />
+    {% endif %}
+    {% if meal %}
+    <input hidden name = "meal-code" value = "{{ food.code }}" />
+    {% endif %}
+    <label for = "percent-comp">Percent discount: </label>
+    <input type= "number" name = "percent-comp" id = "percent-comp" />
+    <input type = "button" class = "btn" value = "Adjust price"
+        hx-post = "{% url 'basic:save-item-price'}" hx-include = "#adjust-price-form"
+        hx-swap = "innerHTML" hx-target = "#order-details"
+    />
+</form>

@@ -1,0 +1,26 @@
+<head>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script> 
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <div id = "select-order">
+        <h1>Adjust Order Price</h1>
+        <form id = "order-filters">
+
+            <label for = "select-employee">Orders from: </label>
+            <select name = "select-employee" id = "select-employee">
+                {% for user in users %}
+                    <option value = "{{ user.username }}">{{ user.first_name }} {{ user.last_name }}</option>
+                {% endfor %}
+            </select>
+            <br />
+
+            {{ form }}
+
+            <input type = "button" class = "btn" value = "Search orders" 
+                hx-post = "{% url 'basic:adjust-price-filter-order' %}" hx-target = "#show-orders"
+                hx-swap = "innerHTML" hx-include = "#order-filters" hx-trigger="click" />
+        </form> 
+        <div id = "show-orders"></div>
+    </div>
+</body>

@@ -491,6 +491,110 @@ def save_new_shift(request):
             request,
             ""
         )
+    
+# ADJUST PRICES ******************
+def adjust_price(request):
+    users = User.objects.all()
+    form = FilterOrdersForm()
+    return render(
+        request,
+        "basic/adjust_order_price.html",
+        {
+            'users' : users,
+            'form' : form
+        }
+    )
+
+def AP_filter_order(request):
+    
+    start_date = datetime.strptime(request.POST.get('order_date'), "%Y-%m-%d")
+    print(start_date)
+    end_date = start_date + timedelta(days = 1)
+    selected_employee = User.objects.get(username=request.POST.get('select-employee'))
+
+    orders = Order.objects.filter(time_submitted__gte=start_date, time_submitted__lt=end_date, employee_submitted=selected_employee)
+
+    return render(
+        request,
+        "basic/partials/show_orders.html",
+        {
+            'orders' : orders
+        }
+    )
+
+def AP_order_details(request):
+    print(request.POST.get('order-number'))
+    order = Order.objects.filter(number=request.POST.get('order-number')).first()
+    inFoods = []
+    for food in order.foods.all():
+        inFoods.append(food.name)
+    print(inFoods)
+    foods = order.foods.all()
+    print(foods)
+    meals = order.meals.all()
+    print(meals)
+
+    return render(
+        request,
+        "basic/partials/view_order_details.html",
+        {
+            'foods' : foods,
+            'meals' : meals,
+            'order' : order,
+        }
+    )
+
+def AP_order_comp(request):
+    return render(
+        request,
+        ""
+    )
+
+def AP_order_void(request):
+    return render(
+        request,
+        ""
+    )
+
+def AP_save_item_price(request):
+    if request.POST.get('food-code'):
+        food = Food.objects.get(code = request.POST.get('food-code'))
+        food.price = food.price * (1 - (request.POST.get('percent-comp') / 100))
+        food.save()
+    elif request.POST.get('meal-code'):
+        meal = Meal.objects.get(code = request.POST.get('meal-code'))
+        meal.price = meal.price * (1 - (request.POST.get('percent-comp') / 100))
+        meal.save()
+    order = Order.objects.filter(number=request.POST.get('order-number')).first()
+    inFoods = []
+    for food in order.foods.all():
+        inFoods.append(food.name)
+    print(inFoods)
+    foods = order.foods.all()
+    print(foods)
+    meals = order.meals.all()
+    print(meals)
+
+    return render(
+        request,
+        "basic/partials/view_order_details.html",
+        {
+            'foods' : foods,
+            'meals' : meals
+        }
+    )
+
+def AP_adjust_item_price(request):
+    return render(
+        request,
+        ""
+    )
+
+def AP_void_item(request):
+    return render(
+        request,
+        ""
+    )
 
 # End Billie's Domain ------------------------------------------------------
 

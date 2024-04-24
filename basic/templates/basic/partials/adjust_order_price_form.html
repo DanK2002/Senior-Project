@@ -1,0 +1,9 @@
+<form id = "adjust-order-price-form">
+    <input hidden name = "order-number" value = "{{ order.number }}" />
+    <label for = "percent-comp">Percent discount: </label>
+    <input type= "number" name = "percent-comp" id = "percent-comp" />
+    <input type = "button" class = "btn" value = "Adjust price"
+        hx-post = "{% url 'basic:save-order-price'}" hx-include = "#adjust-order-price-form"
+        hx-swap = "innerHTML" hx-target = "#select-order"
+    />
+</form>

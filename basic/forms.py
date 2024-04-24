@@ -95,4 +95,10 @@ class EditEmployeeShifts(forms.Form):
         widget=forms.TimeInput(format="%H:%i:%s", attrs={"type": "time"}),
         input_formats=["%H:%i:%s"]
     )
-    
+
+class FilterOrdersForm(forms.Form):
+    order_date = forms.DateField(
+        required=True,
+        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
+        input_formats=["%Y-%m-%d"]
+    )
