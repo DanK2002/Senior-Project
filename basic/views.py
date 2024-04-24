@@ -5,7 +5,7 @@ import json
 from .models import *
 from django.utils import timezone
 from .forms import *
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.views.decorators.http import require_GET, require_POST
 import csv
 import json
@@ -813,7 +813,7 @@ def login(request):
             return render(request, 'basic/login.html', {'error_message': error_message})
     else:
         return render(request, "basic/login.html")
-    
+
 def landingpage(request):
     user = request.user
     groups = []
@@ -1614,3 +1614,8 @@ def removedItem(request):
         total += meal.price
     
     return render(request, "basic/partials/removedItem.html", {"foods": foodsInOrder, "meals": mealsInOrder, "total": total})
+
+def signout(request):
+    logout(request)
+    return redirect('basic:login')
+
