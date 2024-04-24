@@ -3,10 +3,11 @@ from django.contrib.auth.models import User
 from basic.models import Employee, Shift, Order, Ingredient, Food, Meal, Group
 
 # Retrieve the superuser by username
-superuser = User.objects.get(username='dan')
+superusers = ['weldon49', 'senato68', 'bryan',
+             'dan', 'billie', 'ktswy', 'hgare']
 
 # Clear all tables except the superuser
-User.objects.exclude(username=superuser.username).delete()
+User.objects.exclude(username__in=superusers).delete()
 Employee.objects.all().delete()
 Group.objects.all().delete()
 Shift.objects.all().delete()
