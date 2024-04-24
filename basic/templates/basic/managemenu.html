@@ -1,64 +1,15 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'managerial.css' %}">
 
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-      .sidenav {
-        height: 100%;
-        width: 160px;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        padding-top: 20px;
-      }
-      
-      .sidenav a {
-        padding: 6px 8px 6px 16px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #dfd0d0;
-        display: block;
-      }
-      
-      .sidenav a:hover {
-        color: #f1f1f1;
-      }
-      
-      .main {
-        margin-left: 160px; /* Same as the width of the sidenav */
-        font-size: 28px; /* Increased text to enable scrolling */
-        padding: 80px 160px;
-      }
-        
-      @media screen and (max-height: 450px) {
-        .sidenav {padding-top: 15px;}
-        .sidenav a {font-size: 18px;}
-      }
-      body {
-        padding-left: 160px;
-      }
-  </style>
-  <script src="https://unpkg.com/htmx.org@1.9.10"></script> 
-  <title>Manage Menu</title>
-</head>
-
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-  <div class="sidenav">
-    <a><u>Categories</u></a>
-    <a href="{% url 'basic:manageemployees' %}">Employees</a>
-    <a><b>Menu</b></a>
-    <a href="{% url 'basic:inventory' %}">Inventory</a>
-    <a href="{% url 'basic:sales' %}">Sales</a>
-  </div>
 
   <div class = "container">
   <h1>Manage Menu</h1>
   
   <div class = "secondary-container">
+    <div id="list_categories">
+      <!-- Lists all categories -->
+      {{ list_categories|safe }}
+  </div>
   <!-- Display Selected Category -->
   <div class="selected-category-container">
     <p>Category: {{ selected_category }}</p>
@@ -93,6 +44,8 @@
     </select>
   </form>
 
+  <div id = "food-dropdown"></div>
+
   <!-- Drop down list for food items in selected category -->
 <form class="food-dropdown" method="post" 
 hx-target = "#add-food-container"
@@ -101,7 +54,7 @@ hx-trigger="change"
     hx-get="{% url 'basic:fetch_food_details' %}"> 
     {% csrf_token %}
     <label for="food_name">Foods:</label>
-    <select id="food_name" name="food_name" hx-post="category">
+    <select id="food_name" name="food_name">
       <option value="">Select a Food</option>
       {% for food in foods %}
         <option value="{{ food.name }}" {% if selected_food == food %} selected {% endif %}>{{ food.name }}</option>
