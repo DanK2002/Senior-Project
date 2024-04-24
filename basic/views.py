@@ -148,6 +148,8 @@ def save_new_employee(request):
                 first_name = request.POST.get('first_name'),
                 last_name = request.POST.get('last_name'),
             )
+    newUser.set_password(request.POST.get('password'))
+    newUser.save()
     user_groups = request.POST.getlist('user_groups')
     # Add employee to selected groups:
     if "foh" in user_groups:
