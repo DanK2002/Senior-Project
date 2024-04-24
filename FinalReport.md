@@ -15,6 +15,7 @@
 
 ## Stretch Goals Completed:
 - Time Estimation Adjustments
+
 a) There are a number of ways the time estimation for orders could be tweaked. We will start with a basic system, but may update it if we find better solutions, or add additional features. Perhaps changing estimations based on the day of the week and the time of day.
 
 
