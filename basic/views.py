@@ -1213,7 +1213,7 @@ def ordercreation2(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Order: Take Out')
+                   employee_submitted = user, message = 'Order: Take Out')
 
     order.save()
 
@@ -1228,7 +1228,7 @@ def ordercreation3(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Order: Drive Through')
+                   employee_submitted = user, message = 'Order: Drive Through')
 
     order.save()
 
@@ -1406,7 +1406,10 @@ def addFoodToOrder(request):
     for meal in mealsInOrder:
         instruction = meal.name + ":\n"
         for food in meal.foods.all():
-            instruction = instruction + food.name + "; " + food.message + ". "
+            if food.message == '':
+                instruction = instruction + food.name + "; Standard Ingredients. "
+            else:
+                instruction = instruction + food.name + "; " + food.message + ". "
         mealInstructions.append(instruction)
 
     return render(request, "basic/partials/addFoodToOrder.html", {'foodName':foodName, 'foodsInOrder': foodsInOrder,
@@ -1580,7 +1583,10 @@ def addMealToOrder(request):
     for meal in mealsInOrder:
         instruction = meal.name + ":\n"
         for food in meal.foods.all():
-            instruction = instruction + food.name + "; " + food.message + ". "
+            if food.message == '':
+                instruction = instruction + food.name + "; Standard Ingredients. "
+            else:
+                instruction = instruction + food.name + "; " + food.message + ". "
         mealInstructions.append(instruction)
 
     return render(request, "basic/partials/addMealToOrder.html", {"meal": addedMeal, "foods": foodsInOrder,
