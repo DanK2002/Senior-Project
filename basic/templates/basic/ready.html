@@ -15,9 +15,12 @@
                 {% for order in ready_orders|dictsortreversed:"time_est" %}
                     <div class="order-box">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
-                        <div class="message-box"> 
-                            <button class="message-button" hx-trigger="click" hx-get="{% url 'basic:get_food_details' order.id %}">{{ order.message }}</button>
+                        <div class="order-message-box">
+                            <p>{{ order.message }}</p>
                         </div>
+                        {% for food in order.foods.all %}
+                            <b><label for="food_{{ food.id }}">{{ food.name }}: {{ food.message }}</label><br></b>
+                        {% endfor %}
                         <p>Price: ${{ order.price}}</p>
                     </div>
                 {% endfor %}

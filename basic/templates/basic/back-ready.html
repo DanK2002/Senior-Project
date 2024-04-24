@@ -16,9 +16,13 @@
                 {% for order in ready_orders|dictsortreversed:"time_est" %}
                     <div class="order-box" id="order_{{ order.id }}">
                         <h3><b>Order Number: {{ order.number }}</b></h3>
-                        <div class="message-box"> 
-                            <button class="message-button" hx-trigger="click" hx-get="{% url 'basic:get_food_details' order.id %}">{{ order.message }}</button>
+                        <div class="order-message-box">
+                            <p>{{ order.message }}</p>
                         </div>
+                        {% for food in order.foods.all %}
+                            <b><label for="food_{{ food.id }}">{{ food.name }}: {{ food.message }}</label><br></b>
+                        {% endfor %}
+                        <p>Price: {{ order.price}}</p>
                         <form id="mark_completed_form_{{ order.id }}" hx-post="{% url 'basic:mark_completed' order.id %}">
                             {% csrf_token %}
                             <button class="button" type="submit">Completed</button>

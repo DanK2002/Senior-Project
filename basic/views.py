@@ -17,6 +17,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import F, Sum
 
+from django.template import loader
 
 # Create your views here.
 
@@ -1155,9 +1156,10 @@ def remove_completed(request, order_id):
 
 def get_food_details(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
-    foods_list = [food.name for food in order.foods.all()]  # Assuming 'name' is the field you want to display
-    food_details = ', '.join(foods_list)
-    return JsonResponse(food_details, safe=False)
+    template = loader.get_template('food_details_template.html')
+    context = {'order': order}
+    rendered_template = template.render(context, request)
+    return HttpResponse(rendered_template)
 
 def clockin_out(request):
     users = User.objects.all().order_by("username")
