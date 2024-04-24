@@ -30,7 +30,9 @@ for x in range(10):
     wage = round(random.uniform(10.0, 30.0), 2)
     username = f"{last_name.lower()}{random.randint(0, 99):02d}"
     try:
-        user = User.objects.create(username=username, password="Django@1", first_name=first_name, last_name=last_name)
+        user = User.objects.create(username=username, first_name=first_name, last_name=last_name)
+        user.set_password("Django@1")
+        user.save()
         employee = Employee.objects.create(user=user, wage=wage)
         if x == 1:
             man = Group.objects.get(name="manager")
@@ -39,7 +41,7 @@ for x in range(10):
             foh = Group.objects.get(name="foh")
             foh.user_set.add(user)
         else:
-            boh = Group.objects.get(name="foh")
+            boh = Group.objects.get(name="boh")
             boh.user_set.add(user)
     except Exception as e:
         print(f"Error creating employee: {e}")
