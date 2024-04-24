@@ -1,9 +1,9 @@
 # POS+SUM Final Report
 
-## Known Bugs in Project:
+## Known Bugs and Issues in Project:
 - Super users display for employee list in manage employees.
 - Front of House pages do not work without WiFi.
-- CSS inconsistencies between managerial pages.
+- CSS inconsistencies between managerial pages and order pages.
 - Landing page FOH button displays on two lines on certain devices.
 - Order Creation does not fully display summary when a new category is selected
 
