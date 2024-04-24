@@ -500,26 +500,40 @@ def managemenu(request):
     selected_category = request.POST.get('category') #get selected category
     categories = Food.objects.values_list('category', flat=True).distinct()
     meals = Meal.objects.all()
-    selected_category = None
     selected_food = None
     add_food_form = AddFoodForm()
     add_meal_form = AddMealForm()
     if request.method == 'POST':
         selected_category = request.POST.get('category')
-        selected_food = request.POST.get('food')
-    
     if selected_category:
         foods = Food.objects.filter(category=selected_category)
+        selected_food = request.POST.get('food')
     else:
         foods = None
-    
-    return render(request, "basic/managemenu.html", 
-                  {'categories': categories, 
+    html_content = render(request, "basic/managemenu.html", {'categories': categories, 
                    'selected_category': selected_category,
                    'selected_food': selected_food,
                    'foods': foods,
-                    'meals':meals, 'add_food_form': add_food_form, 'add_meal_form': add_meal_form})
+                    'meals':meals, 
+                    'add_food_form': add_food_form, 
+                    'add_meal_form': add_meal_form}).content.decode('utf-8')
+    css_content = render(request, "basic/menu_css.html").content.decode('utf-8')
 
+    return render(request, "basic/sidenav.html", 
+                  {'html_content':  html_content,
+                    'css_content': css_content})
+
+
+def list_categories(request):
+    categories = Food.objects.values_list('category', flat=True).distinct()
+
+    return render(request, 'basic/parials/list_categories.html', 
+                  {'categories': categories})
+
+def list_meals(request):
+    meals = Meal.objects.all()
+    return render(request, 'basic/parials/list_meals.html', 
+                  {'meals': meals})
 
 def edit_category_form(request):
     # Retrieve the selected category from the POST data
@@ -550,16 +564,56 @@ def edit_category(request):
         return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 def add_food(request):
+    add_food_form = AddFoodForm()
     if request.method == 'POST':
-        form = AddFoodForm(request.POST)
-        if form.is_valid():
+        add_food_form = AddFoodForm(request.POST)
+        if add_food_form.is_valid():
             # Create a new Food object with form data
             new_food = Food(
-                name=form.cleaned_data['name'],
-                category=form.cleaned_data['category'],
-                price=form.cleaned_data['price']
+                name=add_food_form.cleaned_data['name'],
+                category=add_food_form.cleaned_data['category'],
+                price=add_food_form.cleaned_data['price']
             )
-                
+   
+        new_food.save()
+        # Generate and assign food code
+        food_code = add_food_code(new_food)
+        new_food.code = food_code
+        new_food.save()
+
+        # Process ingredients and quantities
+        ingred_data = {}
+        for ingredient_name, quantity in request.POST.items():
+            if ingredient_name.startswith('ingredient_'):
+                ingredient_name = ingredient_name.split('_')[1]
+                try:
+                    quantity = int(quantity)
+                    if quantity > 0:
+                        ingred_data[ingredient_name] = quantity
+                except Ingredient.DoesNotExist:
+                    pass
+
+        ingred_json = json.dumps(ingred_data)
+
+        # Update ingred field of the new food item and save
+        new_food.ingred = ingred_json
+        new_food.save()
+        return redirect('basic:managemenu')
+    else:
+        add_food_form = AddFoodForm()
+    return render(request, 'basic/partials/add_food.html', {'add_food_form':add_food_form})
+
+def save_food_as_new_food(request):
+    form = EditFoodForm()
+    add_food_form = AddFoodForm()
+    if request.method == 'POST': 
+        form = EditFoodForm(request.POST)
+        if form.is_valid():
+            new_food = Food(
+                name=form.cleaned_data['initial_name'],
+                category=form.cleaned_data['initial_category'],
+                price=form.cleaned_data['initial_price']
+            )
             new_food.save()
 
             # Generate and assign food code
@@ -569,24 +623,26 @@ def add_food(request):
 
             # Process ingredients and quantities
             ingred_data = {}
-            for ingredient_name, quantity in request.POST.items():
-                if ingredient_name.startswith('ingredient_'):
-                    ingredient_name = ingredient_name.split('_')[1]
+            for ingredient_field, quantity in request.POST.items():
+                if ingredient_field.startswith('ingredient_'):
+                    ingredient_id = ingredient_field.split('_')[1]
                     try:
+                        ingredient = Ingredient.objects.get(id=ingredient_id)
                         quantity = int(quantity)
                         if quantity > 0:
-                            ingred_data[ingredient_name] = quantity
+                            ingred_data[ingredient.name] = quantity
                     except Ingredient.DoesNotExist:
                         pass
 
-            # Update ingred field of the new food item and save
-            new_food.ingred = ingred_data
-            new_food.save()
+            ingred_json = json.dumps(ingred_data)
 
-            return redirect('basic:managemenu')
+            # Update ingred field of the new food item and save
+            new_food.ingred = ingred_json
+            new_food.save()
     else:
-        form = AddFoodForm()
-    return render(request, 'basic/partials/add_food.html', {'form': form})
+        add_food_form = AddFoodForm()
+
+    return render(request, 'basic/partials/add_food.html', {'add_food_form':add_food_form, 'form': form})
 
 def add_meal(request):
     if request.method == 'POST':
@@ -627,7 +683,7 @@ def edit_view_food(request):
             original_food.category = new_category
             original_food.price = new_price
 
-             # Process ingredients and quantities
+            # Process ingredients and quantities
             ingred_data = {}
             for ingredient_name, quantity in request.POST.items():
                 if ingredient_name.startswith('ingredient_'):
@@ -635,15 +691,18 @@ def edit_view_food(request):
                     try:
                         ingredient = Ingredient.objects.get(id=ingredient_id)
                         quantity = int(quantity)
-                        if quantity >= 0:
+                        if quantity > 0:  # Only include ingredients with quantity > 0
                             ingred_data[ingredient.name] = quantity
                     except Ingredient.DoesNotExist:
                         return redirect('basic:managemenu')
             
+            # Convert ingred_data to JSON string
+            ingred_json = json.dumps(ingred_data)
+            
             # Update the ingredients of the food
-            original_food.ingred = ingred_data
+            original_food.ingred = ingred_json
             original_food.save()
-            return render(request, 'basic/partials/edit_view_food.html', {'edit_view_food_form': edit_view_food_form})
+            return render(request, 'basic/partials/add_food.html', {'add_food_form': add_food_form})
 
     return render(request, 'basic/partials/edit_view_food.html', {'edit_view_food_form': edit_view_food_form})
 
@@ -668,19 +727,19 @@ def edit_view_meal(request):
 
 def remove_food(request):
     if request.method == 'POST':
-        food_name = request.POST.get('original_name')
+        food_name = request.POST.get('food_name')
         food = Food.objects.filter(name=food_name).first()
-        if food:
-            food.delete()
-            return JsonResponse({'message': 'Food item removed successfully'}, status=200)
-        else:
-            return JsonResponse({'error': 'Food item not found'}, status=404)
+        food.delete()
+        add_food_form = AddFoodForm()
+        return render(request, 'basic/partials/add_food.html', {'add_food_form': add_food_form})
+    else:
+        return redirect('basic:managemenu')
+
 
 def remove_meal(request):
     if request.method == 'POST':
         meal_name = request.POST.get('meal_name')
-        print(meal_name)
-        meal = get_object_or_404(Meal, name=meal_name)
+        meal = Meal.objects.filter(name=meal_name).first()
         meal.delete()
         add_meal_form = AddMealForm()
         return render(request, 'basic/partials/add_meal.html', {'add_meal_form': add_meal_form})
@@ -741,7 +800,7 @@ def add_food_code(new_food):
         food_name = food.name
         # Extract the first letter of the category for the code
         index = 0
-        category_letter = category[index].upper() 
+        category_letter = category[0].upper() 
         # If the first letter is already used, find the next available letter
         if category not in cat_letters.keys():
             while category_letter in cat_letters.values():

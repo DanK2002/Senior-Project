@@ -12,9 +12,10 @@
       <!-- Add New Ingredient button -->
       <div class="add-ingredient-container">
         <div class="add-ingredient-box">
-          <button type="button" class="add-ingredient-button" hx-get="{% url 'basic:ingredient_list' %}" hx-target="#ingredient-list-container">Add Ingredients</button>
+          <button type="button" class="add-ingredient-button btn" hx-get="{% url 'basic:ingredient_list' %}" hx-target="#ingredient-list-container">Add Ingredients</button>
         </div>
       </div>
+      <br>
       <div id="ingredient-list-container">
         <!-- Include the ingredient list here -->
         {% include 'basic/partials/ingredient_list.html' %}

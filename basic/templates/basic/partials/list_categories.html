@@ -1,0 +1,7 @@
+<label for="select-category">Select a Category:</label>
+<select name="select-category" id="select-category" class="dropdown">
+    <option value=""></option>
+    {% for category in categories %}
+        <option value="{{ category }}" {% if selected_category == category %} selected {% endif %}>{{ category }}</option>
+    {% endfor %}
+</select>
