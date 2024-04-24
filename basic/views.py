@@ -521,29 +521,6 @@ def managemenu(request):
                   {'html_content':  html_content,
                     'css_content': css_content})
 
-# def managemenu(request):
-#     list_categories = render(
-#         request,
-#         "basic/partials/list_categories.html",
-#         {
-#             'categories': Food.objects.values_list('category', flat=True).distinct()
-#         }
-#     ).content.decode('utf-8')
-
-#     meals = Meal.objects.all()
-#     add_food_form = AddFoodForm()
-#     add_meal_form = AddMealForm()
-#     html_content = render(request, "basic/managemenu.html", {
-#                     'list_categories':list_categories,
-#                     'meals':meals, 
-#                     'add_food_form': add_food_form, 
-#                     'add_meal_form': add_meal_form}).content.decode('utf-8')
-#     css_content = render(request, "basic/menu_css.html").content.decode('utf-8')
-
-#     return render(request, "basic/sidenav.html", 
-#                   {'html_content':  html_content,
-#                     'css_content': css_content})
-
 
 def list_categories(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
