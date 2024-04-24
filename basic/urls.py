@@ -83,6 +83,7 @@ urlpatterns = [
     path('edit_view_meal/', views.edit_view_meal, name='edit_view_meal'),
     path('remove_meal/', views.remove_meal, name='remove_meal'),
     path('list_categories/', views.list_categories, name='list_categories'),
+    path('list_meals/', views.list_meals, name='list_meals'),
     path('save_food_as_new_food/', views.save_food_as_new_food, name='save_food_as_new_food'),
 
 

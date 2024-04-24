@@ -1,0 +1,35 @@
+
+
+<form class="meal-dropdown" method="get" 
+  hx-target = "#add-meal-container"
+  hx-swap ="outerHTML"
+  hx-trigger="change"
+  action="{% url 'basic:fetch_meal_details' %}">
+    {% csrf_token %}
+    <label for="meal_name">Meals:</label>
+    <select id="meal_name" name="meal_name" hx-get="{% url 'basic:fetch_meal_details' %}" hx-trigger="change">
+      <option value="">Select a Meal</option>
+      {% for meal in meals %}
+      <option value="{{ meal.name }}">{{ meal.name }}</option>
+      {% endfor %}
+    </select>
+  </form>
+
+
+  <label for = "meal-dropdown">Select a Meal:</label>
+  <select name = "meal-dropdown" id = "meal-dropdown" class = "dropdown"
+    hx-get="{% url 'basic:fetch_meal_details' %}"
+    hx-trigger="change">
+    <option value="">Select a Meal</option>
+    {% for meal in meals %}
+    <option value="{{ meal.name }}">{{ meal.name }}</option>
+    {% endfor %}
+  </select>
+  <!-- Button to edit/view a specific meal -->
+  <input type="button" name="View" value="View" class = "btn"
+  hx-post="{% url 'basic:edit_view_meal' %}" hx-trigger="click" 
+  hx-target="#view-meal-details" hx-include="#meal-dropdown"/>
+
+
+
+
