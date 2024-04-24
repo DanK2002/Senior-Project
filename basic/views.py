@@ -986,18 +986,20 @@ def salesSummary(request):
     meals_total = 0
     
     for order in orders:
-        orders_total += order.price
         for meal in order.meals.all():
             meals_ind[meal.name] += meal.price
             meals_total += meal.price
+            orders_total += meal.price
         for food in order.foods.all():
             foods_ind[food.name] += food.price
             foods_total += food.price
+            orders_total += food.price
 
     meals_ind = dict(meals_ind)
     foods_ind = dict(foods_ind)
     foods_total = round(foods_total, 2)
     meals_total = round(meals_total, 2)
+    orders_total = round(orders_total, 2)
 
     return render(request, "basic/partials/sales_summary.html", {
         'orders_total': orders_total,
@@ -1024,18 +1026,20 @@ def generateCsv(request):
     )
     
     for order in orders:
-        orders_total += order.price
         for meal in order.meals.all():
             meals_ind[meal.name] += meal.price
             meals_total += meal.price
+            orders_total += meal.price
         for food in order.foods.all():
             foods_ind[food.name] += food.price
             foods_total += food.price
+            orders_total += food.price
 
     meals_ind = dict(meals_ind)
     foods_ind = dict(foods_ind)
     foods_total = round(foods_total, 2)
     meals_total = round(meals_total, 2)
+    orders_total = round(orders_total, 2)
 
     writer = csv.writer(response)
     # Order Summary
