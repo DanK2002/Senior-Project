@@ -15,6 +15,7 @@ from django.db.models import IntegerField
 from django.db.models.functions import Cast, Substr
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import F, Sum
 
 
 # Create your views here.
@@ -973,7 +974,7 @@ def salesSummary(request):
 
         orders = Order.objects.filter(time_completed__date__range=(start_date, end_date))
     else:
-        orders = Order.objects.all()
+        orders = Order.objects.exclude(time_completed=None)
     
     orders_total = 0
 
@@ -1270,7 +1271,7 @@ def ordercreation1(request):
 
     orderNumber = len(Order.objects.distinct()) + 1
 
-    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+    order = Order(number = orderNumber, time_est = time_estimation(), time_submitted = timezone.now(),
                     employee_submitted = user, message = 'Order: Dine In')
 
     order.save()
@@ -1285,7 +1286,7 @@ def ordercreation2(request):
 
     orderNumber = len(Order.objects.distinct()) + 1
 
-    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
+    order = Order(number = orderNumber, time_est = time_estimation(), time_submitted = timezone.now(),
                    employee_submitted = user, message = 'Order: Take Out')
 
     order.save()
@@ -1300,12 +1301,21 @@ def ordercreation3(request):
 
     orderNumber = len(Order.objects.distinct()) + 1
 
-    order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   employee_submitted = user, message = 'Order: Drive Through')
+    order = Order(number = orderNumber, time_est = time_estimation(), time_submitted = timezone.now(),
+                    employee_submitted = user, message = 'Order: Drive Through')
 
     order.save()
 
     return render(request, "basic/ordercreation.html", {'categories': categories})
+
+def time_estimation():
+    delta = Order.objects.exclude(time_ready=None).aggregate(
+        est = Sum(F('time_ready') - F('time_submitted'))
+    ) ['est']
+
+    estimate = timezone.now() + delta
+
+    return estimate
 
 def fooditems(request):
     categoryName = request.GET.get("categoryName")
