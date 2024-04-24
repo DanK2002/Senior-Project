@@ -160,6 +160,7 @@
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    {{ html_content|safe }}
     <div id="modal" _="on closeModal add .closing then wait for animationend then remove me">
         <div class="modal-underlay" _="on click trigger closeModal"></div>
         <div class="modal-content">

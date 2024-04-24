@@ -1155,10 +1155,22 @@ def auth_clockin_out(request):
             newShift.save() # Store it into the database
         return redirect('basic:clockin-out')
     else: # No backend authenticated the credentials
+        # Basically just reused code from clockin_out, not sure how else to do this
+        users = User.objects.all().order_by("username")
+        employees = Employee.objects.all()
+        employeeUsernames = []
+        for employee in employees:
+            employeeUsernames.append(employee.user.username)
+        currentShifts = Shift.objects.filter(end=None)
+        clockedIn = []
+        for shift in currentShifts:
+            clockedIn.append(shift.employee.user.username)
+        html_content = render(request, "basic/clockin-out.html", {'users': users, 'employeeUsernames': employeeUsernames, 'clockedIn': clockedIn}).content.decode('utf-8')
         return render(
             request, 
             "partials/modal.html",
             {
+                'html_content': html_content,
                 'username': username
             })
     
