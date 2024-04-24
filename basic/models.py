@@ -35,7 +35,6 @@ class Order(models.Model):
     time_completed = models.DateTimeField(blank=True, null=True)
     foods = models.ManyToManyField('Food', blank=False)
     meals = models.ManyToManyField('Meal', blank=False)
-    price = models.FloatField(null=False)
     employee_submitted = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.CharField(max_length=1000)
 
@@ -74,6 +73,7 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=100)
     quantity = models.IntegerField(blank = False)
     idnumber = models.IntegerField(blank = False)
+    upcharge = models.FloatField(blank = False, default = 0.0)
 
     def __str__(self):
         return self.name

@@ -5,7 +5,7 @@ import json
 from .models import *
 from django.utils import timezone
 from .forms import *
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.views.decorators.http import require_GET, require_POST
 import csv
 import json
@@ -813,7 +813,7 @@ def login(request):
             return render(request, 'basic/login.html', {'error_message': error_message})
     else:
         return render(request, "basic/login.html")
-    
+
 def landingpage(request):
     user = request.user
     groups = []
@@ -1155,10 +1155,22 @@ def auth_clockin_out(request):
             newShift.save() # Store it into the database
         return redirect('basic:clockin-out')
     else: # No backend authenticated the credentials
+        # Basically just reused code from clockin_out, not sure how else to do this
+        users = User.objects.all().order_by("username")
+        employees = Employee.objects.all()
+        employeeUsernames = []
+        for employee in employees:
+            employeeUsernames.append(employee.user.username)
+        currentShifts = Shift.objects.filter(end=None)
+        clockedIn = []
+        for shift in currentShifts:
+            clockedIn.append(shift.employee.user.username)
+        html_content = render(request, "basic/clockin-out.html", {'users': users, 'employeeUsernames': employeeUsernames, 'clockedIn': clockedIn}).content.decode('utf-8')
         return render(
             request, 
             "partials/modal.html",
             {
+                'html_content': html_content,
                 'username': username
             })
     
@@ -1198,7 +1210,7 @@ def ordercreation1(request):
     orderNumber = len(Order.objects.distinct()) + 1
 
     order = Order(number = orderNumber, time_est = timezone.now(), time_submitted = timezone.now(),
-                   price = 0.0, employee_submitted = user, message = 'Order: Dine In')
+                    employee_submitted = user, message = 'Order: Dine In')
 
     order.save()
 
@@ -1341,6 +1353,7 @@ def addFoodToOrder(request):
     
     newIngredients = {}
     changesToFood = ''
+    totalUpcharge = 0
     for x in request.POST:
         #find the ingredient with the id x that matches addition'x'
         if "addition" in str(x):
@@ -1363,8 +1376,10 @@ def addFoodToOrder(request):
                 newAmount = 0
             if int(request.POST.get(str(x))) == 2:
                 changesToFood = changesToFood + "Add extra extra " + ingredient.name + ".\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == 1:
                 changesToFood = changesToFood + "Add extra " + ingredient.name + ".\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == -1:
                 if newAmount == 0:
                     changesToFood = changesToFood + "Remove " + ingredient.name + ".\n"
@@ -1378,6 +1393,7 @@ def addFoodToOrder(request):
         changesToFood = "Standard ingredients.\n"
     changesToFood = changesToFood + request.POST.get("message")
     theFood.message = changesToFood
+    theFood.price += totalUpcharge
     theFood.save()
     #use json.dumps(some dictionary) to pass json of ingredients
 
@@ -1463,6 +1479,7 @@ def customizeMeal(request):
 def customizeFoodInMeal(request):
     if request.method == 'GET':
         foodCode = request.GET.get("foodCode")
+        mealCode = request.GET.get("mealCode")
         theFood = Food.objects.filter(code=foodCode).first()
 
         ingredientDictionary = json.loads(theFood.ingred)
@@ -1474,12 +1491,15 @@ def customizeFoodInMeal(request):
             'food': theFood, 
             'inFood': ingredientsInFood,
             'notInFood': notInFood,
-            'ingredientDictionary': ingredientDictionary
+            'ingredientDictionary': ingredientDictionary,
+            'mealCode': mealCode
             })
 
 def editFoodInMeal(request):
     foodCode = request.POST.get("foodCode")
+    mealCode = request.POST.get("mealCode")
     theFood = Food.objects.filter(code=foodCode).first()
+    meal = Meal.objects.filter(code=mealCode).first()
 
     ingredientDictionary = json.loads(theFood.ingred)
     ingredientsInFood = Ingredient.objects.filter(name__in=ingredientDictionary.keys())
@@ -1492,6 +1512,7 @@ def editFoodInMeal(request):
     '''
     newIngredients = {}
     changesToFood = ''
+    totalUpcharge = 0
     for x in request.POST:
         #find the ingredient with the id x that matches addition'x'
         if "addition" in str(x):
@@ -1516,8 +1537,10 @@ def editFoodInMeal(request):
 
             if int(request.POST.get(str(x))) == 2:
                 changesToFood += f"Add extra extra {ingredient.name}.\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == 1:
                 changesToFood += f"Add extra {ingredient.name}.\n"
+                totalUpcharge += ingredient.upcharge
             elif int(request.POST.get(str(x))) == -1:
 
                 if newAmount == 0:
@@ -1537,6 +1560,8 @@ def editFoodInMeal(request):
 
     changesToFood = changesToFood + request.POST.get("message")
     theFood.message = changesToFood
+    meal.price += totalUpcharge
+    meal.save()
     theFood.save()
 
     return render(request, "basic/partials/editFoodInMeal.html")
@@ -1601,3 +1626,8 @@ def removedItem(request):
         total += meal.price
     
     return render(request, "basic/partials/removedItem.html", {"foods": foodsInOrder, "meals": mealsInOrder, "total": total})
+
+def signout(request):
+    logout(request)
+    return redirect('basic:login')
+

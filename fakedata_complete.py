@@ -96,8 +96,7 @@ ingredients_data = {
 i = 0
 i = 0
 for ingredient_name, quantity in ingredients_data.items():
-    ingredient = Ingredient(name=ingredient_name, quantity=quantity, idnumber=i)
-    ingredient = Ingredient(name=ingredient_name, quantity=quantity, idnumber=i)
+    ingredient = Ingredient(name=ingredient_name, quantity=quantity, idnumber=i, upcharge=0.5)
     ingredient.save()
     i += 1
     i += 1
@@ -105,8 +104,6 @@ for ingredient_name, quantity in ingredients_data.items():
 # Define foods and their ingredients using dictionaries
 foods_data = [
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Krabby Patty',
@@ -117,16 +114,12 @@ foods_data = [
     {
         'menu': True,
         'code': '',
-        'menu': True,
-        'code': '',
         'name': 'Krusty Dog',
         'price': 3.99,
         'category': 'Sandwich',
         'ingredients': {'Hot Dog Bun': 1, 'Hot Dog': 1, 'Ketchup': 2, 'Mustard': 2}
     },
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Steamed Hams',
@@ -137,16 +130,12 @@ foods_data = [
     {
         'menu': True,
         'code': '',
-        'menu': True,
-        'code': '',
         'name': 'Good Burger',
         'price': 4.99,
         'category': 'Sandwich',
         'ingredients': {'Burger Bun': 2, 'Beef Patty': 1, 'Sliced Cheddar Cheese': 1, 'Onion': 1, 'Ketchup': 2, 'Mayo': 2}
     },
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Krusty Krab Pizza',
@@ -157,16 +146,12 @@ foods_data = [
     {
         'menu': True,
         'code': '',
-        'menu': True,
-        'code': '',
         'name': 'None Pizza With Left Beef',
         'price': 8.99,
         'category': 'Pizza',
         'ingredients': {'Pizza Dough': 1, 'Beef Topping': 2}
     },
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Fries',
@@ -177,16 +162,12 @@ foods_data = [
     {
         'menu': True,
         'code': '',
-        'menu': True,
-        'code': '',
         'name': 'Onion Rings',
         'price': 2.99,
         'category': 'Side',
         'ingredients': {'Frozen Onion Rings': 2}
     },
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Seaweed Salad',
@@ -197,16 +178,12 @@ foods_data = [
     {
         'menu': True,
         'code': '',
-        'menu': True,
-        'code': '',
         'name': 'Orange Soda',
         'price': 1.99,
         'category': 'Drink',
         'ingredients': {'Orange Soda': 1}
     },
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Dr Kelp',
@@ -217,12 +194,18 @@ foods_data = [
     {
         'menu': True,
         'code': '',
-        'menu': True,
-        'code': '',
         'name': 'Diet Dr Kelp',
         'price': 1.99,
         'category': 'Drink',
         'ingredients': {'Diet Dr Kelp': 1}
+    },
+    {
+        'menu': True,
+        'code': '',
+        'name': 'Custom Food',
+        'price': 0.00,
+        'category': 'Custom Food',
+        'ingredients': {}
     }
 ]
 
@@ -275,14 +258,10 @@ for food_data in foods_data:
     ingredient_list = json.dumps(food_data['ingredients'])
     food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
                 price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
-    food = Food.objects.create(menu=food_data['menu'], code=food_data['code'], name=food_data['name'], 
-                price=food_data['price'], category=food_data['category'], ingred=ingredient_list)
 
 # Define meals and their foods using dictionaries
 meals_data = [
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Good Meal',
@@ -290,8 +269,6 @@ meals_data = [
         'foods': ['Good Burger', 'Fries', 'Orange Soda']
     },
     {
-        'menu': True,
-        'code': '',
         'menu': True,
         'code': '',
         'name': 'Krabby Patty Combo',
@@ -359,7 +336,6 @@ for meal in meals_data:
 # Loop through the meals list and save each meal
 for meal_data in meals_data:
     meal = Meal.objects.create(menu=meal_data['menu'], code=meal_data['code'], name=meal_data['name'], price=meal_data['price'])
-    meal = Meal.objects.create(menu=meal_data['menu'], code=meal_data['code'], name=meal_data['name'], price=meal_data['price'])
     for food_name in meal_data['foods']:
         # get the menu item
         food = Food.objects.filter(name=food_name, menu=True).first()
@@ -402,7 +378,6 @@ orders_data = [
         'time_completed': None,
         'foods': ['Krabby Patty', 'Krusty Dog', 'Fries'],
         'meals': [],
-        'price': 13.97,
         'employee_submitted': emp,
     },
     {
@@ -413,7 +388,6 @@ orders_data = [
         'time_completed': None,
         'foods': [],
         'meals': ['Good Meal'],
-        'price': 9.99,
         'employee_submitted': emp,
     },
     {
@@ -424,7 +398,6 @@ orders_data = [
         'time_completed': None,
         'foods': ['Steamed Hams', 'Krusty Dog'],
         'meals': ['Good Meal'],
-        'price': 19.97,
         'employee_submitted': emp,
     },
     {
@@ -435,7 +408,6 @@ orders_data = [
         'time_completed': None,
         'foods': ['Krusty Krab Pizza', 'Diet Dr Kelp'],
         'meals': [],
-        'price': 13.37,
         'employee_submitted': emp,
     },
     {
@@ -446,7 +418,6 @@ orders_data = [
         'time_completed': None,
         'foods': ['Seaweed Salad', 'Seaweed Salad', 'Seaweed Salad'],
         'meals': [],
-        'price': 12.34,
         'employee_submitted': emp,
     },
     {
@@ -457,7 +428,6 @@ orders_data = [
         'time_completed': None,
         'foods': ['None Pizza With Left Beef'],
         'meals': ['Krabby Patty Combo'],
-        'price': 99.99,
         'employee_submitted': emp,
     },
     {
@@ -468,7 +438,6 @@ orders_data = [
         'time_completed': None,
         'foods': [],
         'meals': ['Good Meal','Good Meal', 'Krabby Patty Combo'],
-        'price': 17.38,
         'employee_submitted': emp,
     }
 ]
@@ -488,7 +457,6 @@ for order_data in orders_data:
                   time_submitted = order_data['time_submitted'],
                   time_ready = order_data['time_ready'],
                   time_completed = order_data['time_completed'],
-                  price = order_data['price'],
                   employee_submitted = user_exists,
                   message = '')
     print('order created')
