@@ -369,7 +369,10 @@ for t in range(5):
 for t in range(3):
     end_times.append(ready_times[t] + timedelta(minutes=fake.random_int(min=1, max=5)))
 
-emp =  User.objects.exclude(username='senato68').filter().first()
+superusers = ['weldon49', 'senato68', 'bryan',
+             'dan', 'billie', 'ktswy', 'hgare']
+
+emp =  User.objects.exclude(username__in=superusers).filter().first()
 
 orders_data = [
     {
