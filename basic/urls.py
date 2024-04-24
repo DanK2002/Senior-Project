@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 
 app_name = 'basic'
@@ -44,7 +45,8 @@ urlpatterns = [
     path("csv-report/", views.generateCsv, name="csv-report"),
     
     path("login/", views.login, name="login"),
-    path("landingpage/", views.landingpage, name="landingpage"),
+    path("signout/", views.signout, name="signout"),
+    path("landingpage/", login_required(views.landingpage), name="landingpage"),
     path("new-employee/", views.new_employee_form, name= "new-employee"),
     path("save-new-employee/", views.save_new_employee, name= "save-new-employee"),
     path("view-employee/", views.view_employee, name= "view-employee"),
