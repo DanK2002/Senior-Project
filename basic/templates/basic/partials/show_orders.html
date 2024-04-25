@@ -1,0 +1,33 @@
+<div id="order-list">
+    <div>
+        <form id = "order-select-form">
+            <select name = "order-number" id = "order-number">
+                <option value = "">Select an order number</option>
+                {% for order in orders %}
+                    <option value = "{{ order.number }}">{{ order.number }}</option>
+                {% endfor %}
+            </select>
+            
+            <input type = "button" class = "btn" value = "View Details"
+                hx-post = "{% url 'basic:adjust-price-order-details' %}"
+                hx-trigger="click"
+                hx-swap = "innerHTML"
+                hx-target = "#order-details"
+                hx-include = "#order-select-form" />
+            <input type = "button" class = "btn" value = "Adjust Price"
+                hx-post = "{% url 'basic:adjust-price-order-comp' %}"
+                hx-swap = "innerHTML"
+                hx-target = "#order-details"
+                hx-include = "#order-select-form"
+                hx-trigger="click" />
+            <input type = "button" class = "btn-rmv" value = "Void"
+                hx-post = "{% url 'basic:adjust-price-order-void' %}"
+                hx-swap = "innerHTML"
+                hx-target = "#show-orders"
+                hx-include = "#order-select-form"
+                hx-trigger="click" />
+        </form>
+    </div>
+</div>
+
+<div id="order-details"></div>
