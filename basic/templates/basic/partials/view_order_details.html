@@ -1,43 +1,20 @@
-<table>
-    <tr>
-        <td>Food</td>
-        <td>Price</td>
-        <td>Action</td>
-    </tr>
-    {% for food in foods %}
-        <tr>
-            <td>{{ food.name }}</td>
-            <td>{{ food.price }}</td>
-            <td>
-                <form id = "{{ food.code }}">
-                    <input hidden name = "code" value = "{{ food.code }}" />
-                    <input type = "button" class = "btn" value = "Adjust Price"
-                        hx-include = "#{{ food.code }}" hx-post = "{% url 'basic:adjust-item-price' %}"
-                        hx-swap = "innerHTML" hx-target = "#adjust-item-price" />
-                    <input type = "button" class = "btn-rmv" value = "Void"
-                        hx-include = "#{{ food.code }}" hx-post = "{% url 'basic:void-item' %}"
-                        hx-swap = "innerHTML" hx-target = "#order-details" />
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-    {% for meal in meals %}
-        <tr>
-            <td>{{ meal.name }}</td>
-            <td>{{ meal.price }}</td>
-            <td>
-                <form id = "{{ meal.code }}">
-                    <input hidden name = "code" value = "{{ meal.code }}" />
-                    <input type = "button" class = "btn" value = "Adjust Price"
-                        hx-include = "#{{ meal.code }}" hx-post = "{% url 'basic:adjust-item-price' %}"
-                        hx-swap = "innerHTML" hx-target = "#adjust-item-price" />
-                    <input type = "button" class = "btn-rmv" value = "Void"
-                        hx-include = "#{{ meal.code }}" hx-post = "{% url 'basic:void-item' %}"
-                        hx-swap = "innerHTML" hx-target = "#order-details" />
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
+<form id = "list-items">
+    <input hidden name = "order-number" value = "{{ order.code }}" />
+    <select name = "item">
+        <option value = "">Select an item</option>
+        {% for food in foods %}
+            <option value = "{{ food.code }}">{{ food.name }}: {{ food.price }}</option>
+        {% endfor %}
+        {% for meal in meals %}
+            <option value = "{{ meal.code }}">{{ meal.name }}: {{ meal.price }}</option>
+        {% endfor %}
+    </select>
+    <input type = "button" class = "btn" value = "Adjust Price"
+        hx-include = "#list-items" hx-post = "{% url 'basic:adjust-item-price' %}"
+        hx-swap = "innerHTML" hx-target = "#adjust-item-price" />
+    <input type = "button" class = "btn-rmv" value = "Void"
+        hx-include = "#list-items" hx-post = "{% url 'basic:void-item' %}"
+        hx-swap = "innerHTML" hx-target = "#order-details" />
+</form>
 
 <div id = "adjust-item-price"></div>

@@ -2,8 +2,10 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script> 
 </head>
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'managerial.css' %}">
 
-    <div id = "select-order">
+    <div id = "select-order" class = "main container">
         <h1>Adjust Order Price</h1>
         <form id = "order-filters">
 

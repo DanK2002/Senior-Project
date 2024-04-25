@@ -545,25 +545,52 @@ def AP_order_details(request):
     )
 
 def AP_order_comp(request):
+    order = Order.objects.filter(number=request.POST.get('order-number')).first()
     return render(
         request,
-        ""
+        "basic/partials/adjust_order_price_form.html",
+        {
+            'order' : order
+        }
     )
 
 def AP_order_void(request):
+    Order.objects.filter(number = request.POST.get('order-number')).first().delete()
     return render(
         request,
-        ""
+        "basic/partials/voided_order.html"
+    )
+
+def AP_save_order_price(request):
+    order = Order.objects.get(number=request.POST.get('order-number'))
+    foods = order.foods.all()
+    meals = order.meals.all()
+    comp = 1 - int(request.POST.get('percent-comp')) / 100
+    for food in foods:
+        food.price = food.price * comp
+        food.save()
+    for meal in meals:
+        meal.price = meal.price * comp
+        meal.save()
+
+    return render(
+        request,
+        "basic/partials/view_order_details.html",
+        {
+            'foods' : foods,
+            'meals' : meals,
+            'order' : order,
+        }
     )
 
 def AP_save_item_price(request):
     if request.POST.get('food-code'):
         food = Food.objects.get(code = request.POST.get('food-code'))
-        food.price = food.price * (1 - (request.POST.get('percent-comp') / 100))
+        food.price = food.price * (1 - (int(request.POST.get('percent-comp')) / 100))
         food.save()
     elif request.POST.get('meal-code'):
         meal = Meal.objects.get(code = request.POST.get('meal-code'))
-        meal.price = meal.price * (1 - (request.POST.get('percent-comp') / 100))
+        meal.price = meal.price * (1 - (int(request.POST.get('percent-comp')) / 100))
         meal.save()
     order = Order.objects.filter(number=request.POST.get('order-number')).first()
     inFoods = []
@@ -580,20 +607,61 @@ def AP_save_item_price(request):
         "basic/partials/view_order_details.html",
         {
             'foods' : foods,
-            'meals' : meals
+            'meals' : meals,
+            'order' : order
         }
     )
 
 def AP_adjust_item_price(request):
-    return render(
-        request,
-        ""
-    )
+    item_code = request.POST.get('item')
+    if item_code in list(Food.objects.all().values_list('code', flat=True)):
+        food = Food.objects.get(code=item_code)
+        return render(
+            request,
+            "basic/partials/adjust_item_price.html",
+            {
+                'food' : food
+            }
+        )
+
+    elif item_code in list(Meal.objects.all().values_list('code', flat=True)):
+        meal = Meal.objects.get(code = item_code)
+        return render(
+            request,
+            "basic/partials/adjust_item_price.html",
+            {
+                'meal' : meal
+            }
+        )
 
 def AP_void_item(request):
+    
+    item_code = request.POST.get('item')
+    if item_code in list(Food.objects.all().values_list('code', flat=True)):
+        Food.objects.get(code=item_code).delete()
+
+    elif item_code in list(Meal.objects.all().values_list('code', flat=True)):
+        Meal.objects.get(code = item_code).delete()
+    
+    order = Order.objects.filter(number=request.POST.get('order-number')).first()
+    inFoods = []
+    for food in order.foods.all():
+        inFoods.append(food.name)
+    
+    print(inFoods)
+    foods = order.foods.all()
+    print(foods)
+    meals = order.meals.all()
+    print(meals)
+
     return render(
         request,
-        ""
+        "basic/partials/view_order_details.html",
+        {
+            'foods' : foods,
+            'meals' : meals,
+            'order' : order
+        }
     )
 
 # End Billie's Domain ------------------------------------------------------

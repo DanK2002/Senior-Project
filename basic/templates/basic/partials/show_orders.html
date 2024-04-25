@@ -23,7 +23,7 @@
                 <input type = "button" class = "btn-rmv" value = "Void"
                     hx-post = "{% url 'basic:adjust-price-order-void' %}"
                     hx-swap = "innerHTML"
-                    hx-target = "#order-details"
+                    hx-target = "#show-orders"
                     hx-include = "#order-select-form"
                     hx-trigger="click" />
             </form>

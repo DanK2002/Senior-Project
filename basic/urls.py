@@ -101,5 +101,6 @@ urlpatterns = [
     path("save-item-price/", views.AP_save_item_price, name="save-item-price"),
     path("adjust-item-price/", views.AP_adjust_item_price, name="adjust-item-price"),
     path("void-item/", views.AP_void_item, name = "void-item"),
+    path("save-order-price/", views.AP_save_order_price, name = "save-order-price"),
 
 ]
