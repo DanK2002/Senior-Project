@@ -10,6 +10,7 @@
 ## Incomplete Goals:
 - Managers are not able to clock in as a manager on duty when signing in, however, all managers still have managerial abilities.
 - Orders are not color coded based on the amount of time passed.
+
 *Some of these incomplete goals are still in progress
 
 ## Stretch Goals Completed:
