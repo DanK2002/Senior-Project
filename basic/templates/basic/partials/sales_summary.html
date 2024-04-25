@@ -12,14 +12,14 @@
     <td>{{ meals_total }}</td>
   </tr>
   <tr>
-    <td>Orders</td>
+    <td>Total</td>
     <td>{{ orders_total }}</td>
   </tr>
 </table>
 
 <table class = "sales-table">
   <thead>
-    <th>Category</th>
+    <th>Meal</th>
     <th>Revenue</th>
   </thead>
   {% for meal_name, meal_revenue in meals_ind.items %}
@@ -29,14 +29,14 @@
     </tr>
   {% endfor %}
   <tr>
-    <td>Meals</td>
+    <td>Total</td>
     <td>{{ meals_total }}</td>
   </tr>
 </table>
 
 <table class = "sales-table">
   <thead>
-    <th>Category</th>
+    <th>Food</th>
     <th>Revenue</th>
   </thead>
   {% for food_name, food_revenue in foods_ind.items %}
@@ -46,7 +46,7 @@
     </tr>
   {% endfor %}
   <tr>
-    <td>Meals</td>
+    <td>Total</td>
     <td>{{ foods_total }}</td>
   </tr>
 </table>

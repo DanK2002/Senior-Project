@@ -1010,7 +1010,7 @@ def salesSummary(request):
     })
 
 def generateCsv(request):
-    orders = Order.objects.all()
+    orders = Order.objects.exclude(time_completed=None)
     orders_total = 0
 
     foods_ind = defaultdict(int)
