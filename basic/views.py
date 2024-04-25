@@ -501,14 +501,14 @@ def save_new_shift(request):
 def managemenu(request):
     selected_category = request.POST.get('category') #get selected category
     categories = Food.objects.values_list('category', flat=True).distinct()
-    meals = Meal.objects.all()
+    meals = Meal.objects.filter(menu=True)
     selected_food = None
     add_food_form = AddFoodForm()
     add_meal_form = AddMealForm()
     if request.method == 'POST':
         selected_category = request.POST.get('category')
     if selected_category:
-        foods = Food.objects.filter(category=selected_category)
+        foods = Food.objects.filter(category=selected_category, menu=True)
         selected_food = request.POST.get('food')
     else:
         foods = None
@@ -533,7 +533,7 @@ def list_categories(request):
                   {'categories': categories})
 
 def list_meals(request):
-    meals = Meal.objects.all()
+    meals = Meal.objects.filter(menu=True)
     return render(request, 'basic/parials/list_meals.html', 
                   {'meals': meals})
 
@@ -680,7 +680,7 @@ def edit_view_food(request):
             new_price = edit_view_food_form.cleaned_data['initial_price']
 
             original_name = request.POST.get('original_name')
-            original_food = get_object_or_404(Food, name=original_name)
+            original_food = get_object_or_404(Food, name=original_name, menu=True)
             original_food.name = new_name
             original_food.category = new_category
             original_food.price = new_price
@@ -719,7 +719,7 @@ def edit_view_meal(request):
             foods_selected = form.cleaned_data['foods']
 
             original_name = request.POST.get('original_name')
-            original_meal = get_object_or_404(Meal, name=original_name)
+            original_meal = get_object_or_404(Meal, name=original_name, menu=True)
             original_meal.name = new_name
             original_meal.price = new_price
             original_meal.foods.set(foods_selected)
@@ -730,7 +730,7 @@ def edit_view_meal(request):
 def remove_food(request):
     if request.method == 'POST':
         food_name = request.POST.get('food_name')
-        food = Food.objects.filter(name=food_name).first()
+        food = Food.objects.filter(name=food_name, menu=True).first()
         food.delete()
         add_food_form = AddFoodForm()
         return render(request, 'basic/partials/add_food.html', {'add_food_form': add_food_form})
@@ -741,7 +741,7 @@ def remove_food(request):
 def remove_meal(request):
     if request.method == 'POST':
         meal_name = request.POST.get('meal_name')
-        meal = Meal.objects.filter(name=meal_name).first()
+        meal = Meal.objects.filter(name=meal_name, menu=True).first()
         meal.delete()
         add_meal_form = AddMealForm()
         return render(request, 'basic/partials/add_meal.html', {'add_meal_form': add_meal_form})
@@ -751,7 +751,7 @@ def remove_meal(request):
 def fetch_food_details(request):
     if request.method == 'GET':
         food_name = request.GET.get('food_name')
-        food = Food.objects.get(name=food_name)
+        food = Food.objects.get(name=food_name, menu=True)
         initial_data = {
             'initial_name': food.name,
             'initial_category': food.category,
@@ -763,7 +763,7 @@ def fetch_food_details(request):
 def fetch_meal_details(request):
     if request.method == 'GET':
         meal_name = request.GET.get('meal_name')
-        meal = get_object_or_404(Meal, name=meal_name)
+        meal = get_object_or_404(Meal, name=meal_name, menu=True)
         form = EditMealForm(initial={'initial_name': meal.name, 'initial_price': meal.price},  meal_instance=meal)
         return render(request, 'basic/partials/edit_view_meal.html', {'form': form})
     
