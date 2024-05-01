@@ -87,7 +87,12 @@
 </head>
 <body>        
     <div class="title">
-        <h1>Welcome, {{ user.first_name }} {{ user.last_name }}</h1>
+        <h1>Welcome, 
+        {% if user.first_name and user.last_name %}
+            {{ user.first_name }} {{ user.last_name }}
+        {% else %}
+            {{ user.username }}
+        {% endif %}</h1>
     </div>
     <a href="{% url 'basic:signout' %}">
         <input id="signout_button" type="button" value="Sign Out">
@@ -125,6 +130,12 @@
             <button id="sales_button">
                 <img id="img" src="../../../static/sales.png" alt="buttonpng"/>
                 Sales
+            </button>
+        </a>
+        <a href="{% url 'basic:adjust-price' %}">
+            <button id="price_button">
+                <img id="img" src="../../../static/adjustprice.png" alt="buttonpng"/>
+                Adjust Price
             </button>
         </a>
         {% endif %}
