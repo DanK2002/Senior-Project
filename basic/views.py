@@ -699,7 +699,6 @@ def managemenu(request):
                   {'html_content':  html_content,
                     'css_content': css_content})
 
-
 def list_categories(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 
