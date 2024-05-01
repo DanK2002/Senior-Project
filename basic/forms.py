@@ -16,7 +16,7 @@ class AddFoodForm(forms.Form):
 class AddMealForm(forms.Form):
     name = forms.CharField(label='Name', max_length=100)
     price = forms.DecimalField(label='Price', max_digits=10, decimal_places=2)
-    foods = forms.ModelMultipleChoiceField(queryset=Food.objects.all().values_list('name', flat=True), widget=forms.CheckboxSelectMultiple)
+    foods = forms.ModelMultipleChoiceField(queryset=Food.objects.filter(menu=True).values_list('name', flat=True), widget=forms.CheckboxSelectMultiple)
 
 class EditFoodForm(forms.Form):
     initial_name = forms.CharField(label='Name', max_length=100)
@@ -37,7 +37,7 @@ class EditFoodForm(forms.Form):
 class EditMealForm(forms.Form):
     initial_name = forms.CharField(label='Name', max_length=100)
     initial_price = forms.DecimalField(label='Price', max_digits=10, decimal_places=2)
-    foods = forms.ModelMultipleChoiceField(queryset=Food.objects.all(), widget=forms.SelectMultiple)
+    foods = forms.ModelMultipleChoiceField(queryset=Food.objects.filter(menu=True), widget=forms.SelectMultiple)
 
     def __init__(self, *args, **kwargs):
         meal_instance = kwargs.pop('meal_instance', None)

@@ -560,10 +560,9 @@ def edit_category(request):
             food.category = new_category_name
             food.save()
         selected_category = new_category_name
-        return JsonResponse({'Category name successfully changed': True})
+        return redirect('basic:managemenu')
     else:
-        # Return a JSON response indicating failure
-        return JsonResponse({'success': False, 'error': 'Invalid request'})
+        return redirect('basic:managemenu')
 
 def add_food(request):
     add_food_form = AddFoodForm()
@@ -574,7 +573,8 @@ def add_food(request):
             new_food = Food(
                 name=add_food_form.cleaned_data['name'],
                 category=add_food_form.cleaned_data['category'],
-                price=add_food_form.cleaned_data['price']
+                price=add_food_form.cleaned_data['price'],
+                menu=True
             )
    
         new_food.save()
@@ -614,7 +614,8 @@ def save_food_as_new_food(request):
             new_food = Food(
                 name=form.cleaned_data['initial_name'],
                 category=form.cleaned_data['initial_category'],
-                price=form.cleaned_data['initial_price']
+                price=form.cleaned_data['initial_price'],
+                menu=True
             )
             new_food.save()
 
@@ -648,14 +649,18 @@ def save_food_as_new_food(request):
 
 def add_meal(request):
     if request.method == 'POST':
+        print("IN POST")
+        print(request.POST)
         form = AddMealForm(request.POST)
         if form.is_valid():
+            print("FORM VALID")
             # Create a new Food object with form data
             new_meal = Meal(
                 name=form.cleaned_data['name'],
-                price=form.cleaned_data['price']
+                price=form.cleaned_data['price'],
+                menu=True
             )
-                
+            print("SAVED 1")
             new_meal.save()
 
             new_meal.foods.set(form.cleaned_data['foods'])
@@ -663,7 +668,7 @@ def add_meal(request):
             meal_code = add_meal_code(new_meal)
             new_meal.code = meal_code
             new_meal.save()
-            return redirect('basic:managemenu')
+        return redirect('basic:managemenu')
     else:
         form = AddMealForm()
     all_food_items = Food.objects.all()
@@ -724,7 +729,7 @@ def edit_view_meal(request):
             original_meal.price = new_price
             original_meal.foods.set(foods_selected)
             original_meal.save()
-        return render(request, 'basic/partials/add_meal.html', {'form': form, 'add_meal_form': add_meal_form})
+            return render(request, 'basic/partials/add_meal.html', {'form': form, 'add_meal_form': add_meal_form})
     return render(request, 'basic/partials/edit_view_food.html', {'form': form})
 
 def remove_food(request):
