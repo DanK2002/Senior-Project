@@ -699,28 +699,6 @@ def managemenu(request):
                   {'html_content':  html_content,
                     'css_content': css_content})
 
-def cat_menu(request):
-    selected_category = request.POST.get('category') #get selected category
-    categories = Food.objects.values_list('category', flat=True).distinct()
-    meals = Meal.objects.filter(menu=True)
-    selected_food = None
-    add_food_form = AddFoodForm()
-    add_meal_form = AddMealForm()
-    if request.method == 'POST':
-        selected_category = request.POST.get('category')
-    if selected_category:
-        foods = Food.objects.filter(category=selected_category, menu=True)
-        selected_food = request.POST.get('food')
-    else:
-        foods = None
-    return render(request, "basic/managemenu.html", {'categories': categories, 
-                   'selected_category': selected_category,
-                   'selected_food': selected_food,
-                   'foods': foods,
-                    'meals':meals, 
-                    'add_food_form': add_food_form, 
-                    'add_meal_form': add_meal_form})
-
 def list_categories(request):
     categories = Food.objects.values_list('category', flat=True).distinct()
 
