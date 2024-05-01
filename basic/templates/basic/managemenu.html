@@ -29,7 +29,7 @@
 
   <!-- Drop down list for meals -->
   <form class="meal-dropdown" 
-  hx-target = "#add-meal-container"
+  hx-target = "#view-meal-details"
   hx-swap ="outerHTML"
   hx-trigger="change"
   hx-get="{% url 'basic:fetch_meal_details' %}">
@@ -82,12 +82,9 @@ hx-get="{% url 'basic:fetch_food_details' %}">
     {% include 'basic/partials/add_food.html' %}
   </div> 
   <!-- Add Meal form -->
-  <div id="add-meal-container" hx-target="view-meal-details" hx-swap="outerHTML">
+  <div id="view-meal-details">
     {% include 'basic/partials/add_meal.html' %}
   </div>
-  <!--Edit/view food form-->
-  <div id="meal-details">
-    <div id="view-meal-details"></div>
-  </div>
+ 
   
 </body>
