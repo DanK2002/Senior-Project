@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="{% static 'managerial.css' %}">
 
 
-  <div class = "container">
+  <div id="update" name="update" class = "container">
   <h1>Manage Menu</h1>
   
   <div class = "secondary-container">
@@ -12,7 +12,10 @@
   </div>
 
   <!-- Drop-down list for categories -->
-  <form class="category-dropdown form-input" method="post">
+  <form class="category-dropdown form-input" 
+  hx-post="{% url 'basic:managemenu' %}"
+  hx-target = "#update"
+  hx-swap ="outerHTML">
     {% csrf_token %}
     <label for="category">Category:</label>
     <select id="category" name="category">

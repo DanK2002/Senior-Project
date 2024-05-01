@@ -73,6 +73,7 @@ urlpatterns = [
     path("partials/removedItem/", views.removedItem, name="removedItem"),
     
     path("managemenu/", views.managemenu, name="managemenu"),
+    path("cat_menu/", views.cat_menu, name="cat_menu"),
     path('edit_category_form/', views.edit_category_form, name='edit_category_form'),
     path('edit_category/', views.edit_category, name='edit_category'),
     path('edit_view_food/', views.edit_view_food, name='edit_view_food'),
