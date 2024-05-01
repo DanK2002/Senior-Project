@@ -1,0 +1,20 @@
+<form id = "list-items">
+    <input hidden name = "order-number" value = "{{ order.code }}" />
+    <select name = "item">
+        <option value = "">Select an item</option>
+        {% for food in foods %}
+            <option value = "{{ food.code }}">{{ food.name }}: {{ food.price }}</option>
+        {% endfor %}
+        {% for meal in meals %}
+            <option value = "{{ meal.code }}">{{ meal.name }}: {{ meal.price }}</option>
+        {% endfor %}
+    </select>
+    <input type = "button" class = "btn" value = "Adjust Price"
+        hx-include = "#list-items" hx-post = "{% url 'basic:adjust-item-price' %}"
+        hx-swap = "innerHTML" hx-target = "#adjust-item-price" />
+    <input type = "button" class = "btn-rmv" value = "Void"
+        hx-include = "#list-items" hx-post = "{% url 'basic:void-item' %}"
+        hx-swap = "innerHTML" hx-target = "#order-details" />
+</form>
+
+<div id = "adjust-item-price"></div>

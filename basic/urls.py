@@ -97,4 +97,16 @@ urlpatterns = [
     path("remove-shift/", views.remove_shift, name="remove-shift"),
     path("add-shift/", views.add_shift, name="add-shift"),
     path("edit-shifts/", views.edit_shifts, name = "edit-shifts"),
+
+    # Price Adjustment
+    path("adjust-price/", views.adjust_price, name = "adjust-price"),
+    path("adjust-price-filter-order/", views.AP_filter_order, name = "adjust-price-filter-order"),
+    path("adjust-price-order-details/", views.AP_order_details, name = "adjust-price-order-details"),
+    path("adjust-price-order-comp/", views.AP_order_comp, name = "adjust-price-order-comp"),
+    path("adjust-price-order-void/", views.AP_order_void, name = "adjust-price-order-void"),
+    path("save-item-price/", views.AP_save_item_price, name="save-item-price"),
+    path("adjust-item-price/", views.AP_adjust_item_price, name="adjust-item-price"),
+    path("void-item/", views.AP_void_item, name = "void-item"),
+    path("save-order-price/", views.AP_save_order_price, name = "save-order-price"),
+
 ]
