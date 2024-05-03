@@ -13,7 +13,7 @@
               hx-target="#employee-info" hx-swap = "innerHTML" />
     </form>
   </div>
-  Salary: ${{ selectedEmployee.wage }}
+  Salary: ${{ selectedEmployee.wage|floatformat:2 }}
   <br>
   Groups:
   <ul>

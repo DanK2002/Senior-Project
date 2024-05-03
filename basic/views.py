@@ -500,14 +500,17 @@ def save_new_shift(request):
 def adjust_price(request):
     users = User.objects.all()
     form = FilterOrdersForm()
-    return render(
-        request,
-        "basic/adjust_order_price.html",
-        {
-            'users' : users,
-            'form' : form
-        }
-    )
+    html_content = render(request, "basic/adjust_order_price.html",
+                          {'users' : users,
+                           'form' : form}).content.decode('utf-8')
+    css_content = render(request, "basic/employees_css.html").content.decode('utf-8')
+    print("RESET")
+
+    # If no actions have occurred, render the page with just employees
+    return render(request, "basic/sidenav.html", { 
+        'html_content': html_content,
+        'css_content': css_content
+    })
 
 def AP_filter_order(request):
     
@@ -528,7 +531,8 @@ def AP_filter_order(request):
 
 def AP_order_details(request):
     print(request.POST.get('order-number'))
-    order = Order.objects.filter(number=request.POST.get('order-number')).first()
+    order = Order.objects.get(number=request.POST.get('order-number'))
+    print(order.number)
     inFoods = []
     for food in order.foods.all():
         inFoods.append(food.name)
@@ -588,6 +592,7 @@ def AP_save_order_price(request):
     )
 
 def AP_save_item_price(request):
+    print(request.POST)
     if request.POST.get('food-code'):
         food = Food.objects.get(code = request.POST.get('food-code'))
         food.price = food.price * (1 - (int(request.POST.get('percent-comp')) / 100))
@@ -618,13 +623,15 @@ def AP_save_item_price(request):
 
 def AP_adjust_item_price(request):
     item_code = request.POST.get('item')
+    order = Order.objects.get(number = request.POST.get('order-number'))
     if item_code in list(Food.objects.all().values_list('code', flat=True)):
         food = Food.objects.get(code=item_code)
         return render(
             request,
             "basic/partials/adjust_item_price.html",
             {
-                'food' : food
+                'food' : food,
+                'order' : order
             }
         )
 

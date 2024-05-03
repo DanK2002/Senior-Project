@@ -1,12 +1,12 @@
 <form id = "list-items">
-    <input hidden name = "order-number" value = "{{ order.code }}" />
+    <input hidden name = "order-number" value = "{{ order.number }}" />
     <select name = "item">
         <option value = "">Select an item</option>
         {% for food in foods %}
-            <option value = "{{ food.code }}">{{ food.name }}: {{ food.price }}</option>
+            <option value = "{{ food.code }}">{{ food.name }}: {{ food.price|floatformat:2 }}</option>
         {% endfor %}
         {% for meal in meals %}
-            <option value = "{{ meal.code }}">{{ meal.name }}: {{ meal.price }}</option>
+            <option value = "{{ meal.code }}">{{ meal.name }}: {{ meal.price|floatformat:2 }}</option>
         {% endfor %}
     </select>
     <input type = "button" class = "btn" value = "Adjust Price"
