@@ -15,7 +15,7 @@
       <input type="button" name = "Cancel" value = "Cancel" class = "btn-rmv" />
     </form>
     <form method="POST">
-      <input type="button" value="Refresh Employee List" class = "btn"
+      <input hidden type="button" value="Refresh Employee List" class = "btn"
             hx-trigger = "click, click from:.refresh-list delay:1s" hx-post = "{% url 'basic:view-all-employees' %}"
             hx-target = "#view-employees" hx-swap = "innerHTML" />
     </form>

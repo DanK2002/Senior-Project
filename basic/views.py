@@ -110,7 +110,7 @@ def search(request):
 # Billie's Domain -------------------------------------------------------------------------------------
 # For managing employees in the managerial section
 def manageemployees(request):
-    users = User.objects.all()      
+    users = User.objects.filter(employee__isnull=False) 
     list_all_employees = render(
         request,
         "basic/partials/view_all_employees.html",
@@ -144,7 +144,7 @@ def new_employee_form(request):
 # User wants to add a new employee and has already submitted the form          
 def save_new_employee(request):
     employees = Employee.objects.all()
-    users = User.objects.all()
+    users = User.objects.filter(employee__isnull=False) 
     newUser = User.objects.create(                     # Add a new user based on form input
                 username = request.POST.get('username'),
                 first_name = request.POST.get('first_name'),
@@ -304,7 +304,7 @@ def remove_employee(request):
     print("Removing Employee...")
     print(request.POST)
     employees = Employee.objects.all()
-    users = User.objects.all()
+    users = User.objects.filter(employee__isnull=False) 
     selectedUsername = request.POST.get('select-employees')     # Get the username requested
     selectedUser = User.objects.get(username=selectedUsername)  # Find that user
     selectedEmployee = Employee.objects.get(user=selectedUser)  # And the employee linked to it
@@ -325,7 +325,7 @@ def remove_employee(request):
     )
 
 def view_all_employees (request):
-    users = User.objects.all()      
+    users = User.objects.filter(employee__isnull=False)      
     print("Updating employee list")
     return render(
         request,
@@ -498,7 +498,7 @@ def save_new_shift(request):
 
 # ADJUST PRICES ******************
 def adjust_price(request):
-    users = User.objects.all()
+    users = User.objects.filter(employee__isnull=False) 
     form = FilterOrdersForm()
     html_content = render(request, "basic/adjust_order_price.html",
                           {'users' : users,
